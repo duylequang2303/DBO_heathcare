@@ -1,0 +1,16 @@
+food_id,food_name,category,meal_type,serving_size_g,calories,protein_g,carbs_g,fat_g,fiber_g,sodium_mg,calcium_mg,iron_mg,vitamin_a_mcg,vitamin_c_mg,price_vnd,allergy_warnings
+F001,Ức gà luộc,Thịt,lunch;dinner,100,165,31.0,0.0,3.6,0.0,74,15,1.0,13,0.0,15000,none
+F002,Thịt bò xào rau củ,Thịt,lunch;dinner,150,220,24.5,6.0,10.2,2.1,320,28,3.2,85,12.5,35000,none
+F003,Cá hồi áp chảo,Hải sản,lunch;dinner,120,248,26.0,0.0,15.5,0.0,65,12,0.8,40,0.0,55000,fish
+F004,Trứng gà luộc,Trứng,breakfast;snack,60,86,7.5,0.6,6.0,0.0,70,28,0.9,80,0.0,4000,egg
+F005,Đậu phụ luộc,Đậu & Hạt,lunch;dinner;breakfast,100,76,8.1,1.9,4.8,0.3,7,350,5.4,0,0.0,5000,soy
+F006,Cơm trắng,Tinh bột,lunch;dinner,150,195,4.0,43.0,0.4,0.6,2,10,0.4,0,0.0,3000,none
+F007,Cơm gạo lứt,Tinh bột,lunch;dinner,150,166,3.8,35.0,1.4,2.8,4,15,1.2,0,0.0,5000,none
+F008,Khoai lang hấp,Tinh bột,breakfast;snack,120,103,1.9,24.0,0.2,3.6,66,36,0.7,850,2.9,6000,none
+F009,Yến mạch nấu sữa tươi không đường,Ngũ cốc,breakfast,200,210,10.0,32.0,5.0,4.0,95,180,2.1,50,1.2,15000,dairy
+F010,Bông cải xanh luộc,Rau củ,lunch;dinner,100,34,2.8,6.6,0.4,2.6,33,47,0.7,31,89.2,8000,none
+F011,Rau muống xào tỏi,Rau củ,lunch;dinner,120,78,2.6,4.5,5.2,2.1,280,100,2.5,150,18.0,7000,none
+F012,Canh cải thịt băm,Canh & Súp,lunch;dinner,200,85,6.5,2.0,5.5,1.2,350,60,1.5,120,25.0,12000,none
+F013,Chuối tiêu chín,Trái cây,snack;breakfast,100,89,1.1,22.8,0.3,2.6,1,5,0.3,64,8.7,4000,none
+F014,Táo tươi,Trái cây,snack,150,78,0.4,20.7,0.3,3.6,1,9,0.2,4,7.0,10000,none
+F015,Sữa chua Hy Lạp không đường,Sữa & Chế phẩm,snack;breakfast,100,97,10.0,3.6,5.0,0.0,36,110,0.1,20,0.0,12000,dairy
