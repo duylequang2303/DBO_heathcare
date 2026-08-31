@@ -99,6 +99,7 @@ def clean_usda(usda: pd.DataFrame) -> pd.DataFrame:
     usda.loc[bad_energy, "calories"] = usda.loc[bad_energy, "calories"] / 4.184
     usda = usda[usda["calories"] <= 1000]
     usda = usda[usda["calories"] > 0]
+    usda["calories"] = usda["calories"].round(1)
     usda = usda[~usda["food_category"].fillna("").str.strip().str.lower().isin(DROP_CATEGORIES)]
     name_l = usda["food_name"].fillna("").str.lower()
     usda = usda[~name_l.str.contains("juice|nectar", regex=True)]

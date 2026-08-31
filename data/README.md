@@ -27,7 +27,7 @@ data/
 | `food_id` | String | - | Mã định danh (tiền tố `USDA_` / `VN_`) |
 | `food_name` | String | - | Tên món ăn / thực phẩm (món VN dùng tiếng Việt) |
 | `category` | String | - | Phân loại (theo nguồn: USDA Food Category / nhóm thực phẩm VN) |
-| `meal_type` | String | - | Bữa phù hợp: `breakfast`, `snack`, `all` (tự gán theo nhóm món) |
+| `meal_type` | String | - | Bữa phù hợp: `breakfast`, `snack`, `all`. Món trưa/tối gán chung `all` vì về dinh dưỡng không phân biệt được; cấu trúc 3 bữa/ngày do mô hình thực đơn (Menu + `meal_counts`) đảm bảo |
 | `serving_size_g` | Float | gram (g) | Khẩu phần chuẩn (mặc định `100` = tính trên 100g) |
 | `calories` | Float | kcal | Năng lượng |
 | `protein_g` | Float | g | Chất đạm (Protein) |
@@ -49,7 +49,8 @@ data/
 ### 2.3 Ghi chú xử lý dữ liệu
 
 - Toàn bộ giá trị dinh dưỡng tính trên **100g** khẩu phần (`serving_size_g = 100`).
-- Phần USDA: đã quy đổi năng lượng bị lưu nhầm đơn vị kJ sang kcal (÷4.184), lọc bỏ nhóm không phù hợp bữa ăn (kẹo, nước ngọt, snack, dầu, gia vị...), loại dòng nước ép & năng lượng bằng 0.
+- Phần USDA: có ~3.6% dòng lưu năng lượng nhầm đơn vị **kJ** (số nguyên lớn, vd 1400) → đã quy đổi sang kcal bằng công thức `÷ 4.184` (vd `1400/4.184 = 334.6` kcal) rồi làm tròn 1 chữ số thập phân. Đây là **bước chuẩn hóa đơn vị**, không phải suy bù thiếu dữ liệu theo công thức 4-4-9; ghi rõ trong mục phương pháp luận của báo cáo.
+- Lọc bỏ nhóm không phù hợp bữa ăn (kẹo, nước ngọt, snack, dầu, gia vị...), loại dòng nước ép & năng lượng bằng 0.
 - Deduplicate theo `food_name`, giữ dòng có đầy đủ dữ liệu nhất.
 - `vitamin_a_mcg`, `price_vnd`, `allergy_warnings` đã bỏ vì nguồn dữ liệu thô không có; nhóm sẽ bổ sung sau nếu cần.
 - Script tái lập: `scripts/preprocess_data.py`.

@@ -44,7 +44,7 @@ Ghi chú: `src/utils/data_loader.py` thuộc quyền Cương nhưng được c�
 
 ### 2. Cương — Biểu diễn thực đơn
 - [ ] Chuẩn hóa `Menu.decode()` khớp đúng cách mã hóa vector nghiệm của IDBO (chốt format với trưởng nhóm).
-- [ ] Thêm ràng buộc `meal_type` của món với bữa tương ứng (món `breakfast` chỉ vào bữa sáng).
+- [ ] Thêm ràng buộc `meal_type` của món với bữa tương ứng (món `breakfast`/`snack` chỉ vào đúng bữa đó; bữa trưa/tối lấy từ nhãn `all`).
 - [ ] Hỗ trợ khẩu phần theo gram; kiểm tra nạp `merged_food_nutrition.csv` (15.929 món).
 - [ ] Viết test `tests/test_menu.py`.
 
