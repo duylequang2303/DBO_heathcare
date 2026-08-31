@@ -18,15 +18,17 @@ data/
 
 ---
 
-## 2. Quy chuẩn các cột trong file CSV thực phẩm (`foods.csv`)
+## 2. Quy chuẩn các cột trong file CSV thực phẩm (`merged_food_nutrition.csv`)
+
+### 2.1 Các cột chuẩn
 
 | Tên cột | Kiểu dữ liệu | Đơn vị | Mô tả |
 | :--- | :--- | :--- | :--- |
-| `food_id` | Integer / String | - | Mã định danh thực phẩm / món ăn |
-| `food_name` | String | - | Tên món ăn / thực phẩm (VD: Ức gà áp chảo, Cơm trắng,...) |
-| `category` | String | - | Phân loại (Thịt, Hải sản, Rau củ, Trái cây, Tinh bột, Canh, v.v.) |
-| `meal_type` | String | - | Phù hợp cho bữa nào: `breakfast`, `lunch`, `dinner`, `snack`, `all` |
-| `serving_size_g` | Float | gram (g) | Khối lượng 1 khẩu phần chuẩn (VD: 100g hoặc 1 phần ăn) |
+| `food_id` | String | - | Mã định danh (tiền tố `USDA_` / `VN_`) |
+| `food_name` | String | - | Tên món ăn / thực phẩm (món VN dùng tiếng Việt) |
+| `category` | String | - | Phân loại (theo nguồn: USDA Food Category / nhóm thực phẩm VN) |
+| `meal_type` | String | - | Bữa phù hợp: `breakfast`, `snack`, `all` (tự gán theo nhóm món) |
+| `serving_size_g` | Float | gram (g) | Khẩu phần chuẩn (mặc định `100` = tính trên 100g) |
 | `calories` | Float | kcal | Năng lượng |
 | `protein_g` | Float | g | Chất đạm (Protein) |
 | `carbs_g` | Float | g | Carbohydrate (Tinh bột/Đường) |
@@ -35,7 +37,19 @@ data/
 | `sodium_mg` | Float | mg | Natri (Sodium) |
 | `calcium_mg` | Float | mg | Canxi (Calcium) |
 | `iron_mg` | Float | mg | Sắt (Iron) |
-| `vitamin_a_mcg` | Float | mcg | Vitamin A |
 | `vitamin_c_mg` | Float | mg | Vitamin C |
-| `price_vnd` | Float | VNĐ | Giá tiền ước lượng (nếu cần) |
-| `allergy_warnings` | String | - | Cảnh báo dị ứng (hải sản, đậu phộng, trứng,...) |
+
+### 2.2 Các cột bổ sung
+
+| Tên cột | Kiểu dữ liệu | Đơn vị | Mô tả |
+| :--- | :--- | :--- | :--- |
+| `source` | String | - | Nguồn dữ liệu: `usda` hoặc `vietnamese` |
+| `name_en` | String | - | Tên tiếng Anh gốc (USDA) / tên tham khảo (VN) |
+
+### 2.3 Ghi chú xử lý dữ liệu
+
+- Toàn bộ giá trị dinh dưỡng tính trên **100g** khẩu phần (`serving_size_g = 100`).
+- Phần USDA: đã quy đổi năng lượng bị lưu nhầm đơn vị kJ sang kcal (÷4.184), lọc bỏ nhóm không phù hợp bữa ăn (kẹo, nước ngọt, snack, dầu, gia vị...), loại dòng nước ép & năng lượng bằng 0.
+- Deduplicate theo `food_name`, giữ dòng có đầy đủ dữ liệu nhất.
+- `vitamin_a_mcg`, `price_vnd`, `allergy_warnings` đã bỏ vì nguồn dữ liệu thô không có; nhóm sẽ bổ sung sau nếu cần.
+- Script tái lập: `scripts/preprocess_data.py`.
