@@ -23,6 +23,7 @@ class MenuItem:
     calcium_mg: float = 0.0
     iron_mg: float = 0.0
     vitamin_c_mg: float = 0.0
+    meal_type: str = ""
 
     def nutrient(self, key: str) -> float:
         per_100g = getattr(self, key)
@@ -54,35 +55,39 @@ class Menu:
         return [item for meal in self.meals.values() for item in meal.items]
 
     def encode(self) -> list[float]:
-        flat: list[float] = []
-        for item in self.all_items():
-            flat.append(float(item.portion_g))
-        return flat
+        return [float(item.portion_g) for item in self.all_items()]
+
+    def food_ids(self) -> list[str]:
+        return [item.food_id for item in self.all_items()]
 
     @classmethod
-    def decode(cls, food_ids: list[str], portions_g: list[float], food_map: dict) -> "Menu":
+    def decode(
+        cls,
+        food_ids: list[str],
+        portions_g: list[float],
+        food_map: dict,
+        meal_counts: dict[str, int] | None = None,
+    ) -> "Menu":
+        if len(food_ids) != len(portions_g):
+            raise ValueError("food_ids and portions_g must have the same length")
+        meal_order = list(MealType)
+        if meal_counts is None:
+            n = len(food_ids)
+            base, extra = divmod(n, len(meal_order))
+            counts = [base + (1 if i < extra else 0) for i in range(len(meal_order))]
+        else:
+            counts = [meal_counts.get(meal_type.value, 0) for meal_type in meal_order]
+            if sum(counts) != len(food_ids):
+                raise ValueError("sum(meal_counts) must equal len(food_ids)")
         menu = cls()
-        chunks = [food_ids[i::4] for i in range(4)]
-        pchunks = [portions_g[i::4] for i in range(4)]
-        for idx, meal_type in enumerate(MealType):
+        offset = 0
+        for meal_type, count in zip(meal_order, counts):
             meal = Meal(meal_type)
-            for fid, portion in zip(chunks[idx], pchunks[idx]):
+            for fid, portion in zip(food_ids[offset:offset + count], portions_g[offset:offset + count]):
                 row = food_map[fid]
-                meal.add_item(MenuItem(
-                    food_id=fid,
-                    food_name=row["food_name"],
-                    portion_g=portion,
-                    calories=row["calories"],
-                    protein_g=row["protein_g"],
-                    carbs_g=row["carbs_g"],
-                    fat_g=row["fat_g"],
-                    fiber_g=row["fiber_g"],
-                    sodium_mg=row["sodium_mg"],
-                    calcium_mg=row["calcium_mg"],
-                    iron_mg=row["iron_mg"],
-                    vitamin_c_mg=row["vitamin_c_mg"],
-                ))
+                meal.add_item(_item_from_row(fid, portion, row))
             menu.meals[meal_type] = meal
+            offset += count
         return menu
 
     def __repr__(self) -> str:
@@ -91,3 +96,42 @@ class Menu:
             names = [f"{i.food_name}({i.portion_g:.0f}g)" for i in meal.items]
             parts.append(f"{meal_type.value}: {', '.join(names) or '-'}")
         return "\n".join(parts)
+
+
+def _item_from_row(food_id: str, portion_g: float, row: dict) -> MenuItem:
+    return MenuItem(
+        food_id=food_id,
+        food_name=row["food_name"],
+        portion_g=portion_g,
+        calories=_num(row.get("calories")),
+        protein_g=_num(row.get("protein_g")),
+        carbs_g=_num(row.get("carbs_g")),
+        fat_g=_num(row.get("fat_g")),
+        fiber_g=_num(row.get("fiber_g")),
+        sodium_mg=_num(row.get("sodium_mg")),
+        calcium_mg=_num(row.get("calcium_mg")),
+        iron_mg=_num(row.get("iron_mg")),
+        vitamin_c_mg=_num(row.get("vitamin_c_mg")),
+        meal_type=_meal_type_str(row.get("meal_type")),
+    )
+
+
+def _meal_type_str(value) -> str:
+    if value is None:
+        return ""
+    text = str(value).strip().lower()
+    if text in ("", "nan", "none"):
+        return ""
+    return text
+
+
+def _num(value) -> float:
+    if value is None:
+        return 0.0
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return 0.0
+    if number != number:
+        return 0.0
+    return number

@@ -51,17 +51,17 @@ Ghi chú: `src/utils/data_loader.py` thuộc quyền Cương nhưng được c�
 **Nghiệm thu:** Round-trip `encode() → decode()` trả đúng menu ban đầu; nạp đủ dữ liệu không lỗi.
 
 ### 3. Duy — Ràng buộc & hàm mục tiêu + tích hợp
-- [ ] Hoàn thiện các ràng buộc (số món, khẩu phần, sở thích, không lặp món trong ngày).
-- [ ] Cân chỉnh trọng số hàm mục tiêu; đảm bảo fitness nằm trong khoảng ổn định.
-- [ ] Tích hợp và viết test end-to-end `tests/test_model.py` (nạp dữ liệu thật → dựng menu → đánh giá).
-- [ ] Chủ trì họp nhóm chốt format nghiệm chung trước tuần 4 (DBO).
+- [x] Hoàn thiện các ràng buộc (số món, khẩu phần, sở thích, không lặp món trong ngày).
+- [x] Cân chỉnh trọng số hàm mục tiêu; đảm bảo fitness nằm trong khoảng ổn định.
+- [x] Tích hợp và viết test end-to-end `tests/test_model.py` (nạp dữ liệu thật → dựng menu → đánh giá).
+- [x] Chủ trì họp nhóm chốt format nghiệm chung trước tuần 4 (DBO).
 
 **Nghiệm thu:** Menu hợp lệ có fitness cao hơn menu ngẫu nhiên; test end-to-end chạy qua với dữ liệu thật.
 
 ## Đầu ra cuối tuần 3
-- [ ] Tất cả module hoàn thiện + test xanh (`python -m pytest tests/`).
-- [ ] Demo: nhập hồ sơ người dùng → tính nhu cầu → dựng 1 thực đơn mẫu → đánh giá.
-- [ ] Cập nhật README.md mô tả mô hình bài toán.
+- [x] Tất cả module hoàn thiện + test xanh (`python -m pytest tests/`).
+- [x] Demo: nhập hồ sơ người dùng → tính nhu cầu → dựng 1 thực đơn mẫu → đánh giá.
+- [x] Cập nhật README.md mô tả mô hình bài toán.
 
 ## Quy trình làm việc (Git)
 1. Mỗi thành viên tạo nhánh riêng: `git checkout -b 310826-feat-week3-<tên-chức-năng>`.
