@@ -54,6 +54,9 @@ class Menu:
     def all_items(self) -> list[MenuItem]:
         return [item for meal in self.meals.values() for item in meal.items]
 
+    def meal_counts(self) -> dict[str, int]:
+        return {meal_type.value: len(meal.items) for meal_type, meal in self.meals.items()}
+
     def encode(self) -> list[float]:
         return [float(item.portion_g) for item in self.all_items()]
 
@@ -66,19 +69,16 @@ class Menu:
         food_ids: list[str],
         portions_g: list[float],
         food_map: dict,
-        meal_counts: dict[str, int] | None = None,
+        meal_counts: dict[str, int],
     ) -> "Menu":
         if len(food_ids) != len(portions_g):
             raise ValueError("food_ids and portions_g must have the same length")
         meal_order = list(MealType)
-        if meal_counts is None:
-            n = len(food_ids)
-            base, extra = divmod(n, len(meal_order))
-            counts = [base + (1 if i < extra else 0) for i in range(len(meal_order))]
-        else:
-            counts = [meal_counts.get(meal_type.value, 0) for meal_type in meal_order]
-            if sum(counts) != len(food_ids):
-                raise ValueError("sum(meal_counts) must equal len(food_ids)")
+        counts = [int(meal_counts.get(meal_type.value, 0)) for meal_type in meal_order]
+        if any(count < 0 for count in counts):
+            raise ValueError("meal_counts values must be non-negative")
+        if sum(counts) != len(food_ids):
+            raise ValueError("sum(meal_counts) must equal len(food_ids)")
         menu = cls()
         offset = 0
         for meal_type, count in zip(meal_order, counts):

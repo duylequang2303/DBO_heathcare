@@ -117,7 +117,7 @@ Kèm vector rời rạc `food_ids` cùng độ dài, cùng thứ tự bữa. Gi�
 Menu.decode(food_ids, portions_g, food_map, meal_counts)
 ```
 
-`Menu.encode()` trả về đúng `x`. Round-trip `encode -> decode` giữ nguyên thực đơn. Biên: `25 <= x_i <= 350`.
+`Menu.encode()` tra ve dung `x`. Decode bat buoc truyen `meal_counts` (lay tu `Menu.meal_counts()`). Round-trip giu nguyen ranh gioi bua. Bien: `25 <= x_i <= 350`.
 
 Chi tiết API cho module biểu diễn: mục **Hướng dẫn cho Cương** trong `docs/TASK_WEEK3.md`.
 

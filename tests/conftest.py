@@ -38,7 +38,7 @@ def item_from_map(food_map: dict, food_id: str, portion_g: float) -> MenuItem:
 
 
 def build_menu(food_map: dict, spec: list[tuple[MealType, str, float]] | None = None) -> Menu:
-    spec = spec or SAMPLE_ITEMS
+    spec = SAMPLE_ITEMS if spec is None else spec
     menu = Menu()
     grouped: dict[MealType, list[MenuItem]] = {meal_type: [] for meal_type in MealType}
     for meal_type, food_id, portion_g in spec:
@@ -70,6 +70,7 @@ def profile():
         goal=Goal.MAINTAIN,
         allergies=[],
         dislikes=[],
+        likes=[],
         meal_counts={"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 2},
     )
 

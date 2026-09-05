@@ -1,5 +1,6 @@
 from src.models.menu import Meal, MealType, Menu
 from src.models.objective import FITNESS_MAX, FITNESS_MIN, WEIGHTS, evaluate, evaluate_breakdown
+from src.models.user_profile import ActivityLevel, Gender, Goal, UserProfile
 from tests.conftest import item_from_map
 
 
@@ -33,3 +34,33 @@ def test_preference_drops_when_disliked(valid_menu, profile, targets):
 def test_diversity_perfect_when_unique(valid_menu, profile, targets):
     breakdown = evaluate_breakdown(valid_menu, profile, targets)
     assert breakdown["diversity"] == 100.0
+
+
+def test_likes_on_user_profile_raise_preference(valid_menu, targets):
+    counts = {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 2}
+    unmatched = UserProfile(
+        name="Duy",
+        age=22,
+        gender=Gender.MALE,
+        height_cm=170,
+        weight_kg=65,
+        activity_level=ActivityLevel.MODERATE,
+        goal=Goal.MAINTAIN,
+        likes=["pizza"],
+        meal_counts=counts,
+    )
+    matched = UserProfile(
+        name="Duy",
+        age=22,
+        gender=Gender.MALE,
+        height_cm=170,
+        weight_kg=65,
+        activity_level=ActivityLevel.MODERATE,
+        goal=Goal.MAINTAIN,
+        likes=["ca hoi", "chuoi"],
+        meal_counts=counts,
+    )
+    matched.likes = ["cá hồi", "chuối"]
+    unmatched_score = evaluate_breakdown(valid_menu, unmatched, targets)["preference"]
+    matched_score = evaluate_breakdown(valid_menu, matched, targets)["preference"]
+    assert matched_score > unmatched_score

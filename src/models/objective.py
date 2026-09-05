@@ -77,7 +77,7 @@ def _preference_score(menu: Menu, profile: UserProfile) -> float:
                 disliked += 1
                 break
     dislike_score = 100.0 * (1.0 - disliked / len(items))
-    likes = getattr(profile, "likes", None) or []
+    likes = profile.likes
     if not likes:
         return dislike_score
     liked = 0

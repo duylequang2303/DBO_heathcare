@@ -73,12 +73,13 @@ Biên khẩu phần: `25 <= x_i <= 350`. Dinh dưỡng tính trên 100g: `nutrie
 **API phải giữ**
 
 ```python
-Menu.encode() -> list[float]          # đúng x, cùng thứ tự all_items()
+Menu.encode() -> list[float]          # vector khau phan, thu tu all_items()
 Menu.food_ids() -> list[str]
-Menu.decode(food_ids, portions_g, food_map, meal_counts=None) -> Menu
+Menu.meal_counts() -> dict[str, int]  # so mon moi bua, dung khi decode
+Menu.decode(food_ids, portions_g, food_map, meal_counts) -> Menu
 ```
 
-`meal_counts` ví dụ `{"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 2}`. Nếu `None` thì chia đều 4 bữa.
+`meal_counts` bat buoc, vi du `{"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 2}`. Khong uoc luong khi thieu. Round-trip phai giu bien bua (ke ca [1, 2, 3, 0]). Gia tri am bi reject.
 
 **`meal_type` trên món (CSV)**
 
@@ -115,7 +116,9 @@ Nhánh gợi ý: `git checkout -b 260905-feat-week3-menu-encode`. File được 
 **Nghiệm thu:** Menu hợp lệ có fitness cao hơn menu ngẫu nhiên; test end-to-end chạy qua với dữ liệu thật.
 
 ## Đầu ra cuối tuần 3
-- [x] Tất cả module hoàn thiện + test xanh (`python -m pytest tests/`).
+- [x] Phần Duy (ràng buộc, hàm mục tiêu, tích hợp e2e) hoàn thiện + test xanh (`python -m pytest tests/`).
+- [ ] Phần Đăng (`user_profile.py`, `nutrition.py`, `tests/test_nutrition.py`) còn mở.
+- [ ] Phần Cương (`menu.py` encode/decode, `data_loader.py`, `tests/test_menu.py`) còn mở.
 - [x] Demo: nhập hồ sơ người dùng → tính nhu cầu → dựng 1 thực đơn mẫu → đánh giá.
 - [x] Cập nhật README.md mô tả mô hình bài toán.
 
