@@ -30,7 +30,9 @@ src/
 | Hồ Trung Cương | Biểu diễn nghiệm | `src/models/menu.py`, `src/utils/data_loader.py` | Thực đơn, encode/decode vector ↔ thực đơn cho IDBO |
 | Lê Quang Duy (trưởng) | Ràng buộc & hàm mục tiêu + tích hợp | `src/models/constraints.py`, `src/models/objective.py` | Kiểm tra ràng buộc, hàm fitness, kiểm thử tổng |
 
-Ghi chú: `src/utils/data_loader.py` thuộc quyền Cương nhưng được cả nhóm dùng chung; nếu cần sửa phải báo trong nhóm.
+Ghi chú:
+- `src/utils/data_loader.py` thuộc quyền Cương nhưng dùng chung; nếu cần sửa phải báo trong nhóm.
+- Format nghiệm IDBO đã chốt ở mục **Hướng dẫn cho Cương** bên dưới. Cương bám spec đó khi viết `encode`/`decode` và `tests/test_menu.py`.
 
 ## Checklist từng thành viên (kèm tiêu chí nghiệm thu)
 
@@ -43,12 +45,66 @@ Ghi chú: `src/utils/data_loader.py` thuộc quyền Cương nhưng được c�
 **Nghiệm thu:** BMR nam/nữ đúng giá trị chuẩn Mifflin-St Jeor cho bộ số test mẫu; mỗi hàm trả số dương hợp lý.
 
 ### 2. Cương — Biểu diễn thực đơn
-- [ ] Chuẩn hóa `Menu.decode()` khớp đúng cách mã hóa vector nghiệm của IDBO (chốt format với trưởng nhóm).
-- [ ] Thêm ràng buộc `meal_type` của món với bữa tương ứng (món `breakfast`/`snack` chỉ vào đúng bữa đó; bữa trưa/tối lấy từ nhãn `all`).
-- [ ] Hỗ trợ khẩu phần theo gram; kiểm tra nạp `merged_food_nutrition.csv` (15.929 món).
+- [ ] Chuẩn hóa `Menu.decode()` khớp đúng cách mã hóa vector nghiệm của IDBO (format đã chốt bên dưới).
+- [ ] Gắn `meal_type` vào từng `MenuItem` khi decode/nạp từ CSV. Ràng buộc bữa (breakfast/snack đúng bữa; lunch/dinner lấy `all`) do Duy kiểm tra ở `constraints.py` — Cương chỉ cần dữ liệu món mang đúng nhãn.
+- [ ] Hỗ trợ khẩu phần theo gram; kiểm tra nạp `merged_food_nutrition.csv` (15.929 món) trong `data_loader.py`.
 - [ ] Viết test `tests/test_menu.py`.
 
 **Nghiệm thu:** Round-trip `encode() → decode()` trả đúng menu ban đầu; nạp đủ dữ liệu không lỗi.
+
+#### Hướng dẫn cho Cương (format nghiệm đã chốt)
+
+Trưởng nhóm đã chốt format trước tuần 4. Làm đúng spec này, không đổi cách xếp vector.
+
+**Vector nghiệm IDBO**
+
+- `x` (liên tục): khẩu phần gram, độ dài `n = sum(meal_counts)`.
+- `food_ids` (rời rạc): cùng độ dài, cùng thứ tự.
+- Thứ tự bữa cố định: `breakfast → lunch → dinner → snack`.
+- Mỗi bữa một **khối liên tục**, không xen kẽ `i::4`.
+
+```text
+x = [p_bf_1, ..., p_bf_k, p_lunch_1, ..., p_dinner_1, ..., p_snack_1, ...]
+food_ids = [id_bf_1, ..., id_bf_k, id_lunch_1, ..., ...]
+```
+
+Biên khẩu phần: `25 <= x_i <= 350`. Dinh dưỡng tính trên 100g: `nutrient * portion_g / 100`.
+
+**API phải giữ**
+
+```python
+Menu.encode() -> list[float]          # đúng x, cùng thứ tự all_items()
+Menu.food_ids() -> list[str]
+Menu.decode(food_ids, portions_g, food_map, meal_counts=None) -> Menu
+```
+
+`meal_counts` ví dụ `{"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 2}`. Nếu `None` thì chia đều 4 bữa.
+
+**`meal_type` trên món (CSV)**
+
+| Nhãn CSV | Bữa được xếp |
+| :--- | :--- |
+| `breakfast` | chỉ breakfast |
+| `snack` | chỉ snack |
+| `all` | lunch và dinner |
+
+Khi tạo `MenuItem` từ `food_map`, copy `row["meal_type"]`. Giá trị thiếu coi như `""` (constraints sẽ bỏ qua).
+
+**`data_loader.py`**
+
+- `load_food_db()` nạp `data/processed/merged_food_nutrition.csv`.
+- `build_food_map(df)` → `dict[food_id, row]`.
+- NaN dinh dưỡng → `0`. Không sửa `scripts/preprocess_data.py`.
+
+**Test `tests/test_menu.py` (bắt buộc)**
+
+1. Nạp CSV: `len(df) == 15929`, có cột `food_id`, `food_name`, `meal_type`, `calories`.
+2. Round-trip: dựng menu → `encode()` + `food_ids()` → `decode(...)` → cùng `food_id` và `portion_g` từng bữa.
+3. `decode(..., meal_counts=...)` xếp đúng số món mỗi bữa.
+4. `MenuItem.nutrient("calories")` đúng công thức `calories * portion_g / 100`.
+5. `meal_type` sau decode khớp CSV (`breakfast`/`snack`/`all`).
+
+Nhánh gợi ý: `git checkout -b 260905-feat-week3-menu-encode`. File được phép sửa: `src/models/menu.py`, `src/utils/data_loader.py`, `tests/test_menu.py`. Không đụng `constraints.py` / `objective.py`.
 
 ### 3. Duy — Ràng buộc & hàm mục tiêu + tích hợp
 - [x] Hoàn thiện các ràng buộc (số món, khẩu phần, sở thích, không lặp món trong ngày).
