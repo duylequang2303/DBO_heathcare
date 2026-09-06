@@ -40,14 +40,20 @@ class Meal:
         self.items: list[MenuItem] = items or []
 
     def total(self, key: str) -> float:
-        return sum(item.nutrient(key) for item in self.items)
+        return sum(
+            item.nutrient(key)
+            for item in self.items
+        )
 
     def add_item(self, item: MenuItem) -> None:
         self.items.append(item)
 
 
 class Menu:
-    def __init__(self, meals: dict[MealType, Meal] | None = None):
+    def __init__(
+        self,
+        meals: dict[MealType, Meal] | None = None,
+    ):
         self.meals: dict[MealType, Meal] = meals or {
             meal_type: Meal(meal_type)
             for meal_type in MealType
@@ -100,16 +106,28 @@ class Menu:
             )
 
         meal_order = list(MealType)
+        counts = []
 
-        counts = [
-            meal_counts.get(meal_type.value, 0)
-            for meal_type in meal_order
-        ]
-
-        if any(count < 0 for count in counts):
-            raise ValueError(
-                "meal_counts must be non-negative"
+        for meal_type in meal_order:
+            count = meal_counts.get(
+                meal_type.value,
+                0,
             )
+
+            if isinstance(count, bool) or not isinstance(
+                count,
+                int,
+            ):
+                raise ValueError(
+                    "meal_counts values must be integers"
+                )
+
+            if count < 0:
+                raise ValueError(
+                    "meal_counts must be non-negative"
+                )
+
+            counts.append(count)
 
         if sum(counts) != len(food_ids):
             raise ValueError(
@@ -119,7 +137,10 @@ class Menu:
         menu = cls()
         offset = 0
 
-        for meal_type, count in zip(meal_order, counts):
+        for meal_type, count in zip(
+            meal_order,
+            counts,
+        ):
             meal = Meal(meal_type)
 
             for fid, portion in zip(
@@ -151,7 +172,8 @@ class Menu:
             ]
 
             parts.append(
-                f"{meal_type.value}: {', '.join(names) or '-'}"
+                f"{meal_type.value}: "
+                f"{', '.join(names) or '-'}"
             )
 
         return "\n".join(parts)
@@ -166,15 +188,33 @@ def _item_from_row(
         food_id=food_id,
         food_name=row["food_name"],
         portion_g=portion_g,
-        calories=_num(row.get("calories")),
-        protein_g=_num(row.get("protein_g")),
-        carbs_g=_num(row.get("carbs_g")),
-        fat_g=_num(row.get("fat_g")),
-        fiber_g=_num(row.get("fiber_g")),
-        sodium_mg=_num(row.get("sodium_mg")),
-        calcium_mg=_num(row.get("calcium_mg")),
-        iron_mg=_num(row.get("iron_mg")),
-        vitamin_c_mg=_num(row.get("vitamin_c_mg")),
+        calories=_num(
+            row.get("calories")
+        ),
+        protein_g=_num(
+            row.get("protein_g")
+        ),
+        carbs_g=_num(
+            row.get("carbs_g")
+        ),
+        fat_g=_num(
+            row.get("fat_g")
+        ),
+        fiber_g=_num(
+            row.get("fiber_g")
+        ),
+        sodium_mg=_num(
+            row.get("sodium_mg")
+        ),
+        calcium_mg=_num(
+            row.get("calcium_mg")
+        ),
+        iron_mg=_num(
+            row.get("iron_mg")
+        ),
+        vitamin_c_mg=_num(
+            row.get("vitamin_c_mg")
+        ),
         meal_type=_meal_type_str(
             row.get("meal_type")
         ),
