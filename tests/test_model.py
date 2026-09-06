@@ -95,11 +95,48 @@ def test_meal_type_mismatch(food_map, profile, targets):
 
 
 def test_encode_decode_roundtrip(valid_menu, food_map):
-    food_ids = [item.food_id for item in valid_menu.all_items()]
+    food_ids = valid_menu.food_ids()
     portions = valid_menu.encode()
-    decoded = Menu.decode(food_ids, portions, food_map)
-    assert [i.food_id for i in decoded.all_items()] == food_ids
+    decoded = Menu.decode(food_ids, portions, food_map, valid_menu.meal_counts())
+    assert decoded.food_ids() == food_ids
     assert decoded.encode() == portions
+    assert decoded.meal_counts() == valid_menu.meal_counts()
+
+
+def test_decode_requires_meal_counts(valid_menu, food_map):
+    try:
+        Menu.decode(valid_menu.food_ids(), valid_menu.encode(), food_map)
+        raise AssertionError("expected TypeError when meal_counts is omitted")
+    except TypeError:
+        pass
+
+
+def test_decode_rejects_negative_meal_counts(valid_menu, food_map):
+    counts = {"breakfast": -1, "lunch": 3, "dinner": 3, "snack": 3}
+    try:
+        Menu.decode(valid_menu.food_ids(), valid_menu.encode(), food_map, counts)
+        raise AssertionError("expected ValueError for negative meal_counts")
+    except ValueError as exc:
+        assert "non-negative" in str(exc)
+
+
+def test_nonuniform_meal_counts_roundtrip(food_map):
+    menu = build_menu(
+        food_map,
+        [
+            (MealType.BREAKFAST, "VN_10009", 80.0),
+            (MealType.LUNCH, "VN_1004", 150.0),
+            (MealType.LUNCH, "VN_7018", 120.0),
+            (MealType.DINNER, "VN_8011", 110.0),
+            (MealType.DINNER, "VN_4051", 60.0),
+            (MealType.DINNER, "VN_4083", 180.0),
+        ],
+    )
+    expected = {"breakfast": 1, "lunch": 2, "dinner": 3, "snack": 0}
+    assert menu.meal_counts() == expected
+    decoded = Menu.decode(menu.food_ids(), menu.encode(), food_map, menu.meal_counts())
+    assert decoded.meal_counts() == expected
+    assert [len(decoded.meals[mt].items) for mt in MealType] == [1, 2, 3, 0]
 
 
 def test_objective_breakdown_keys(valid_menu, profile, targets):

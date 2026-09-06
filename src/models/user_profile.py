@@ -32,6 +32,7 @@ class UserProfile:
     goal: Goal = Goal.MAINTAIN
     allergies: list[str] = field(default_factory=list)
     dislikes: list[str] = field(default_factory=list)
+    likes: list[str] = field(default_factory=list)
     meal_counts: dict[str, int] = field(default_factory=lambda: {
         "breakfast": 1,
         "lunch": 1,
