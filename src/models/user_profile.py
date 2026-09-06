@@ -21,6 +21,13 @@ class Goal(Enum):
     GAIN_WEIGHT = "gain_weight"
 
 
+class DietType(Enum):
+    STANDARD = "standard"
+    VEGETARIAN = "vegetarian"
+    VEGAN = "vegan"
+    KETO = "keto"
+
+
 @dataclass
 class UserProfile:
     name: str
@@ -33,9 +40,12 @@ class UserProfile:
     allergies: list[str] = field(default_factory=list)
     dislikes: list[str] = field(default_factory=list)
     likes: list[str] = field(default_factory=list)
+    medical_conditions: list[str] = field(default_factory=list)
+    diet_type: DietType = DietType.STANDARD
     meal_counts: dict[str, int] = field(default_factory=lambda: {
         "breakfast": 1,
         "lunch": 1,
         "dinner": 1,
         "snack": 1,
     })
+

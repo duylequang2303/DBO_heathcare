@@ -1,4 +1,4 @@
-from ..models.user_profile import Goal, UserProfile
+from ..models.user_profile import Gender, Goal, UserProfile
 
 
 def calc_bmr(profile: UserProfile) -> float:
@@ -38,5 +38,23 @@ def calc_macro_targets(calorie_target: float, goal: Goal) -> dict[str, float]:
 def daily_targets(profile: UserProfile) -> dict[str, float]:
     calorie_target = calc_calorie_target(profile)
     targets = calc_macro_targets(calorie_target, profile.goal)
-    targets["fiber_g"] = 25.0 if profile.gender == "female" else 38.0
+    is_female = (profile.gender == Gender.FEMALE) or (getattr(profile.gender, "value", profile.gender) == "female")
+    targets["fiber_g"] = 25.0 if is_female else 38.0
     return targets
+
+
+def daily_micro_targets(profile: UserProfile) -> dict[str, float]:
+    is_female = (profile.gender == Gender.FEMALE) or (getattr(profile.gender, "value", profile.gender) == "female")
+    return {
+        "sodium_mg": 2300.0,
+        "calcium_mg": 1000.0,
+        "iron_mg": 18.0 if is_female else 8.0,
+        "vitamin_c_mg": 75.0 if is_female else 90.0,
+    }
+
+
+def daily_all_targets(profile: UserProfile) -> dict[str, float]:
+    targets = daily_targets(profile)
+    targets.update(daily_micro_targets(profile))
+    return targets
+
