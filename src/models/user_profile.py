@@ -21,9 +21,19 @@ class Goal(Enum):
     GAIN_WEIGHT = "gain_weight"
 
 
+class DietType(Enum):
+    """Dietary preferences and restrictions."""
+    STANDARD = "standard"
+    VEGETARIAN = "vegetarian"
+    VEGAN = "vegan"
+    KETO = "keto"
+
+
 @dataclass
 class UserProfile:
+    """User physiological parameters, goals, preferences, and dietary restrictions."""
     name: str
+
     age: int
     gender: Gender
     height_cm: float
@@ -39,3 +49,7 @@ class UserProfile:
         "dinner": 1,
         "snack": 1,
     })
+    medical_conditions: list[str] = field(default_factory=list)
+    diet_type: DietType = DietType.STANDARD
+
+
