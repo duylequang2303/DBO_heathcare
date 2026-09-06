@@ -42,15 +42,13 @@ Ghi chú:
 - [x] Xác định ngưỡng dinh dưỡng theo DRI: calories, protein, carb, fat, fiber, sodium, calcium, iron, vitamin C.
 - [x] Viết test `tests/test_nutrition.py`.
 
-**Nghiệm thu:** BMR nam/nữ đúng giá trị chuẩn Mifflin-St Jeor cho bộ số test mẫu; mỗi hàm trả số dương hợp lý; 18/18 test passed.
+**Nghiệm thu:** BMR nam/nữ đúng giá trị chuẩn Mifflin-St Jeor cho bộ số test mẫu; mỗi hàm trả số dương hợp lý; 22/22 test passed.
 
 #### Chi tiết triển khai phần Đăng (Hồ sơ & Nhu cầu dinh dưỡng)
 
 **1. Mở rộng `UserProfile` (`src/models/user_profile.py`)**
 - Bổ sung Enum `DietType`: `STANDARD` (mặc định), `VEGETARIAN`, `VEGAN`, `KETO`.
-- Bổ sung `medical_conditions: list[str]` (default: `[]`): lưu danh sách bệnh lý (tiểu đường, huyết áp, gout...).
-- Bổ sung `diet_type: DietType` (default: `DietType.STANDARD`): hỗ trợ người ăn chay, keto.
-- Đảm bảo tương thích ngược 100% với các hàm khởi tạo `UserProfile` hiện hữu.
+- Đặt `medical_conditions: list[str]` (default: `[]`) và `diet_type: DietType` (default: `DietType.STANDARD`) **sau** `meal_counts` để giữ nguyên thứ tự đối số vị trí (positional constructor), đảm bảo 100% tương thích ngược.
 
 **2. Hoàn thiện tính toán dinh dưỡng & chuẩn DRI (`src/utils/nutrition.py`)**
 - **BMR (Mifflin-St Jeor):**
@@ -64,15 +62,16 @@ Ghi chú:
   - `GAIN_WEIGHT`: 25% Protein / 50% Carbs / 25% Fat
   - `MAINTAIN`: 20% Protein / 50% Carbs / 30% Fat
 - **Sửa lỗi tính chất xơ (`fiber_g`):** So sánh `profile.gender == Gender.FEMALE` để trả đúng 25g cho nữ và 38g cho nam.
-- **Ngưỡng vi chất theo khuyến nghị DRI (`daily_micro_targets`):**
+- **Ngưỡng vi chất theo khuyến nghị DRI theo độ tuổi & giới tính (`daily_micro_targets`):**
+  - Kiểm tra độ tuổi: chặn hồ sơ dưới 18 tuổi (`ValueError`).
   - Sodium (Na): $\le 2300$ mg/ngày (mức giới hạn UL cho người trưởng thành).
-  - Calcium (Ca): 1000 mg/ngày (RDA).
-  - Iron (Fe): 8 mg/ngày cho nam, 18 mg/ngày cho nữ (RDA tuổi 19-50).
-  - Vitamin C: 90 mg/ngày cho nam, 75 mg/ngày cho nữ (RDA).
+  - Calcium (Ca): 1000 mg/ngày (18-50 tuổi); 1200 mg/ngày cho nữ > 50 tuổi và người cao tuổi > 70 tuổi.
+  - Iron (Fe): 18 mg/ngày cho nữ 18-50 tuổi; 8 mg/ngày cho nam và nữ > 50 tuổi (sau mãn kinh).
+  - Vitamin C: 90 mg/ngày cho nam, 75 mg/ngày cho nữ.
 - **Hàm tích hợp (`daily_all_targets`):** Gộp toàn bộ 9 chỉ số (5 macros + 4 micros) phục vụ bài toán tối ưu.
 
 **3. Bộ kiểm thử (`tests/test_nutrition.py`)**
-- 18 bài unit test bao phủ toàn bộ: BMR, TDEE, Calorie targets, Macro distribution, Fiber gender check, Micro DRI thresholds, All targets.
+- 22 bài unit test bao phủ toàn bộ: BMR, TDEE, Calorie targets, Macro distribution, Fiber gender check, Micro DRI theo tuổi/giới tính, validation tuổi, positional constructor order, All targets.
 
 ### 2. Cương — Biểu diễn thực đơn
 - [ ] Chuẩn hóa `Menu.decode()` khớp đúng cách mã hóa vector nghiệm của IDBO (format đã chốt bên dưới).

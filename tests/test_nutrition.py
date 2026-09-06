@@ -66,6 +66,18 @@ def test_user_profile_custom_diet_and_conditions():
     assert "hypertension" in profile.medical_conditions
 
 
+def test_user_profile_positional_order():
+    counts = {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1}
+    profile = UserProfile(
+        "PosUser", 25, Gender.MALE, 175.0, 70.0, ActivityLevel.MODERATE,
+        Goal.MAINTAIN, [], [], [], counts
+    )
+    assert profile.meal_counts == counts
+    assert profile.medical_conditions == []
+    assert profile.diet_type == DietType.STANDARD
+
+
+
 # --- BMR tests (Mifflin-St Jeor) ---
 
 
@@ -188,6 +200,48 @@ def test_daily_micro_targets_female(female_profile):
     assert micro["calcium_mg"] == 1000.0
     assert micro["iron_mg"] == 18.0
     assert micro["vitamin_c_mg"] == 75.0
+
+
+def test_daily_micro_targets_older_female():
+    profile = UserProfile(
+        name="ElderFemale",
+        age=55,
+        gender=Gender.FEMALE,
+        height_cm=158.0,
+        weight_kg=52.0,
+        activity_level=ActivityLevel.LIGHT,
+    )
+    micro = daily_micro_targets(profile)
+    assert micro["iron_mg"] == 8.0  # post-menopause
+    assert micro["calcium_mg"] == 1200.0  # female > 50
+
+
+def test_daily_micro_targets_older_male():
+    profile = UserProfile(
+        name="ElderMale",
+        age=75,
+        gender=Gender.MALE,
+        height_cm=168.0,
+        weight_kg=60.0,
+        activity_level=ActivityLevel.SEDENTARY,
+    )
+    micro = daily_micro_targets(profile)
+    assert micro["iron_mg"] == 8.0
+    assert micro["calcium_mg"] == 1200.0  # male > 70
+
+
+def test_daily_micro_targets_rejects_under_18():
+    child = UserProfile(
+        name="Child",
+        age=16,
+        gender=Gender.MALE,
+        height_cm=160.0,
+        weight_kg=50.0,
+        activity_level=ActivityLevel.MODERATE,
+    )
+    with pytest.raises(ValueError, match="outside supported adult age range"):
+        daily_micro_targets(child)
+
 
 
 # --- Daily all targets tests ---
