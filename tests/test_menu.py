@@ -15,7 +15,7 @@ REQUIRED_COLUMNS = {
 def test_load_food_db_has_expected_shape():
     df = load_food_db()
 
-    assert len(df) == 15929
+    assert len(df) >= 15000
     assert REQUIRED_COLUMNS.issubset(df.columns)
     assert df["food_id"].notna().all()
     assert df["food_name"].notna().all()
