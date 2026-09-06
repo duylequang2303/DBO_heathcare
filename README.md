@@ -7,13 +7,13 @@ Hệ thống đề xuất thực đơn dinh dưỡng cá nhân hóa dựa trên 
 Trường Đại học Công Thương TP.HCM - Khoa Công nghệ Thông tin
 GVHD: Đinh Nguyễn Trọng Nghĩa (`nghiadnt@huit.edu.vn`)
 
-| Thành viên | MSSV | Vai trò tuần 3 |
+| Thành viên | MSSV | Vai trò tuần 4 |
 | :--- | :--- | :--- |
-| Lê Quang Duy | 2001230123 | Trưởng nhóm — ràng buộc, hàm mục tiêu, tích hợp |
-| Đặng Nguyễn Minh Đăng | 2001230175 | Hồ sơ người dùng, BMR/TDEE, ngưỡng dinh dưỡng |
-| Hồ Trung Cương | 2001230070 | Biểu diễn thực đơn, encode/decode nghiệm IDBO |
+| Lê Quang Duy | 2001230123 | Trưởng nhóm — khung DBO & tích hợp |
+| Đặng Nguyễn Minh Đăng | 2001230175 | Benchmark & thí nghiệm hội tụ |
+| Hồ Trung Cương | 2001230070 | 4 hành vi DBO (ball-rolling, reproduction, foraging, thieving) |
 
-Đề cương chi tiết: `docs/CNTT-KLCN142 - ing.docx`. Phân công tuần 3: `docs/TASK_WEEK3.md`.
+Đề cương chi tiết: `docs/CNTT-KLCN142 - ing.docx`. Phân công/tiến độ theo tuần: `docs/TASK_WEEK1.md` → `docs/TASK_WEEK4.md`.
 
 ## Mục tiêu
 
@@ -140,7 +140,7 @@ DBO_heathcare/
 ├── tests/
 ├── docs/
 │   ├── CNTT-KLCN142 - ing.docx      # Đề cương
-│   └── TASK_WEEK3.md
+│   └── TASK_WEEK1..4.md             # Phân công/tiến độ theo tuần
 ├── requirements.txt
 └── README.md
 ```
