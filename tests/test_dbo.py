@@ -128,6 +128,16 @@ def test_missing_behaviors_module_raises_clear_error(monkeypatch):
         DBO(n_agents=8, max_iter=3).optimize(sphere, DIM, LB, UB, seed=1)
 
 
+def test_evaluate_handles_vectorized_and_scalar_objectives():
+    X = np.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]])
+
+    def vectorized(x):
+        return np.sum(np.square(x), axis=1)
+
+    np.testing.assert_allclose(DBO._evaluate(vectorized, X), [0.0, 2.0, 8.0])
+    np.testing.assert_allclose(DBO._evaluate(sphere, X), [0.0, 2.0, 8.0])
+
+
 def test_sphere_10d_convergence_with_real_behaviors():
     pytest.importorskip("src.algorithms.behaviors")
     res = DBO(n_agents=30, max_iter=500).optimize(sphere, 10, LB, UB, seed=42)

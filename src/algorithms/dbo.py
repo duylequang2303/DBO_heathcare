@@ -53,7 +53,7 @@ class DBO:
         n_agents: int = 30,
         max_iter: int = 500,
         ratios: Optional[dict[str, float]] = None,
-        cfg: Optional[dict] = None,
+        cfg: Optional[dict[str, float]] = None,
         behaviors: Optional[dict[str, Callable]] = None,
     ) -> None:
         if n_agents < 4:
@@ -93,22 +93,34 @@ class DBO:
         behaviors = self._resolve_behaviors()
         groups = self._partition(self.n_agents)
         for t in range(1, self.max_iter + 1):
+            # Worst individual (argmax fitness) is the reference point of the
+            # ball-rolling update (paper Eq. 1), so compute it once per iteration.
             worst_x = positions[int(np.argmax(fitness))].copy()
+            # Each behaviour group updates only its own, disjoint slice of the
+            # population. Groups are processed sequentially so a later group can
+            # exploit improvements made by an earlier one within the iteration.
             for name, idx in zip(BEHAVIOR_NAMES, groups):
                 if len(idx) == 0:
                     continue
                 fn = behaviors[name]
                 group_x = positions[idx]
                 group_f = fitness[idx]
+                # Behaviour signatures differ (frozen contract in TASK_WEEK4.md):
+                # ball-rolling needs its group fitness + the global worst; the
+                # shrinking zones of reproduction/foraging depend on lb/ub, t and
+                # max_iter; thieving only needs the global best.
                 if name == "ball_rolling":
                     new_x = fn(group_x, group_f, best_x, rng=rng, worst=worst_x, **self.cfg)
                 elif name in ("reproduction", "foraging"):
                     new_x = fn(group_x, best_x, lbv, ubv, t, self.max_iter, rng=rng, **self.cfg)
                 else:
                     new_x = fn(group_x, best_x, rng=rng, **self.cfg)
+                # Clipping is the framework's job; behaviours must not clip.
                 new_x = np.clip(new_x, lbv, ubv)
                 new_f = self._evaluate(objective, new_x)
                 n_evaluations += len(idx)
+                # Greedy acceptance: replace an individual only if its proposal
+                # is strictly better than its current position (like pX memory).
                 improved = new_f < group_f
                 if np.any(improved):
                     positions[idx[improved]] = new_x[improved]
@@ -173,6 +185,15 @@ class DBO:
 
     @staticmethod
     def _evaluate(objective: Objective, X: np.ndarray) -> np.ndarray:
+        # Fast path: trust a fully-vectorized objective that returns one value
+        # per candidate row. Any other outcome falls back to a per-row loop so
+        # the single-vector contract `objective(x: (dim,)) -> float` still works.
+        try:
+            values = np.asarray(objective(X), dtype=float)
+            if values.shape == (X.shape[0],):
+                return values
+        except Exception:
+            pass
         values = np.empty(X.shape[0], dtype=float)
         for i in range(X.shape[0]):
             values[i] = objective(X[i])
