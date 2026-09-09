@@ -77,6 +77,13 @@ def run_single_experiment(
 
 
 def main() -> None:
+    """Parse CLI arguments, run DBO benchmark experiments, and export results to CSV.
+
+    For each combination of benchmark function and dimension, executes ``args.runs``
+    independent runs of DBO with distinct seeds.  Writes per-run details and
+    aggregated Best/Mean/Std/Worst statistics to CSV files in the output directory.
+    Use ``--dry-run`` to verify the pipeline without needing ``behaviors.py``.
+    """
     parser = argparse.ArgumentParser(description="Run DBO benchmark convergence experiments.")
     parser.add_argument(
         "--functions",
@@ -122,6 +129,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if args.runs < 1:
+        parser.error("--runs must be >= 1")
+
     out_dir = ROOT / args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -158,12 +168,14 @@ def main() -> None:
     all_results: List[dict] = []
 
     for f_idx, func_name in enumerate(args.functions):
+        # Resolve to canonical name once so CSV records always use the normalised key
+        canonical_name = get_benchmark(func_name).name
         for d_idx, dim in enumerate(args.dims):
-            print(f"--> Testing '{func_name}' (dim={dim}) across {args.runs} runs...")
+            print(f"--> Testing '{canonical_name}' (dim={dim}) across {args.runs} runs...")
             for r in range(args.runs):
                 seed = 1000 * (f_idx + 1) + 100 * (d_idx + 1) + (r + 1)
                 res = run_single_experiment(
-                    benchmark_name=func_name,
+                    benchmark_name=canonical_name,
                     dim=dim,
                     run_idx=r + 1,
                     seed=seed,
@@ -197,17 +209,18 @@ def main() -> None:
     # Compute summary statistics
     summaries: List[dict] = []
     for func_name in args.functions:
+        canonical_name = get_benchmark(func_name).name
         for dim in args.dims:
             matching = [
                 r["best_fitness"]
                 for r in all_results
-                if r["function"] == func_name and r["dim"] == dim
+                if r["function"] == canonical_name and r["dim"] == dim
             ]
             if not matching:
                 continue
             arr = np.array(matching, dtype=float)
             summaries.append({
-                "function": func_name,
+                "function": canonical_name,
                 "dim": dim,
                 "runs": len(arr),
                 "best": float(np.min(arr)),

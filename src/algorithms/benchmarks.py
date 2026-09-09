@@ -139,14 +139,31 @@ class BenchmarkFunction:
     description: str = ""
 
     def __call__(self, x: np.ndarray) -> Union[float, np.ndarray]:
+        """Evaluate the benchmark function at point(s) ``x``.
+
+        Supports both 1-D input ``(dim,) -> float`` and 2-D batch input
+        ``(N, dim) -> ndarray of shape (N,)``.
+        """
         return self.func(x)
 
     def optimum_x(self, dim: int) -> np.ndarray:
-        """Returns the known global optimum coordinates for dimension `dim`."""
+        """Return the known global optimum coordinates for dimension ``dim``.
+
+        Parameters
+        ----------
+        dim:
+            Number of dimensions.  Must be >= 1 (>= 2 for Rosenbrock).
+
+        Returns
+        -------
+        np.ndarray of shape ``(dim,)``.
+        """
         if self.name == "rosenbrock":
             if dim < 2:
                 raise ValueError("Rosenbrock optimum requires dim >= 2")
             return np.ones(dim, dtype=float)
+        if dim < 1:
+            raise ValueError("dim must be >= 1")
         return np.zeros(dim, dtype=float)
 
 

@@ -28,7 +28,12 @@ from src.algorithms.benchmarks import get_benchmark, list_benchmarks
 from src.algorithms.dbo import DBO, BEHAVIOR_NAMES
 
 
-def _create_mock_behaviors():
+def _create_mock_behaviors() -> dict:
+    """Return a dict of mock behavior callables for dry-run pipeline testing.
+
+    Each mock moves agents 10% closer to the origin with small Gaussian noise,
+    mimicking convergence without requiring the real behaviors module.
+    """
     def _step(X, *args, rng=None, **kwargs):
         generator = rng if rng is not None else np.random.default_rng()
         return X * 0.9 + 0.01 * generator.standard_normal(X.shape)
@@ -80,6 +85,9 @@ def main() -> None:
         help="Run using mock behaviors to test demo without behaviors.py",
     )
     args = parser.parse_args()
+
+    if args.log_every < 1:
+        parser.error("--log-every must be >= 1")
 
     bench = get_benchmark(args.function)
 

@@ -25,6 +25,7 @@ EXPECTED_BENCHMARK_NAMES = [
 
 
 def test_registry_contains_expected_benchmarks():
+    """All expected benchmark names exist in the registry and return BenchmarkFunction instances."""
     names = list_benchmarks()
     assert sorted(names) == sorted(EXPECTED_BENCHMARK_NAMES)
     for name in EXPECTED_BENCHMARK_NAMES:
@@ -34,6 +35,7 @@ def test_registry_contains_expected_benchmarks():
 
 
 def test_get_benchmark_case_insensitive_and_whitespace():
+    """get_benchmark() strips whitespace and is case-insensitive."""
     bench1 = get_benchmark("  Sphere  ")
     bench2 = get_benchmark("SPHERE")
     assert bench1.name == "sphere"
@@ -41,12 +43,14 @@ def test_get_benchmark_case_insensitive_and_whitespace():
 
 
 def test_get_benchmark_unknown_raises_value_error():
+    """get_benchmark() raises ValueError for unrecognised names."""
     with pytest.raises(ValueError, match="Unknown benchmark function"):
         get_benchmark("nonexistent_func")
 
 
 def test_bounds_and_metadata_validity():
-    for name, bench in BENCHMARKS.items():
+    """Every registered benchmark has valid bounds, category, optimum_val and description."""
+    for _name, bench in BENCHMARKS.items():
         assert bench.lb < bench.ub
         assert bench.category in ("unimodal", "multimodal")
         assert bench.optimum_val == 0.0
@@ -56,6 +60,7 @@ def test_bounds_and_metadata_validity():
 @pytest.mark.parametrize("name", EXPECTED_BENCHMARK_NAMES)
 @pytest.mark.parametrize("dim", [2, 10, 30])
 def test_optimum_value_at_known_optimum(name, dim):
+    """Each benchmark returns optimum_val (within 1e-8) at its known global optimum x*."""
     bench = get_benchmark(name)
     x_opt = bench.optimum_x(dim)
     assert x_opt.shape == (dim,)
@@ -65,17 +70,19 @@ def test_optimum_value_at_known_optimum(name, dim):
 
 
 def test_manual_values_dim2_sphere():
+    """Sphere: f([2, 3]) = 4 + 9 = 13."""
     val = sphere(np.array([2.0, 3.0]))
     assert val == pytest.approx(13.0, abs=1e-12)
 
 
 def test_manual_values_dim2_schwefel_2_22():
-    # sum(|x|) = 2 + 3 = 5; prod(|x|) = 2 * 3 = 6; total = 11
+    """Schwefel 2.22: f([2, -3]) = sum(|x|) + prod(|x|) = 5 + 6 = 11."""
     val = schwefel_2_22(np.array([2.0, -3.0]))
     assert val == pytest.approx(11.0, abs=1e-12)
 
 
 def test_manual_values_dim2_rosenbrock():
+    """Rosenbrock: verify two hand-computed 2D cases."""
     # x = [1, 2]: 100 * (2 - 1^2)^2 + (1 - 1)^2 = 100 * 1 = 100
     val1 = rosenbrock(np.array([1.0, 2.0]))
     assert val1 == pytest.approx(100.0, abs=1e-12)
@@ -86,20 +93,19 @@ def test_manual_values_dim2_rosenbrock():
 
 
 def test_manual_values_dim2_rastrigin():
-    # x = [0, 1]: 10*2 + (0 - 10*cos(0)) + (1 - 10*cos(2pi))
-    # = 20 + (-10) + (1 - 10) = 20 - 10 - 9 = 1.0
+    """Rastrigin: f([0, 1]) = 10*2 + (0 - 10*cos(0)) + (1 - 10*cos(2pi)) = 1.0."""
     val = rastrigin(np.array([0.0, 1.0]))
     assert val == pytest.approx(1.0, abs=1e-12)
 
 
 def test_manual_values_dim2_ackley():
-    # At origin, value is exactly 0.0
+    """Ackley: f([0, 0]) = 0 (global minimum at origin)."""
     val = ackley(np.array([0.0, 0.0]))
     assert val == pytest.approx(0.0, abs=1e-12)
 
 
 def test_manual_values_dim2_griewank():
-    # At origin, value is exactly 0.0
+    """Griewank: verify at origin (f=0) and at a hand-computed 2D point."""
     val1 = griewank(np.array([0.0, 0.0]))
     assert val1 == pytest.approx(0.0, abs=1e-12)
 
@@ -114,6 +120,7 @@ def test_manual_values_dim2_griewank():
 
 @pytest.mark.parametrize("name", EXPECTED_BENCHMARK_NAMES)
 def test_vectorized_batch_equals_scalar_evaluations(name):
+    """Batch 2D evaluation matches per-row scalar evaluation for all benchmarks."""
     bench = get_benchmark(name)
     dim = 5
     n_samples = 8
@@ -129,6 +136,7 @@ def test_vectorized_batch_equals_scalar_evaluations(name):
 
 
 def test_rosenbrock_rejects_dimension_less_than_2():
+    """Rosenbrock raises ValueError for dim < 2 both in func and in optimum_x."""
     with pytest.raises(ValueError, match="requires dimension >= 2"):
         rosenbrock(np.array([1.0]))
 
@@ -138,5 +146,15 @@ def test_rosenbrock_rejects_dimension_less_than_2():
 
 
 def test_empty_vector_rejects():
+    """Sphere raises ValueError for empty input vector."""
     with pytest.raises(ValueError, match="Dimension must be at least 1"):
         sphere(np.array([]))
+
+
+def test_optimum_x_rejects_dim_less_than_1():
+    """optimum_x() raises ValueError when dim < 1 for any non-Rosenbrock benchmark."""
+    for name in ["sphere", "schwefel_2_22", "rastrigin", "ackley", "griewank"]:
+        bench = get_benchmark(name)
+        with pytest.raises(ValueError, match="dim must be >= 1"):
+            bench.optimum_x(0)
+
