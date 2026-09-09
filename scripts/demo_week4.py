@@ -88,6 +88,8 @@ def main() -> None:
 
     if args.log_every < 1:
         parser.error("--log-every must be >= 1")
+    if args.dim < 1:
+        parser.error("--dim must be >= 1")
 
     bench = get_benchmark(args.function)
 

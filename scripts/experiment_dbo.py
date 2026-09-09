@@ -131,6 +131,8 @@ def main() -> None:
 
     if args.runs < 1:
         parser.error("--runs must be >= 1")
+    if any(dim < 1 for dim in args.dims):
+        parser.error("--dims values must be >= 1")
 
     out_dir = ROOT / args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
