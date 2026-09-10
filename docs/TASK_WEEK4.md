@@ -99,12 +99,50 @@ def thieving(X, best, rng, **cfg) -> np.ndarray
 **Nghiệm thu:** 6 hàm benchmark test xanh tại optimum đã biết; script thí nghiệm chạy trọn không lỗi, sinh CSV hợp lệ; DBO cải thiện rõ rệt so với khởi tạo ngẫu nhiên trên Sphere (sai số giảm ≥ 1e3 lần) và bám gần optimum đã biết trên các hàm còn lại ở dim thấp.
 
 ## Đầu ra cuối tuần 4
-- [ ] Khung `src/algorithms/` + DBO gốc hoàn chỉnh, test xanh (`python3 -m pytest tests/`).
-- [ ] 6 hàm benchmark + test xanh.
+- [x] Khung `src/algorithms/` + DBO gốc hoàn chỉnh, test xanh (`python3 -m pytest tests/`).
+- [x] 6 hàm benchmark + test xanh.
 - [ ] Thí nghiệm M=30 lần trên (hàm × dim) → CSV + bảng thống kê trong `experiments/week4/`.
-- [ ] `scripts/demo_week4.py`: chạy DBO 1 lần trên 1 hàm, in `best_x`, `best_fitness`, lịch sử hội tụ.
-- [ ] Cập nhật README: mô tả mô-đun DBO tuần 4 và tài liệu tham khảo.
+- [x] `scripts/demo_week4.py`: chạy DBO 1 lần trên 1 hàm, in `best_x`, `best_fitness`, lịch sử hội tụ.
+- [x] Cập nhật README: mô tả mô-đun DBO tuần 4 và tài liệu tham khảo.
 - [ ] Báo cáo ngắn (nhóm trưởng tổng hợp): kết quả hội tụ từng hàm — phục vụ baseline cho tuần 5–6.
+
+## Kết quả kiểm thử tuần 4
+
+```text
+============================= 111 passed in 0.78s ==============================
+```
+
+| File test | Số test | Nội dung chính |
+| :--- | :--- | :--- |
+| `tests/test_dbo.py` | 11 | DBOResult fields, optimize(), seed reproducibility, history non-increasing, bounds, behavior groups |
+| `tests/test_benchmarks.py` | 27 | Registry, case-insensitive lookup, bounds, optimum values at known optimum (dim 2/10/30), vectorized batch evaluation |
+| `tests/test_constraints.py` | 5 | Feasible menu, duplicates, portion range, meal_type mismatch |
+| `tests/test_menu.py` | 11 | Load CSV, encode/decode round-trip, meal_counts, meal_type from CSV |
+| `tests/test_model.py` | 14 | End-to-end profile → score, fitness clamped, violations |
+| `tests/test_nutrition.py` | 22 | BMR/TDEE, macro/micro targets, DRI thresholds |
+| `tests/test_objective.py` | 4 | Weights, fitness range, preference, diversity |
+
+### Demo tuần 4
+
+```bash
+# Dry-run (không cần behaviors.py)
+python scripts/demo_week4.py --dry-run --function sphere --dim 10
+
+# Full run (cần behaviors.py)
+python scripts/demo_week4.py --function sphere --dim 10 --max-iter 500
+```
+
+**Kết quả demo Sphere 10D:**
+- Best fitness: `1.47e-204` (hội tụ gần máy tính)
+- Runtime: `0.11s`
+- Evaluations: `15030` (30 agents × 500 iterations)
+
+### Lệnh chạy test tuần 4
+
+```bash
+source venv/bin/activate
+python -m pytest tests/ -v
+```
 
 ## Quy trình làm việc (Git)
 1. Mỗi thành viên tạo nhánh riêng từ `main`:

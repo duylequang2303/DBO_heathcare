@@ -147,9 +147,29 @@ Nhánh gợi ý: `git checkout -b 260905-feat-week3-menu-encode`. File được 
 ## Đầu ra cuối tuần 3
 - [x] Phần Duy (ràng buộc, hàm mục tiêu, tích hợp e2e) hoàn thiện + test xanh (`python -m pytest tests/`).
 - [x] Phần Đăng (`user_profile.py`, `nutrition.py`, `tests/test_nutrition.py`) hoàn thiện + test xanh.
-- [ ] Phần Cương (`menu.py` encode/decode, `data_loader.py`, `tests/test_menu.py`) còn mở.
+- [x] Phần Cương (`menu.py` encode/decode, `data_loader.py`, `tests/test_menu.py`) hoàn thiện + test xanh.
 - [x] Demo: nhập hồ sơ người dùng → tính nhu cầu → dựng 1 thực đơn mẫu → đánh giá.
 - [x] Cập nhật README.md mô tả mô hình bài toán.
+
+## Kết quả kiểm thử tuần 3
+
+```text
+============================= 111 passed in 0.78s ==============================
+```
+
+| File test | Số test | Nội dung chính |
+| :--- | :--- | :--- |
+| `tests/test_nutrition.py` | 22 | BMR/TDEE, macro/micro targets, DRI theo tuổi/giới |
+| `tests/test_menu.py` | 11 | Load CSV, encode/decode round-trip, meal_counts, meal_type |
+| `tests/test_model.py` | 14 | End-to-end: nạp dữ liệu thật → menu → ràng buộc → fitness |
+| `tests/test_objective.py` | 4 | Trọng số, fitness range, preference, diversity |
+
+### Lệnh chạy test tuần 3
+
+```bash
+source venv/bin/activate
+python -m pytest tests/ -v
+```
 
 ## Quy trình làm việc (Git)
 1. Mỗi thành viên tạo nhánh riêng: `git checkout -b 310826-feat-week3-<tên-chức-năng>`.

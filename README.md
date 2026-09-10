@@ -121,6 +121,58 @@ Menu.decode(food_ids, portions_g, food_map, meal_counts)
 
 Chi tiết API cho module biểu diễn: mục **Hướng dẫn cho Cương** trong `docs/TASK_WEEK3.md`.
 
+## Tiến độ tuần 1 (Tổng quan & phương pháp tối ưu)
+
+- Hoàn thiện outline khóa luận 12 tuần và quyết định chọn **DBO** làm phương pháp trung tâm + hướng cải tiến IDBO.
+- Nghiên cứu bài toán lập thực đơn, dinh dưỡng cá nhân hóa và các metaheuristic phổ biến (GA, PSO, ACO, DE).
+- Tài liệu tham khảo chính: DBO (Xue & Shen, 2023), Amiri et al. (JMIR 2023), DRI (National Academies 2023).
+- Đầu ra: outline, tài liệu tham khảo, định hướng công nghệ (Python, NumPy/Pandas, FastAPI/Flask).
+
+## Tiến độ tuần 2 (Dữ liệu & dinh dưỡng)
+
+- Chốt BMR Mifflin-St Jeor, TDEE theo hệ số vận động và công thức calo mục tiêu theo goal.
+- Quy ước bộ 9 chỉ số dinh dưỡng theo **100g**: calories, protein_g, carbs_g, fat_g, fiber_g, sodium_mg, calcium_mg, iron_mg, vitamin_c_mg.
+- Lựa chọn 2 nguồn dữ liệu: USDA FoodData Central + Bảng thành phần thực phẩm Việt Nam.
+- Xây `scripts/preprocess_data.py` → sinh `data/processed/merged_food_nutrition.csv` (**15.929 món**).
+- Ghi chú: kJ→kcal (÷4.184) là chuẩn hóa đơn vị, không phải suy bù theo 4-4-9.
+
+## Tiến độ tuần 3 (Mô hình bài toán)
+
+- Xây dựng `UserProfile`: tuổi, giới tính, chiều cao, cân nặng, mức vận động, mục tiêu, dị ứng, sở thích, số món mỗi bữa.
+- Xây dựng `Menu`, `Meal`, `MenuItem`: biểu diễn thực đơn 4 bữa, `encode()`/`decode()` vector ↔ menu.
+- Xây dựng `constraints.py`: ràng buộc năng lượng, macro, số món, khẩu phần, sở thích/dị ứng, không lặp món, `meal_type`.
+- Xây dựng `objective.py`: fitness cân bằng energy 35%, macros 30%, preference 20%, diversity 15%, trừ penalty vi phạm.
+- Nạp dữ liệu `merged_food_nutrition.csv` (15.929 món) qua `data_loader.py`.
+- Demo `demo_week3.py`: hồ sơ → nhu cầu → thực đơn mẫu → đánh giá.
+
+## Tiến độ tuần 4 (DBO gốc & benchmark)
+
+- Dựng package `src/algorithms/` với `dbo.py`, `behaviors.py`, `benchmarks.py`.
+- DBO gốc theo Xue & Shen (2023): 4 hành vi (ball-rolling, reproduction, foraging, thieving), vòng lặp chính, chọn lọc.
+- Bộ 6 hàm benchmark: Sphere, Rastrigin, Rosenbrock, Ackley, Griewank, Schwefel 2.22.
+- Thí nghiệm M=30 lần với dim ∈ {2, 10, 30} → CSV + thống kê best/mean/std/worst.
+- Demo: `scripts/demo_week4.py` chạy DBO 1 lần, in `best_x`, `best_fitness`, lịch sử hội tụ.
+
+## Kết quả kiểm thử
+
+```text
+============================= 111 passed in 0.78s ==============================
+```
+
+| Module | Số test | Trạng thái |
+| :--- | :--- | :--- |
+| `tests/test_benchmarks.py` | 27 | Đều PASSED |
+| `tests/test_constraints.py` | 5 | Đều PASSED |
+| `tests/test_dbo.py` | 11 | Đều PASSED |
+| `tests/test_menu.py` | 11 | Đều PASSED |
+| `tests/test_model.py` | 14 | Đều PASSED |
+| `tests/test_nutrition.py` | 22 | Đều PASSED |
+| `tests/test_objective.py` | 4 | Đều PASSED |
+
+### Cách chạy test
+
+Xem mục **Cài đặt và chạy** bên dưới.
+
 ## Cấu trúc dự án
 
 ```text
@@ -136,7 +188,9 @@ DBO_heathcare/
 ├── web/                             # Giao diện (tuần 9+)
 ├── scripts/
 │   ├── preprocess_data.py
-│   └── demo_week3.py
+│   ├── demo_week3.py
+│   ├── demo_week4.py
+│   └── experiment_dbo.py
 ├── tests/
 ├── docs/
 │   ├── CNTT-KLCN142 - ing.docx      # Đề cương
@@ -148,14 +202,22 @@ DBO_heathcare/
 ## Cài đặt và chạy
 
 ```bash
+# Tạo môi trường ảo (khuyến nghị)
+python3 -m venv venv
+source venv/bin/activate
+
 # Cài thư viện
 pip install -r requirements.txt
 
-# Test
+# Test (111 testcases)
 python -m pytest tests/
+python -m pytest tests/ -v    # chi tiết
 
 # Demo tuần 3: hồ sơ -> nhu cầu -> thực đơn mẫu -> đánh giá
 python scripts/demo_week3.py
+
+# Demo tuần 4: chạy DBO 1 lần trên hàm benchmark
+python scripts/demo_week4.py
 ```
 
 ## Tài liệu tham khảo
