@@ -43,3 +43,8 @@ venv.bak/
 # Temporary / OS files
 .DS_Store
 Thumbs.db
+
+# Week 4 experiments output
+experiments/week4/*.csv
+experiments/week4/*.png
+experiments/week4/*.json
