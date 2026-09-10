@@ -138,6 +138,51 @@ def test_evaluate_handles_vectorized_and_scalar_objectives():
     np.testing.assert_allclose(DBO._evaluate(sphere, X), [0.0, 2.0, 8.0])
 
 
+def test_ball_rolling_receives_previous_iterate_as_x_prev():
+    # Eq. (1)/(2) need x(t-1). Ball-rolling is processed first, so a naive
+    # start-of-iteration snapshot would make X_prev equal the current x(t) and
+    # silently freeze the obstacle/dancing branch.
+    seen_x: list[np.ndarray] = []
+    seen_prev: list[np.ndarray] = []
+
+    def ball(X, f, best, *args, rng=None, **cfg):
+        seen_x.append(X.copy())
+        assert "X_prev" in cfg
+        seen_prev.append(np.asarray(cfg["X_prev"], dtype=float).copy())
+        return 0.5 * X  # move toward the origin, so the update is always accepted
+
+    behaviors = {name: _jitter() for name in dbo_mod.BEHAVIOR_NAMES}
+    behaviors["ball_rolling"] = ball
+    DBO(n_agents=8, max_iter=4, behaviors=behaviors).optimize(sphere, DIM, LB, UB, seed=5)
+
+    assert len(seen_prev) == 4
+    # t = 1 has no earlier iterate, so the current position is used as fallback.
+    np.testing.assert_allclose(seen_prev[0], seen_x[0])
+    # From t = 2 on, X_prev must be the previous iterate x(t-1).
+    for i in range(1, len(seen_x)):
+        np.testing.assert_allclose(seen_prev[i], seen_x[i - 1])
+
+
+def test_real_behaviors_receive_previous_iterate_for_dancing():
+    behaviors_mod = pytest.importorskip("src.algorithms.behaviors")
+    real_ball_rolling = behaviors_mod.ball_rolling
+    seen: list[tuple[np.ndarray, np.ndarray]] = []
+
+    def wrapped(X, f, best, *args, rng=None, **cfg):
+        assert "X_prev" in cfg
+        seen.append((X.copy(), np.asarray(cfg["X_prev"], dtype=float).copy()))
+        return real_ball_rolling(X, f, best, *args, rng=rng, **cfg)
+
+    behaviors = {name: getattr(behaviors_mod, name) for name in dbo_mod.BEHAVIOR_NAMES}
+    behaviors["ball_rolling"] = wrapped
+    DBO(n_agents=30, max_iter=100, behaviors=behaviors).optimize(sphere, 10, LB, UB, seed=1)
+
+    # Dancing uses |x(t) - x(t-1)|. At least some ball-rolling calls must see a
+    # real history; if X_prev were never supplied it would always equal x(t) and
+    # the obstacle/dancing branch would be inert.
+    assert any(not np.allclose(cur, prev) for cur, prev in seen)
+
+
 def test_sphere_10d_convergence_with_real_behaviors():
     pytest.importorskip("src.algorithms.behaviors")
     res = DBO(n_agents=30, max_iter=500).optimize(sphere, 10, LB, UB, seed=42)
