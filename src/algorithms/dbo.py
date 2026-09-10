@@ -92,7 +92,14 @@ class DBO:
 
         behaviors = self._resolve_behaviors()
         groups = self._partition(self.n_agents)
+        # Eq. (1)/(2) of ball-rolling/dancing need x(t-1), the positions at the
+        # start of the previous iteration. Snapshotting at the top of the current
+        # iteration is not enough (ball-rolling runs first, so it would equal the
+        # current x(t)). For t = 1 there is no earlier iterate, so the current
+        # positions are used as a fallback; X_prev becomes meaningful from t = 2.
+        prev_positions = positions.copy()
         for t in range(1, self.max_iter + 1):
+            start_positions = positions.copy()
             # Worst individual (argmax fitness) is the reference point of the
             # ball-rolling update (paper Eq. 1), so compute it once per iteration.
             worst_x = positions[int(np.argmax(fitness))].copy()
@@ -110,7 +117,11 @@ class DBO:
                 # shrinking zones of reproduction/foraging depend on lb/ub, t and
                 # max_iter; thieving only needs the global best.
                 if name == "ball_rolling":
-                    new_x = fn(group_x, group_f, best_x, rng=rng, worst=worst_x, **self.cfg)
+                    ball_cfg = dict(self.cfg)
+                    ball_cfg.setdefault("X_prev", prev_positions[idx])
+                    new_x = fn(
+                        group_x, group_f, best_x, rng=rng, worst=worst_x, **ball_cfg
+                    )
                 elif name in ("reproduction", "foraging"):
                     new_x = fn(group_x, best_x, lbv, ubv, t, self.max_iter, rng=rng, **self.cfg)
                 else:
@@ -130,6 +141,7 @@ class DBO:
                         best_fitness = float(new_f[k])
                         best_x = new_x[k].copy()
             history.append(best_fitness)
+            prev_positions = start_positions
 
         runtime_s = time.perf_counter() - start
         return DBOResult(
