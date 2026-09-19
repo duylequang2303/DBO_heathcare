@@ -142,6 +142,11 @@ class DBO:
                         best_x = new_x[k].copy()
             history.append(best_fitness)
             prev_positions = start_positions
+            positions, fitness, best_x, best_fitness, extra_evals = self._after_iteration(
+                t, positions, fitness, best_x, best_fitness, rng, lbv, ubv, objective
+            )
+            n_evaluations += extra_evals
+            history[-1] = best_fitness
 
         runtime_s = time.perf_counter() - start
         return DBOResult(
@@ -152,6 +157,20 @@ class DBO:
             runtime_s=runtime_s,
             seed=seed,
         )
+
+    def _after_iteration(
+        self,
+        t: int,
+        positions: np.ndarray,
+        fitness: np.ndarray,
+        best_x: np.ndarray,
+        best_fitness: float,
+        rng: np.random.Generator,
+        lbv: np.ndarray,
+        ubv: np.ndarray,
+        objective: Objective,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, float, int]:
+        return positions, fitness, best_x, best_fitness, 0
 
     def _resolve_behaviors(self) -> dict[str, Callable]:
         if self._behaviors is not None:

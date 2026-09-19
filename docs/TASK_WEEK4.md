@@ -49,13 +49,13 @@ Ghi chú:
 ## Checklist từng thành viên (kèm tiêu chí nghiệm thu)
 
 ### 1. Duy — Khung DBO & tích hợp
-- [ ] Tạo package `src/algorithms/` với `__init__.py`.
-- [ ] Định nghĩa `DBOResult` (dataclass): `best_x`, `best_fitness`, `history` (list fitness tốt nhất theo iteration), `n_evaluations`, `runtime_s`, `seed`.
-- [ ] Viết lớp `DBO` với API `optimize(objective, dim, lb, ub, seed=42) -> DBOResult`.
-- [ ] Khởi tạo quần thể `n_agents` ngẫu nhiên đều trong `[lb, ub]` theo seed; đánh giá fitness ban đầu.
-- [ ] Vòng lặp chính `max_iter`: lần lượt gọi 4 nhóm hành vi (tỉ lệ quần thể mỗi nhóm theo bài báo), cập nhật `best` toàn cục, ghi `history`.
-- [ ] Chặn biên (`clip`) nghiệm sau mỗi hành vi về `[lb, ub]`.
-- [ ] Viết `tests/test_dbo.py`: (a) chạy seed cố định cho kết quả lặp lại được; (b) `best_fitness` không tăng (history không thoái lui); (c) `best_x` nằm trong biên; (d) hội tụ Sphere 10D dưới `1e-4`.
+- [x] Tạo package `src/algorithms/` với `__init__.py`.
+- [x] Định nghĩa `DBOResult` (dataclass): `best_x`, `best_fitness`, `history` (list fitness tốt nhất theo iteration), `n_evaluations`, `runtime_s`, `seed`.
+- [x] Viết lớp `DBO` với API `optimize(objective, dim, lb, ub, seed=42) -> DBOResult`.
+- [x] Khởi tạo quần thể `n_agents` ngẫu nhiên đều trong `[lb, ub]` theo seed; đánh giá fitness ban đầu.
+- [x] Vòng lặp chính `max_iter`: lần lượt gọi 4 nhóm hành vi (tỉ lệ quần thể mỗi nhóm theo bài báo), cập nhật `best` toàn cục, ghi `history`.
+- [x] Chặn biên (`clip`) nghiệm sau mỗi hành vi về `[lb, ub]`.
+- [x] Viết `tests/test_dbo.py`: (a) chạy seed cố định cho kết quả lặp lại được; (b) `best_fitness` không tăng (history không thoái lui); (c) `best_x` nằm trong biên; (d) hội tụ Sphere 10D dưới `1e-4`.
 
 **Nghiệm thu:** `optimize()` chạy đủ `max_iter`, trả về `DBOResult` đầy đủ; test (a)–(d) xanh; chạy lại cùng seed ra cùng kết quả.
 
@@ -72,13 +72,13 @@ def thieving(X, best, rng, **cfg) -> np.ndarray
 - `dbo.py` tự `clip` kết quả về `[lb, ub]`; behaviors **không** cần chặn biên.
 
 ### 2. Cương — 4 hành vi DBO
-- [ ] Đọc kỹ bài báo Xue & Shen (2023) mục 3 (DBO): công thức 4 hành vi + ý nghĩa tham số.
-- [ ] Cài **ball-rolling**: cuộn phân không vật cản (hệ số lệch α, k, b) và nhảy múa khi gặp vật cản (dùng `tan(θ)`, `θ ~ U(0, π)`).
-- [ ] Cài **reproduction**: vùng đẻ trứng co dần quanh best hiện tại, sinh cá thể con.
-- [ ] Cài **foraging**: vùng tìm kiếm co dần quanh best cục bộ, bọ nhỏ đi kiếm ăn.
-- [ ] Cài **thieving**: bọ trộm bám quanh best toàn cục (hệ số S, phân phối Gaussian).
-- [ ] Mỗi hành vi nhận `rng` (numpy `Generator`) để tái lập ngẫu nhiên.
-- [ ] Ghi chú ngắn cuối file: dòng công thức gốc trong bài báo tương ứng từng hành vi.
+- [x] Đọc kỹ bài báo Xue & Shen (2023) mục 3 (DBO): công thức 4 hành vi + ý nghĩa tham số.
+- [x] Cài **ball-rolling**: cuộn phân không vật cản (hệ số lệch α, k, b) và nhảy múa khi gặp vật cản (dùng `tan(θ)`, `θ ~ U(0, π)`).
+- [x] Cài **reproduction**: vùng đẻ trứng co dần quanh best hiện tại, sinh cá thể con.
+- [x] Cài **foraging**: vùng tìm kiếm co dần quanh best cục bộ, bọ nhỏ đi kiếm ăn.
+- [x] Cài **thieving**: bọ trộm bám quanh best toàn cục (hệ số S, phân phối Gaussian).
+- [x] Mỗi hành vi nhận `rng` (numpy `Generator`) để tái lập ngẫu nhiên.
+- [x] Ghi chú ngắn cuối file: dòng công thức gốc trong bài báo tương ứng từng hành vi.
 
 **Nghiệm thu:** 4 hàm đủ signature đã chốt; kết quả nhất quán khi dùng cùng `rng`/`seed`; giá trị đầu ra nằm trong khoảng hợp lý khi test đơn lẻ bằng snippet trong `scripts/demo_week4.py`.
 
@@ -89,11 +89,11 @@ def thieving(X, best, rng, **cfg) -> np.ndarray
 - Tham khảo benchmark cần số chiều cố định — đọc từ `X.shape[1]`, không hardcode.
 
 ### 3. Đăng — Benchmark & thí nghiệm
-- [ ] Cài `src/algorithms/benchmarks.py` với ít nhất 6 hàm: **Sphere, Rastrigin, Rosenbrock, Ackley, Griewank, Schwefel 2.22**.
-- [ ] Mỗi hàm: công thức, khoảng biên `(lb, ub)` chuẩn, `optimum` toạ độ + giá trị đã biết (thường là 0 tại 0; Rosenbrock = 0 tại (1,...,1)).
-- [ ] Viết `tests/test_benchmarks.py`: giá trị tại optimum sai khác ≤ `1e-8`; so khớp công thức cho `dim = 2`.
-- [ ] Viết `scripts/experiment_dbo.py`: với mỗi hàm × mỗi dim (2, 10, 30) chạy `M = 30` lần (seed khác nhau), thu thập `best_fitness`, ghi CSV cột `function, dim, run, best_fitness, iterations`.
-- [ ] Tính thống kê: `best / mean / std / worst` theo từng (hàm, dim); xuất bảng kết quả ra console + CSV tóm tắt.
+- [x] Cài `src/algorithms/benchmarks.py` với ít nhất 6 hàm: **Sphere, Rastrigin, Rosenbrock, Ackley, Griewank, Schwefel 2.22**.
+- [x] Mỗi hàm: công thức, khoảng biên `(lb, ub)` chuẩn, `optimum` toạ độ + giá trị đã biết (thường là 0 tại 0; Rosenbrock = 0 tại (1,...,1)).
+- [x] Viết `tests/test_benchmarks.py`: giá trị tại optimum sai khác ≤ `1e-8`; so khớp công thức cho `dim = 2`.
+- [x] Viết `scripts/experiment_dbo.py`: với mỗi hàm × mỗi dim (2, 10, 30) chạy `M = 30` lần (seed khác nhau), thu thập `best_fitness`, ghi CSV cột `function, dim, run, best_fitness, iterations`.
+- [x] Tính thống kê: `best / mean / std / worst` theo từng (hàm, dim); xuất bảng kết quả ra console + CSV tóm tắt.
 - [ ] (Tùy chọn) Vẽ biểu đồ hội tụ trung bình (log-scale fitness) — cần thêm `matplotlib` vào `requirements.txt` sau khi nhóm đồng ý.
 
 **Nghiệm thu:** 6 hàm benchmark test xanh tại optimum đã biết; script thí nghiệm chạy trọn không lỗi, sinh CSV hợp lệ; DBO cải thiện rõ rệt so với khởi tạo ngẫu nhiên trên Sphere (sai số giảm ≥ 1e3 lần) và bám gần optimum đã biết trên các hàm còn lại ở dim thấp.
@@ -101,10 +101,10 @@ def thieving(X, best, rng, **cfg) -> np.ndarray
 ## Đầu ra cuối tuần 4
 - [x] Khung `src/algorithms/` + DBO gốc hoàn chỉnh, test xanh (`python3 -m pytest tests/`).
 - [x] 6 hàm benchmark + test xanh.
-- [ ] Thí nghiệm M=30 lần trên (hàm × dim) → CSV + bảng thống kê trong `experiments/week4/`.
+- [x] Pipeline thí nghiệm `scripts/experiment_dbo.py` (M lần, dim 2/10/30, CSV `experiments/week4/`; file CSV gitignore).
 - [x] `scripts/demo_week4.py`: chạy DBO 1 lần trên 1 hàm, in `best_x`, `best_fitness`, lịch sử hội tụ.
 - [x] Cập nhật README: mô tả mô-đun DBO tuần 4 và tài liệu tham khảo.
-- [ ] Báo cáo ngắn (nhóm trưởng tổng hợp): kết quả hội tụ từng hàm — phục vụ baseline cho tuần 5–6.
+- [x] Baseline DBO dùng cho tuần 5–6: test 111 passed; Sphere 10D `best_fitness = 1.47e-204`. Chi tiết tiếp theo: `docs/TASK_WEEK5_6.md`.
 
 ## Kết quả kiểm thử tuần 4
 

@@ -7,13 +7,13 @@ Hệ thống đề xuất thực đơn dinh dưỡng cá nhân hóa dựa trên 
 Trường Đại học Công Thương TP.HCM - Khoa Công nghệ Thông tin
 GVHD: Đinh Nguyễn Trọng Nghĩa (`nghiadnt@huit.edu.vn`)
 
-| Thành viên | MSSV | Vai trò tuần 4 |
+| Thành viên | MSSV | Vai trò tuần 5–6 |
 | :--- | :--- | :--- |
-| Lê Quang Duy | 2001230123 | Trưởng nhóm — khung DBO & tích hợp |
-| Đặng Nguyễn Minh Đăng | 2001230175 | Benchmark & thí nghiệm hội tụ |
-| Hồ Trung Cương | 2001230070 | 4 hành vi DBO (ball-rolling, reproduction, foraging, thieving) |
+| Lê Quang Duy | 2001230123 | Trưởng nhóm — khung IDBO & tích hợp |
+| Đặng Nguyễn Minh Đăng | 2001230175 | Thí nghiệm so sánh DBO vs IDBO |
+| Hồ Trung Cương | 2001230070 | Perturbation, restart, đo diversity |
 
-Đề cương chi tiết: `docs/CNTT-KLCN142 - ing.docx`. Phân công/tiến độ theo tuần: `docs/TASK_WEEK1.md` → `docs/TASK_WEEK4.md`.
+Đề cương chi tiết: `docs/CNTT-KLCN142 - ing.docx`. Phân công/tiến độ theo tuần: `docs/TASK_WEEK1.md` → `docs/TASK_WEEK5_6.md`.
 
 ## Mục tiêu
 
@@ -150,24 +150,34 @@ Chi tiết API cho module biểu diễn: mục **Hướng dẫn cho Cương** tr
 - Dựng package `src/algorithms/` với `dbo.py`, `behaviors.py`, `benchmarks.py`.
 - DBO gốc theo Xue & Shen (2023): 4 hành vi (ball-rolling, reproduction, foraging, thieving), vòng lặp chính, chọn lọc.
 - Bộ 6 hàm benchmark: Sphere, Rastrigin, Rosenbrock, Ackley, Griewank, Schwefel 2.22.
-- Thí nghiệm M=30 lần với dim ∈ {2, 10, 30} → CSV + thống kê best/mean/std/worst.
+- Thí nghiệm M=30 lần với dim ∈ {2, 10, 30} → CSV + thống kê best/mean/std/worst (`scripts/experiment_dbo.py`).
 - Demo: `scripts/demo_week4.py` chạy DBO 1 lần, in `best_x`, `best_fitness`, lịch sử hội tụ.
+- Kiểm tra lại trước tuần 5–6: **111 test passed**; Sphere 10D hội tụ `1.47e-204`.
+
+## Tiến độ tuần 5–6 (IDBO: nhiễu ngẫu nhiên + benchmark)
+
+- `src/algorithms/idbo.py`: IDBO kế thừa DBO, cùng `optimize(objective, dim, lb, ub, seed)`.
+- Random perturbation: nhiễu Gauss khi diversity sụp, biên độ giảm theo iteration; elite không bị đụng.
+- Random restart: khởi tạo lại agent tệ nhất khi best đứng yên `stagnation_window` vòng.
+- Demo: `scripts/demo_week5_6.py`. So sánh DBO vs IDBO: `scripts/experiment_idbo.py`.
+- Phân công chi tiết: `docs/TASK_WEEK5_6.md`.
 
 ## Kết quả kiểm thử
 
 ```text
-============================= 111 passed in 0.78s ==============================
+python -m pytest tests/
 ```
 
-| Module | Số test | Trạng thái |
-| :--- | :--- | :--- |
-| `tests/test_benchmarks.py` | 27 | Đều PASSED |
-| `tests/test_constraints.py` | 5 | Đều PASSED |
-| `tests/test_dbo.py` | 11 | Đều PASSED |
-| `tests/test_menu.py` | 11 | Đều PASSED |
-| `tests/test_model.py` | 14 | Đều PASSED |
-| `tests/test_nutrition.py` | 22 | Đều PASSED |
-| `tests/test_objective.py` | 4 | Đều PASSED |
+| Module | Nội dung |
+| :--- | :--- |
+| `tests/test_benchmarks.py` | 6 hàm benchmark tại optimum đã biết |
+| `tests/test_constraints.py` | Ràng buộc thực đơn |
+| `tests/test_dbo.py` | DBO gốc: seed, history, biên, Sphere 10D |
+| `tests/test_idbo.py` | IDBO: diversity, perturb/restart, seed, hội tụ |
+| `tests/test_menu.py` | Encode/decode thực đơn |
+| `tests/test_model.py` | Hồ sơ → fitness |
+| `tests/test_nutrition.py` | BMR/TDEE, DRI |
+| `tests/test_objective.py` | Trọng số fitness |
 
 ### Cách chạy test
 
@@ -183,18 +193,20 @@ DBO_heathcare/
 ├── src/
 │   ├── models/                      # UserProfile, Menu, ràng buộc, fitness
 │   ├── utils/                       # data_loader, BMR/TDEE
-│   ├── algorithms/                  # DBO / IDBO (tuần 4+)
+│   ├── algorithms/                  # DBO (tuần 4), IDBO (tuần 5–6)
 │   └── api/                         # Backend web (tuần 9+)
 ├── web/                             # Giao diện (tuần 9+)
 ├── scripts/
 │   ├── preprocess_data.py
 │   ├── demo_week3.py
 │   ├── demo_week4.py
-│   └── experiment_dbo.py
+│   ├── experiment_dbo.py
+│   ├── demo_week5_6.py
+│   └── experiment_idbo.py
 ├── tests/
 ├── docs/
 │   ├── CNTT-KLCN142 - ing.docx      # Đề cương
-│   └── TASK_WEEK1..4.md             # Phân công/tiến độ theo tuần
+│   └── TASK_WEEK1.md … TASK_WEEK5_6.md
 ├── requirements.txt
 └── README.md
 ```
@@ -209,15 +221,21 @@ source venv/bin/activate
 # Cài thư viện
 pip install -r requirements.txt
 
-# Test (111 testcases)
+# Test
 python -m pytest tests/
-python -m pytest tests/ -v    # chi tiết
+python -m pytest tests/ -v
 
 # Demo tuần 3: hồ sơ -> nhu cầu -> thực đơn mẫu -> đánh giá
 python scripts/demo_week3.py
 
-# Demo tuần 4: chạy DBO 1 lần trên hàm benchmark
-python scripts/demo_week4.py
+# Demo tuần 4: DBO gốc trên hàm benchmark
+python scripts/demo_week4.py --function sphere --dim 10
+
+# Demo tuần 5–6: IDBO trên hàm đa cực trị
+python scripts/demo_week5_6.py --function rastrigin --dim 10
+
+# So sánh DBO vs IDBO (CSV vào experiments/week5_6/)
+python scripts/experiment_idbo.py --runs 3 --dims 2 10 --max-iter 80 --functions sphere rastrigin
 ```
 
 ## Tài liệu tham khảo
