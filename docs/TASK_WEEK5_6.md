@@ -113,9 +113,11 @@ Với **mỗi** `(hàm, dim)` điền đúng 8 số + cột thắng:
 
 Quy tắc cột **Thắng (mean)** — so sánh **fixed-iteration** (`max_iter` giống nhau), **không** phải equal-evaluation-budget. IDBO gọi thêm objective khi perturb/restart nên `n_evaluations` thường lớn hơn DBO.
 
-- `IDBO` nếu `mean_IDBO < mean_DBO`
-- `DBO` nếu ngược lại
-- `hòa` nếu `|mean_IDBO - mean_DBO| / max(|mean_DBO|, 1e-30) < 0.01` (chênh < 1%)
+Áp dụng **theo thứ tự** (kiểm tra hòa trước, rồi mới chọn thắng):
+
+1. `hòa` nếu `|mean_IDBO - mean_DBO| / max(|mean_DBO|, 1e-30) < 0.01` (chênh < 1%)
+2. `IDBO` nếu không hòa và `mean_IDBO < mean_DBO`
+3. `DBO` nếu không hòa và `mean_DBO < mean_IDBO`
 
 Kèm bảng `n_evaluations` trung bình (lấy từ `idbo_vs_dbo_runs.csv` / summary) cho từng `(hàm, dim)`:
 
