@@ -15,10 +15,13 @@ from src.algorithms.benchmarks import (
     list_benchmarks,
 )
 from src.algorithms.dbo import DBO, DBOResult
+from src.algorithms.idbo import IDBO, IDBOResult
 
 __all__ = [
     "DBO",
     "DBOResult",
+    "IDBO",
+    "IDBOResult",
     "BenchmarkFunction",
     "get_benchmark",
     "list_benchmarks",

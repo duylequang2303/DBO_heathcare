@@ -44,7 +44,10 @@ venv.bak/
 .DS_Store
 Thumbs.db
 
-# Week 4 experiments output
+# Experiment outputs (CSV/plots are regenerated locally)
 experiments/week4/*.csv
 experiments/week4/*.png
 experiments/week4/*.json
+experiments/week5_6/*.csv
+experiments/week5_6/*.png
+experiments/week5_6/*.json
