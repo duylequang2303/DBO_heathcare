@@ -199,7 +199,11 @@ class IDBO(DBO):
         self._prev_best = best_fitness
 
         collapsed = diversity < self.diversity_threshold
-        do_restart = collapsed and self._stagnation >= self.stagnation_window
+        do_restart = (
+            collapsed
+            and self.restart_rate > 0.0
+            and self._stagnation >= self.stagnation_window
+        )
         if do_restart:
             positions, idx = random_restart(
                 positions,

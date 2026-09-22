@@ -70,6 +70,7 @@ def run_single(
         "n_evaluations": result.n_evaluations,
         "n_perturbations": getattr(result, "n_perturbations", 0),
         "n_restarts": getattr(result, "n_restarts", 0),
+        "execution_order": 0,
     }
     return row
 
@@ -131,13 +132,16 @@ def main() -> None:
     start_total_time = time.perf_counter()
     all_results: List[dict] = []
 
-    for algo in args.algorithms:
-        for f_idx, func_name in enumerate(args.functions):
-            canonical_name = get_benchmark(func_name).name
-            for d_idx, dim in enumerate(args.dims):
-                print(f"--> {algo.upper()} '{canonical_name}' dim={dim} x {args.runs}")
-                for r in range(args.runs):
-                    seed = 1000 * (f_idx + 1) + 100 * (d_idx + 1) + (r + 1)
+    for f_idx, func_name in enumerate(args.functions):
+        canonical_name = get_benchmark(func_name).name
+        for d_idx, dim in enumerate(args.dims):
+            print(f"--> '{canonical_name}' dim={dim} x {args.runs} ({', '.join(args.algorithms)})")
+            for r in range(args.runs):
+                seed = 1000 * (f_idx + 1) + 100 * (d_idx + 1) + (r + 1)
+                order_rng = np.random.default_rng(seed + 17_000)
+                algo_order = list(args.algorithms)
+                order_rng.shuffle(algo_order)
+                for exec_idx, algo in enumerate(algo_order, start=1):
                     row = run_single(
                         algorithm=algo,
                         benchmark_name=canonical_name,
@@ -148,6 +152,7 @@ def main() -> None:
                         max_iter=args.max_iter,
                         behaviors=behaviors,
                     )
+                    row["execution_order"] = exec_idx
                     all_results.append(row)
                     completed_runs += 1
 
@@ -166,6 +171,7 @@ def main() -> None:
         "n_evaluations",
         "n_perturbations",
         "n_restarts",
+        "execution_order",
     ]
     with open(runs_csv, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -179,7 +185,7 @@ def main() -> None:
             canonical_name = get_benchmark(func_name).name
             for dim in args.dims:
                 matching = [
-                    r["best_fitness"]
+                    r
                     for r in all_results
                     if r["algorithm"] == algo
                     and r["function"] == canonical_name
@@ -187,7 +193,8 @@ def main() -> None:
                 ]
                 if not matching:
                     continue
-                arr = np.array(matching, dtype=float)
+                arr = np.array([r["best_fitness"] for r in matching], dtype=float)
+                evals = np.array([r["n_evaluations"] for r in matching], dtype=float)
                 summaries.append(
                     {
                         "algorithm": algo,
@@ -198,11 +205,22 @@ def main() -> None:
                         "mean": float(np.mean(arr)),
                         "std": float(np.std(arr)),
                         "worst": float(np.max(arr)),
+                        "mean_n_evaluations": float(np.mean(evals)),
                     }
                 )
 
     summary_csv = out_dir / "idbo_vs_dbo_summary.csv"
-    sum_fields = ["algorithm", "function", "dim", "runs", "best", "mean", "std", "worst"]
+    sum_fields = [
+        "algorithm",
+        "function",
+        "dim",
+        "runs",
+        "best",
+        "mean",
+        "std",
+        "worst",
+        "mean_n_evaluations",
+    ]
     with open(summary_csv, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=sum_fields)
         writer.writeheader()
@@ -211,7 +229,7 @@ def main() -> None:
 
     header = (
         f"{'Algo':<6} {'Function':<16} {'Dim':<5} {'Runs':<5} "
-        f"{'Best':<14} {'Mean':<14} {'Std':<14} {'Worst':<14}"
+        f"{'Best':<14} {'Mean':<14} {'Std':<14} {'Worst':<14} {'MeanEvals':<12}"
     )
     print("-" * len(header))
     print(header)
@@ -219,7 +237,8 @@ def main() -> None:
     for s in summaries:
         print(
             f"{s['algorithm']:<6} {s['function']:<16} {s['dim']:<5} {s['runs']:<5} "
-            f"{s['best']:<14.4e} {s['mean']:<14.4e} {s['std']:<14.4e} {s['worst']:<14.4e}"
+            f"{s['best']:<14.4e} {s['mean']:<14.4e} {s['std']:<14.4e} {s['worst']:<14.4e} "
+            f"{s['mean_n_evaluations']:<12.1f}"
         )
     print("-" * len(header))
     print(

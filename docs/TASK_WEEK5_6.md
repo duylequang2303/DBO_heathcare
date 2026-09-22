@@ -111,13 +111,20 @@ Với **mỗi** `(hàm, dim)` điền đúng 8 số + cột thắng:
 | schwefel_2_22 | 2 | | | | | | | |
 | … đủ 6 hàm × 3 dim = 18 dòng | | | | | | | | |
 
-Quy tắc cột **Thắng (mean)**:
+Quy tắc cột **Thắng (mean)** — so sánh **fixed-iteration** (`max_iter` giống nhau), **không** phải equal-evaluation-budget. IDBO gọi thêm objective khi perturb/restart nên `n_evaluations` thường lớn hơn DBO.
 
 - `IDBO` nếu `mean_IDBO < mean_DBO`
 - `DBO` nếu ngược lại
 - `hòa` nếu `|mean_IDBO - mean_DBO| / max(|mean_DBO|, 1e-30) < 0.01` (chênh < 1%)
 
-Không viết “IDBO tốt hơn” nếu bảng chưa có số.
+Kèm bảng `n_evaluations` trung bình (lấy từ `idbo_vs_dbo_runs.csv` / summary) cho từng `(hàm, dim)`:
+
+| Hàm | Dim | DBO mean n_evaluations | IDBO mean n_evaluations |
+| :--- | ---: | :--- | :--- |
+| sphere | 2 | | |
+| … đủ 6 hàm × 3 dim | | | |
+
+Không viết “IDBO tốt hơn” nếu bảng chưa có số. Không mô tả kết quả như so sánh cùng ngân sách đánh giá.
 
 ### 1.4 Câu hỏi Đăng phải trả lời trong Word (mục 5)
 

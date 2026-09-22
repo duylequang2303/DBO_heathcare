@@ -175,6 +175,29 @@ def test_idbo_perturbation_fires_when_diversity_collapses():
     assert res.n_restarts == 0
 
 
+def test_idbo_perturbation_fires_when_restart_rate_is_zero_after_stagnation():
+    collapsed = np.full((8, DIM), 0.01)
+
+    def freeze(X, *args, rng=None, **kwargs):
+        return np.broadcast_to(collapsed[0], X.shape).copy()
+
+    behaviors = {name: freeze for name in BEHAVIOR_NAMES}
+    opt = IDBO(
+        n_agents=8,
+        max_iter=8,
+        behaviors=behaviors,
+        diversity_threshold=0.2,
+        perturbation_rate=0.5,
+        perturbation_scale=0.3,
+        stagnation_window=2,
+        restart_rate=0.0,
+        n_elite=1,
+    )
+    res = opt.optimize(sphere, DIM, LB, UB, seed=11)
+    assert res.n_perturbations >= 1
+    assert res.n_restarts == 0
+
+
 def test_idbo_restart_fires_after_stagnation_window():
     collapsed = np.full((8, DIM), 0.01)
 
