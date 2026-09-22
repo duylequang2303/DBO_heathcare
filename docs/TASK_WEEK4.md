@@ -94,9 +94,11 @@ def thieving(X, best, rng, **cfg) -> np.ndarray
 - [x] Viết `tests/test_benchmarks.py`: giá trị tại optimum sai khác ≤ `1e-8`; so khớp công thức cho `dim = 2`.
 - [x] Viết `scripts/experiment_dbo.py`: với mỗi hàm × mỗi dim (2, 10, 30) chạy `M = 30` lần (seed khác nhau), thu thập `best_fitness`, ghi CSV cột `function, dim, run, best_fitness, iterations`.
 - [x] Tính thống kê: `best / mean / std / worst` theo từng (hàm, dim); xuất bảng kết quả ra console + CSV tóm tắt.
-- [ ] (Tùy chọn) Vẽ biểu đồ hội tụ trung bình (log-scale fitness) — cần thêm `matplotlib` vào `requirements.txt` sau khi nhóm đồng ý.
+- [ ] **Bắt buộc (Đăng):** Vẽ biểu đồ hội tụ + boxplot cho báo cáo Word — xem mục **Việc còn lại** bên dưới.
 
-**Nghiệm thu:** 6 hàm benchmark test xanh tại optimum đã biết; script thí nghiệm chạy trọn không lỗi, sinh CSV hợp lệ; DBO cải thiện rõ rệt so với khởi tạo ngẫu nhiên trên Sphere (sai số giảm ≥ 1e3 lần) và bám gần optimum đã biết trên các hàm còn lại ở dim thấp.
+**Nghiệm thu code:** 6 hàm benchmark test xanh tại optimum đã biết; script thí nghiệm chạy trọn không lỗi, sinh CSV hợp lệ; DBO cải thiện rõ rệt so với khởi tạo ngẫu nhiên trên Sphere (sai số giảm ≥ 1e3 lần) và bám gần optimum đã biết trên các hàm còn lại ở dim thấp.
+
+**Nghiệm thu báo cáo (chưa xong):** có CSV M=30, có PNG, có `docs/BaoCao_Tuan4.docx`.
 
 ## Đầu ra cuối tuần 4
 - [x] Khung `src/algorithms/` + DBO gốc hoàn chỉnh, test xanh (`python3 -m pytest tests/`).
@@ -105,6 +107,122 @@ def thieving(X, best, rng, **cfg) -> np.ndarray
 - [x] `scripts/demo_week4.py`: chạy DBO 1 lần trên 1 hàm, in `best_x`, `best_fitness`, lịch sử hội tụ.
 - [x] Cập nhật README: mô tả mô-đun DBO tuần 4 và tài liệu tham khảo.
 - [x] Baseline DBO dùng cho tuần 5–6: test 111 passed; Sphere 10D `best_fitness = 1.47e-204`. Chi tiết tiếp theo: `docs/TASK_WEEK5_6.md`.
+- [ ] **Chưa có:** số liệu thí nghiệm M=30 đầy đủ, hình PNG, báo cáo Word tuần 4. Giao **Đăng + Cương** ở mục dưới.
+
+## Việc còn lại tuần 4 — báo cáo Word + hình (giao Cương + Đăng)
+
+> Code DBO / 6 hàm benchmark / `experiment_dbo.py` **đã xong**. Còn thiếu đúng thứ cần để bảo vệ: **số liệu M=30**, **biểu đồ**, **file Word**. Không có hình thì không nộp báo cáo tuần 4.
+
+Hiện trạng repo (2026-09-22):
+
+| Hạng mục | Có chưa |
+| :--- | :--- |
+| `src/algorithms/benchmarks.py` + test | Có |
+| `scripts/experiment_dbo.py` (pipeline CSV) | Có |
+| `scripts/demo_week4.py` (1 lần Sphere 10D) | Có — chỉ 1 run, không đủ |
+| CSV `experiments/week4/` (M=30, 6 hàm × 3 dim) | **Không** (gitignore, chưa nộp) |
+| PNG hội tụ / boxplot | **Không** |
+| `docs/BaoCao_Tuan4.docx` | **Không** |
+| `matplotlib` trong `requirements.txt` | **Không** |
+
+### Phân công còn lại
+
+| Thành viên | Việc | Nộp gì |
+| :--- | :--- | :--- |
+| **Đặng Nguyễn Minh Đăng** | Chạy thí nghiệm + vẽ hình | CSV + 2 PNG + bảng 18 dòng điền số |
+| **Hồ Trung Cương** | Viết báo cáo Word tuần 4 (lý thuyết DBO + dán hình/bảng của Đăng) | `docs/BaoCao_Tuan4.docx` |
+
+Không đụng `behaviors.py` / `dbo.py` trừ khi phát hiện bug khi chạy.
+
+---
+
+### 1. Đăng — thí nghiệm + hình (bắt buộc)
+
+#### 1.1 Chạy bản chính
+
+Cấu hình **không tự đổi** (khớp tuần 5–6 để so được):
+
+| Tham số | Giá trị |
+| :--- | :--- |
+| Thuật toán | `dbo` |
+| Hàm | `sphere`, `schwefel_2_22`, `rosenbrock`, `rastrigin`, `ackley`, `griewank` |
+| `dim` | `2`, `10`, `30` |
+| `n_agents` | `30` |
+| `max_iter` | `500` |
+| `M` | `30` |
+
+```bash
+python scripts/experiment_dbo.py --runs 30 --dims 2 10 30 --max-iter 500 --n-agents 30
+```
+
+CSV ra `experiments/week4/` (gitignore). **Không commit CSV/PNG.** Nộp Drive / đính Word.
+
+Nếu 6×3×30 quá nặng: tối thiểu **dim=10, M=30, đủ 6 hàm**. Summary mọi dim vẫn phải có nếu máy kịp.
+
+#### 1.2 Code thêm (Đăng)
+
+`experiment_dbo.py` hiện chỉ ghi `best_fitness` cuối run. Bổ sung, **không phá cột CSV cũ**:
+
+1. Lưu lịch sử hội tụ dim=10: `experiments/week4/dbo_history_dim10.csv`  
+   Cột: `function,dim,run,iteration,best_fitness` (`iteration` từ `0` đến `max_iter`).
+2. Thêm `matplotlib` vào `requirements.txt`.
+3. Script `scripts/plot_week4.py` — chạy **sau** khi CSV có, không gắn plot vào vòng optimize.
+
+| Mã hình | Nội dung bắt buộc | File xuất |
+| :--- | :--- | :--- |
+| W4-F1 | Hội tụ trung bình dim=10, trục Y log, 6 subplot (mỗi hàm), 1 đường DBO | `experiments/week4/fig_convergence_dim10.png` |
+| W4-F2 | Boxplot `best_fitness` dim=10, 6 hàm | `experiments/week4/fig_boxplot_dim10.png` |
+
+Legend, tên hàm, `dim=10`. Trục tiếng Việt hoặc English đều được.
+
+#### 1.3 Bảng số liệu (copy vào Word — Cương dán)
+
+Với **mỗi** `(hàm, dim)` điền 4 số:
+
+| Hàm | Dim | best | mean | std | worst |
+| :--- | ---: | :--- | :--- | :--- | :--- |
+| sphere | 2 | | | | |
+| sphere | 10 | | | | |
+| sphere | 30 | | | | |
+| … đủ 6 hàm × 3 dim = 18 dòng | | | | | |
+
+#### 1.4 Nghiệm thu Đăng
+
+- [ ] CSV runs + summary (tối thiểu dim=10, M=30, 6 hàm).
+- [ ] History dim=10.
+- [ ] Đủ 2 PNG W4-F1, W4-F2.
+- [ ] Bảng 18 dòng điền hết (hoặc 6 dòng dim=10 nếu máy không kịp 2/30).
+
+---
+
+### 2. Cương — báo cáo Word tuần 4
+
+File: `docs/BaoCao_Tuan4.docx`
+
+Bìa: tên đề tài, mã **CNTT-KLCN142**, 3 thành viên + MSSV, GVHD, mốc **Tuần 4**.
+
+Cương **không** viết lại `behaviors.py`. Đọc `src/algorithms/dbo.py`, `behaviors.py`, bài Xue & Shen (2023) rồi viết cho người chưa đọc code.
+
+#### Mục lục bắt buộc
+
+| Mục | Nội dung | Ai soạn |
+| :--- | :--- | :--- |
+| 1. Mục tiêu tuần 4 | DBO gốc trên benchmark; chưa đụng thực đơn | Cương |
+| 2. DBO gốc | 4 hành vi (tên + 1–2 câu + công thức chính), tỉ lệ quần thể, tham số bài báo | Cương |
+| 3. Bộ hàm benchmark | 6 hàm: công thức ngắn, biên, optimum | Cương (lấy từ `benchmarks.py`) |
+| 4. Protocol thí nghiệm | n_agents=30, max_iter=500, M=30, dim 2/10/30, seed | Cương (khớp script Đăng) |
+| 5. Kết quả | Dán bảng 18 dòng + hình W4-F1, W4-F2 | Cương dán số/hình Đăng |
+| 6. Nhận xét | Unimodal vs multimodal; dim 30; Sphere có hội tụ không | Cương, **phải có số** |
+| 7. Kết luận + việc tuần 5–6 | Baseline DBO xong, sang IDBO | Cương |
+
+#### Nghiệm thu Cương
+
+- [ ] File Word đủ 7 mục, có bìa.
+- [ ] Có **ít nhất 2 hình** W4-F1 và W4-F2 trong mục 5 (không nộp Word không hình).
+- [ ] Bảng số liệu không ô trống ở các dòng đã chạy.
+- [ ] Không viết “DBO hội tụ tốt” nếu chưa có số từ CSV của Đăng.
+
+---
 
 ## Kết quả kiểm thử tuần 4
 
