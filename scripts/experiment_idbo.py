@@ -71,6 +71,8 @@ def run_single(
         "n_perturbations": getattr(result, "n_perturbations", 0),
         "n_restarts": getattr(result, "n_restarts", 0),
         "execution_order": 0,
+        "history": result.history,
+        "diversity_history": getattr(result, "diversity_history", []),
     }
     return row
 
@@ -173,11 +175,58 @@ def main() -> None:
         "n_restarts",
         "execution_order",
     ]
+    # Filter keys matching fieldnames so extra keys like 'history' don't crash DictWriter
+    clean_runs = [{k: r[k] for k in fieldnames} for r in all_results]
     with open(runs_csv, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(all_results)
+        writer.writerows(clean_runs)
     print(f"\n[OK] Detailed runs written to: {runs_csv}")
+
+    # History CSV (dim=10 per spec to keep file size reasonable)
+    history_csv = out_dir / "idbo_vs_dbo_history.csv"
+    history_fields = ["algorithm", "function", "dim", "run", "iteration", "best_fitness"]
+    history_rows = []
+    for r in all_results:
+        if r["dim"] == 10:
+            for it, fit in enumerate(r.get("history", [])):
+                history_rows.append(
+                    {
+                        "algorithm": r["algorithm"],
+                        "function": r["function"],
+                        "dim": r["dim"],
+                        "run": r["run"],
+                        "iteration": it,
+                        "best_fitness": fit,
+                    }
+                )
+    with open(history_csv, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=history_fields)
+        writer.writeheader()
+        writer.writerows(history_rows)
+    print(f"[OK] Convergence history written to: {history_csv}")
+
+    # Diversity CSV (IDBO, dim=10 per spec)
+    diversity_csv = out_dir / "idbo_diversity.csv"
+    diversity_fields = ["function", "dim", "run", "iteration", "diversity"]
+    diversity_rows = []
+    for r in all_results:
+        if r["algorithm"] == "idbo" and r["dim"] == 10:
+            for it, div in enumerate(r.get("diversity_history", []), start=1):
+                diversity_rows.append(
+                    {
+                        "function": r["function"],
+                        "dim": r["dim"],
+                        "run": r["run"],
+                        "iteration": it,
+                        "diversity": div,
+                    }
+                )
+    with open(diversity_csv, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=diversity_fields)
+        writer.writeheader()
+        writer.writerows(diversity_rows)
+    print(f"[OK] Diversity history written to: {diversity_csv}")
 
     summaries: List[dict] = []
     for algo in args.algorithms:
