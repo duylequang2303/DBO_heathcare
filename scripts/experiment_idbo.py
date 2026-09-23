@@ -43,6 +43,19 @@ def run_single(
     max_iter: int,
     behaviors: dict | None = None,
 ) -> dict:
+    """Run one benchmark and return its metrics and iteration histories.
+
+    ``run_idx`` labels the run; ``seed`` controls the optimizer's randomness.
+    ``behaviors`` optionally supplies the optimizer's behavior callables. The
+    returned history includes the initial best fitness at iteration 0, while
+    IDBO diversity measurements start at iteration 1. ``runtime_s`` is in
+    seconds; unavailable diversity and intervention counts default to empty
+    history and zero for DBO.
+
+    Unknown benchmarks, algorithms, or invalid optimizer settings raise
+    ``ValueError``. A missing default behavior module raises ``RuntimeError``;
+    errors from per-candidate objective evaluations or behavior calls propagate.
+    """
     bench = get_benchmark(benchmark_name)
     if algorithm == "dbo":
         optimizer = DBO(n_agents=n_agents, max_iter=max_iter, behaviors=behaviors)
@@ -78,6 +91,14 @@ def run_single(
 
 
 def main() -> None:
+    """Run DBO/IDBO comparisons and write run, summary, and history CSVs.
+
+    Convergence history is exported only for dimension 10, and diversity only
+    for IDBO at dimension 10. ``--dry-run`` supplies mock behaviors; otherwise
+    a missing behavior module exits with status 1. Invalid run counts,
+    dimensions, or algorithms exit through argparse; unknown benchmarks and
+    output-file errors propagate.
+    """
     parser = argparse.ArgumentParser(description="Compare DBO vs IDBO on benchmarks.")
     parser.add_argument("--functions", nargs="+", default=list_benchmarks())
     parser.add_argument("--dims", nargs="+", type=int, default=[2, 10, 30])

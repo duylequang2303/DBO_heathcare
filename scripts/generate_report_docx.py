@@ -41,6 +41,7 @@ BORDER_HEX = "CBD5E0"
 
 
 def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
+    """Set a table cell's four inset margins in twentieths of a point."""
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = OxmlElement('w:tcMar')
     for m, val in [('top', top), ('bottom', bottom), ('left', left), ('right', right)]:
@@ -52,14 +53,16 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
 
 
 def set_cell_background(cell, color_hex):
+    """Apply a hex RGB fill color to a table cell."""
     shading_xml = f'<w:shd {nsdecls("w")} w:fill="{color_hex}"/>'
     cell._tc.get_or_add_tcPr().append(parse_xml(shading_xml))
 
 
 def set_cell_border(cell, **kwargs):
-    """
-    kwargs: top, bottom, left, right
-    values: dict(sz=12, val='single', color='FF0000', space='0')
+    """Add borders for supplied top, left, bottom, or right cell edges.
+
+    Each edge accepts a dict of optional ``val``, ``sz``, and ``color``
+    settings; spacing is always set to zero for added borders.
     """
     tcPr = cell._tc.get_or_add_tcPr()
     tcBorders = OxmlElement('w:tcBorders')
@@ -77,6 +80,7 @@ def set_cell_border(cell, **kwargs):
 
 
 def style_table(table):
+    """Center a table and style its first row as a header and later rows in stripes."""
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     for r_idx, row in enumerate(table.rows):
         for c_idx, cell in enumerate(row.cells):
@@ -102,6 +106,7 @@ def style_table(table):
 
 
 def add_heading_1(doc, text):
+    """Append and return a level-one heading paragraph."""
     h = doc.add_paragraph(style='Heading 1')
     h.paragraph_format.space_before = Pt(16)
     h.paragraph_format.space_after = Pt(6)
@@ -115,6 +120,7 @@ def add_heading_1(doc, text):
 
 
 def add_heading_2(doc, text):
+    """Append and return a level-two heading paragraph."""
     h = doc.add_paragraph(style='Heading 2')
     h.paragraph_format.space_before = Pt(12)
     h.paragraph_format.space_after = Pt(4)
@@ -128,6 +134,7 @@ def add_heading_2(doc, text):
 
 
 def add_heading_3(doc, text):
+    """Append and return a level-three heading paragraph."""
     h = doc.add_paragraph(style='Heading 3')
     h.paragraph_format.space_before = Pt(8)
     h.paragraph_format.space_after = Pt(2)
@@ -142,6 +149,7 @@ def add_heading_3(doc, text):
 
 
 def add_body_p(doc, text, bold_prefix="", italic=False):
+    """Append and return a body paragraph with optional bold prefix or italic text."""
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(5)
     p.paragraph_format.line_spacing = 1.18
@@ -159,6 +167,7 @@ def add_body_p(doc, text, bold_prefix="", italic=False):
 
 
 def add_bullet_p(doc, text, bold_prefix=""):
+    """Append and return a bulleted paragraph with an optional bold prefix."""
     p = doc.add_paragraph(style='List Bullet')
     p.paragraph_format.space_after = Pt(3)
     p.paragraph_format.line_spacing = 1.15
@@ -175,6 +184,11 @@ def add_bullet_p(doc, text, bold_prefix=""):
 
 
 def build_report():
+    """Write the Week 4–6 progress report with fixed results to ``DOC_OUT``.
+
+    Include available dimension-10 figures from ``EXP_DIR``; missing figures
+    are omitted. Errors reading existing figures or saving the report propagate.
+    """
     doc = docx.Document()
 
     # Page Margins

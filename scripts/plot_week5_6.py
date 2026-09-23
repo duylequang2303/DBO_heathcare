@@ -43,7 +43,12 @@ COLOR_RASTRIGIN = "#D62728"
 
 
 def plot_f1_convergence(history_csv: Path, out_path: Path, dim: int = 10) -> None:
-    """F1: Convergence curve (dim=10, Y-axis log scale, 6 subplots, 2 lines DBO/IDBO)."""
+    """Save mean DBO and IDBO convergence curves for the selected dimension.
+
+    Use a logarithmic fitness axis, flooring plotted values at 1e-300. If the
+    CSV is missing or contains no rows for ``dim``, skip creating the plot.
+    CSV and plotting errors otherwise propagate.
+    """
     if not history_csv.is_file():
         print(f"[WARN] History file not found: {history_csv}. Skipping F1.")
         return
@@ -113,7 +118,13 @@ def plot_f1_convergence(history_csv: Path, out_path: Path, dim: int = 10) -> Non
 
 
 def plot_f2_boxplot(runs_csv: Path, out_path: Path, dim: int = 10) -> None:
-    """F2: Boxplot best_fitness DBO vs IDBO, dim=10, 6 functions."""
+    """Save DBO/IDBO best-fitness boxplots for the selected dimension.
+
+    Use a log axis only when both algorithms have data, all plotted values are
+    positive, and their combined maximum exceeds the minimum by a factor of
+    100. Skip the plot if the CSV is missing or has no rows for ``dim``;
+    other errors propagate.
+    """
     if not runs_csv.is_file():
         print(f"[WARN] Runs file not found: {runs_csv}. Skipping F2.")
         return
@@ -180,7 +191,11 @@ def plot_f2_boxplot(runs_csv: Path, out_path: Path, dim: int = 10) -> None:
 
 
 def plot_f3_diversity(diversity_csv: Path, out_path: Path, dim: int = 10) -> None:
-    """F3: Average diversity IDBO dim=10: Sphere (unimodal) and Rastrigin (multimodal)."""
+    """Save mean IDBO diversity by iteration for Sphere and Rastrigin.
+
+    Plot a reference line at 1e-3. Skip creating the plot if the CSV is
+    missing or lacks data for ``dim`` or either function; other errors propagate.
+    """
     if not diversity_csv.is_file():
         print(f"[WARN] Diversity file not found: {diversity_csv}. Skipping F3.")
         return
@@ -249,6 +264,11 @@ def plot_f3_diversity(diversity_csv: Path, out_path: Path, dim: int = 10) -> Non
 
 
 def main() -> None:
+    """Generate benchmark figures from CSVs in the selected output directory.
+
+    Remove existing figure files for the selected dimension before plotting;
+    plotters skip creation when their CSV is absent or lacks required rows.
+    """
     parser = argparse.ArgumentParser(description="Plot Week 5-6 benchmark results.")
     parser.add_argument(
         "--out-dir",
