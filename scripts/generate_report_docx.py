@@ -102,7 +102,7 @@ def style_table(table):
 
 
 def add_heading_1(doc, text):
-    h = doc.add_paragraph()
+    h = doc.add_paragraph(style='Heading 1')
     h.paragraph_format.space_before = Pt(16)
     h.paragraph_format.space_after = Pt(6)
     h.paragraph_format.keep_with_next = True
@@ -115,7 +115,7 @@ def add_heading_1(doc, text):
 
 
 def add_heading_2(doc, text):
-    h = doc.add_paragraph()
+    h = doc.add_paragraph(style='Heading 2')
     h.paragraph_format.space_before = Pt(12)
     h.paragraph_format.space_after = Pt(4)
     h.paragraph_format.keep_with_next = True
@@ -128,7 +128,7 @@ def add_heading_2(doc, text):
 
 
 def add_heading_3(doc, text):
-    h = doc.add_paragraph()
+    h = doc.add_paragraph(style='Heading 3')
     h.paragraph_format.space_before = Pt(8)
     h.paragraph_format.space_after = Pt(2)
     h.paragraph_format.keep_with_next = True
@@ -566,8 +566,8 @@ def build_report():
          "giúp bầy đàn tinh chỉnh nghiệm sâu hơn (fine-tuning) trong giai đoạn khai thác cuối."),
 
         ("Câu hỏi 2: Đối với nhóm hàm Multimodal (Rastrigin, Ackley, Griewank), IDBO thắng Mean ở bao nhiêu trên tổng số 9 ô (3 hàm × 3 chiều)?",
-         "Trả lời: IDBO thắng Mean ở 8 / 9 ô (chiếm 88.9%). Cụ thể: 1 ô hòa ở Rastrigin 2D (cả hai đều tìm thấy nghiệm tối ưu toàn cục 0.0), "
-         "và IDBO chiến thắng áp đảo ở 8 ô còn lại (Rastrigin 10D, 30D; Ackley 2D, 10D, 30D; Griewank 2D, 10D, 30D). "
+         "Trả lời: IDBO thắng Mean ở 7 / 9 ô (chiếm 77.8%). Cụ thể: 2 ô hòa ở Rastrigin 2D và Ackley 2D (chênh lệch dưới 1%), "
+         "và IDBO chiến thắng áp đảo ở 7 ô còn lại (Rastrigin 10D, 30D; Ackley 10D, 30D; Griewank 2D, 10D, 30D). "
          "Đặc biệt trên Rastrigin 10D, DBO gốc thường xuyên bị kẹt ở các cực trị địa phương (Mean = 6.9647), trong khi IDBO thoát bẫy xuất sắc để kéo Mean xuống 1.8540."),
 
         ("Câu hỏi 3: Ở không gian 30 chiều (Dim = 30), thuật toán có còn hội tụ không, hay phương sai (Std) bị bùng nổ? Hàm nào có kết quả thách thức nhất?",

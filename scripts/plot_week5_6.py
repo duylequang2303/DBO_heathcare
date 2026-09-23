@@ -100,8 +100,10 @@ def plot_f1_convergence(history_csv: Path, out_path: Path, dim: int = 10) -> Non
         if labels:
             ax.legend(handles, labels, loc="upper right", framealpha=0.9)
 
+    n_runs = int(df_dim["run"].nunique()) if "run" in df_dim.columns else 0
+    run_str = f", averaged over {n_runs} runs" if n_runs > 0 else ""
     fig.suptitle(
-        f"Convergence Curves: DBO vs IDBO (dim={dim}, averaged over 30 runs)",
+        f"Convergence Curves: DBO vs IDBO (dim={dim}{run_str})",
         fontsize=14,
         fontweight="bold",
     )
@@ -165,8 +167,10 @@ def plot_f2_boxplot(runs_csv: Path, out_path: Path, dim: int = 10) -> None:
         ax.set_title(f"{func_name} (dim={dim})", fontsize=12, fontweight="bold")
         ax.grid(True, linestyle=":", alpha=0.6)
 
+    n_runs = int(df_dim["run"].nunique()) if "run" in df_dim.columns else 0
+    run_str = f", M={n_runs} runs" if n_runs > 0 else ""
     fig.suptitle(
-        f"Distribution of Best Fitness: DBO vs IDBO (dim={dim}, M=30 runs)",
+        f"Distribution of Best Fitness: DBO vs IDBO (dim={dim}{run_str})",
         fontsize=14,
         fontweight="bold",
     )
@@ -196,16 +200,19 @@ def plot_f3_diversity(diversity_csv: Path, out_path: Path, dim: int = 10) -> Non
     sphere_data = grouped[grouped["function"] == "sphere"].sort_values("iteration")
     rastrigin_data = grouped[grouped["function"] == "rastrigin"].sort_values("iteration")
 
+    if sphere_data.empty or rastrigin_data.empty:
+        print(f"[WARN] F3 requires both 'sphere' and 'rastrigin' data in {diversity_csv}. Skipping F3.")
+        return
+
     fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
 
-    if not sphere_data.empty:
-        ax.plot(
-            sphere_data["iteration"],
-            sphere_data["diversity"],
-            label="Sphere (Unimodal)",
-            color=COLOR_SPHERE,
-            linewidth=2.0,
-        )
+    ax.plot(
+        sphere_data["iteration"],
+        sphere_data["diversity"],
+        label="Sphere (Unimodal)",
+        color=COLOR_SPHERE,
+        linewidth=2.0,
+    )
     if not rastrigin_data.empty:
         ax.plot(
             rastrigin_data["iteration"],
@@ -266,6 +273,9 @@ def main() -> None:
     print(f" Input/Output Directory: {out_dir}")
     print(f" Target Dimension      : {args.dim}")
     print("=" * 60)
+
+    for path in (f1_path, f2_path, f3_path):
+        path.unlink(missing_ok=True)
 
     plot_f1_convergence(history_csv, f1_path, dim=args.dim)
     plot_f2_boxplot(runs_csv, f2_path, dim=args.dim)

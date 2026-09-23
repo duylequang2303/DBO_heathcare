@@ -1,4 +1,5 @@
 numpy
 pandas
 pytest
-matplotlib
+matplotlib>=3.9
+python-docx
