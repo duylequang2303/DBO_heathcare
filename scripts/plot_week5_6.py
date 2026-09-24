@@ -60,21 +60,18 @@ def _safe_log(arr: np.ndarray) -> np.ndarray:
     return out
 
 
-# ─── F1: Hội tụ trung bình dim=10 ────────────────────────────────────────────
-def plot_convergence(history_csv: Path, out_path: Path) -> None:
-    if not history_csv.exists():
-        print(f"[SKIP F1] Không tìm thấy {history_csv}")
+# ─── F1: Hội tụ trung bình DBO vs IDBO theo dim ─────────────────────────────
+def plot_convergence_for_dim(df: pd.DataFrame, dim: int, out_path: Path) -> None:
+    sub_dim = df[df["dim"] == dim]
+    if sub_dim.empty:
         return
-
-    df = pd.read_csv(history_csv)
-    df = df[df["dim"] == 10]
 
     fig, axes = plt.subplots(2, 3, figsize=(14, 8), constrained_layout=True)
     axes = axes.flatten()
 
     for ax, func in zip(axes, FUNC_ORDER):
         for algo in ["dbo", "idbo"]:
-            sub = df[(df["function"] == func) & (df["algorithm"] == algo)]
+            sub = sub_dim[(sub_dim["function"] == func) & (sub_dim["algorithm"] == algo)]
             if sub.empty:
                 continue
             mean_curve = (
@@ -91,35 +88,32 @@ def plot_convergence(history_csv: Path, out_path: Path) -> None:
                 linewidth=1.8,
                 label=algo.upper(),
             )
-        ax.set_title(f"{FUNC_LABEL.get(func, func)}  (dim=10)", fontsize=11)
+        ax.set_title(f"{FUNC_LABEL.get(func, func)}  (dim={dim})", fontsize=11)
         ax.set_xlabel("Iteration", fontsize=9)
         ax.set_ylabel("Best fitness (log)", fontsize=9)
         ax.legend(fontsize=9)
         ax.grid(True, which="both", linestyle=":", alpha=0.5)
         ax.tick_params(labelsize=8)
 
-    fig.suptitle("Hội tụ trung bình DBO vs IDBO — dim=10, M=30", fontsize=13, fontweight="bold")
+    fig.suptitle(f"Hội tụ trung bình DBO vs IDBO — dim={dim}, M=30", fontsize=13, fontweight="bold")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
-    print(f"[OK] F1 saved: {out_path}")
+    print(f"[OK] F1 Convergence dim={dim} saved: {out_path}")
 
 
-# ─── F2: Boxplot best_fitness dim=10 ─────────────────────────────────────────
-def plot_boxplot(runs_csv: Path, out_path: Path) -> None:
-    if not runs_csv.exists():
-        print(f"[SKIP F2] Không tìm thấy {runs_csv}")
+# ─── F2: Boxplot best_fitness DBO vs IDBO theo dim ──────────────────────────
+def plot_boxplot_for_dim(df: pd.DataFrame, dim: int, out_path: Path) -> None:
+    sub_dim = df[df["dim"] == dim]
+    if sub_dim.empty:
         return
-
-    df = pd.read_csv(runs_csv)
-    df = df[df["dim"] == 10]
 
     fig, axes = plt.subplots(2, 3, figsize=(14, 8), constrained_layout=True)
     axes = axes.flatten()
 
     for ax, func in zip(axes, FUNC_ORDER):
-        data_dbo  = df[(df["function"] == func) & (df["algorithm"] == "dbo")]["best_fitness"].to_numpy()
-        data_idbo = df[(df["function"] == func) & (df["algorithm"] == "idbo")]["best_fitness"].to_numpy()
+        data_dbo  = sub_dim[(sub_dim["function"] == func) & (sub_dim["algorithm"] == "dbo")]["best_fitness"].to_numpy()
+        data_idbo = sub_dim[(sub_dim["function"] == func) & (sub_dim["algorithm"] == "idbo")]["best_fitness"].to_numpy()
 
         try:
             bp = ax.boxplot(
@@ -141,11 +135,10 @@ def plot_boxplot(runs_csv: Path, out_path: Path) -> None:
             patch.set_facecolor(color)
             patch.set_alpha(0.75)
 
-        ax.set_title(f"{FUNC_LABEL.get(func, func)}  (dim=10)", fontsize=11)
+        ax.set_title(f"{FUNC_LABEL.get(func, func)}  (dim={dim})", fontsize=11)
         ax.set_ylabel("Best fitness", fontsize=9)
         ax.tick_params(labelsize=9)
 
-        # Log-scale nếu giá trị không bằng 0 hoàn toàn
         all_vals = np.concatenate([data_dbo, data_idbo])
         if np.any(all_vals > 0):
             try:
@@ -154,21 +147,18 @@ def plot_boxplot(runs_csv: Path, out_path: Path) -> None:
                 pass
         ax.grid(True, axis="y", linestyle=":", alpha=0.5)
 
-    fig.suptitle("Phân bố best fitness DBO vs IDBO — dim=10, M=30", fontsize=13, fontweight="bold")
+    fig.suptitle(f"Phân bố best fitness DBO vs IDBO — dim={dim}, M=30", fontsize=13, fontweight="bold")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
-    print(f"[OK] F2 saved: {out_path}")
+    print(f"[OK] F2 Boxplot dim={dim} saved: {out_path}")
 
 
-# ─── F3: Diversity IDBO dim=10 (sphere + rastrigin) ──────────────────────────
-def plot_diversity(diversity_csv: Path, out_path: Path) -> None:
-    if not diversity_csv.exists():
-        print(f"[SKIP F3] Không tìm thấy {diversity_csv}")
+# ─── F3: Diversity IDBO theo dim (sphere + rastrigin) ───────────────────────
+def plot_diversity_for_dim(df: pd.DataFrame, dim: int, out_path: Path) -> None:
+    sub_dim = df[df["dim"] == dim]
+    if sub_dim.empty:
         return
-
-    df = pd.read_csv(diversity_csv)
-    df = df[df["dim"] == 10]
 
     target_funcs = ["sphere", "rastrigin"]
     func_colors  = {"sphere": "#2ca02c", "rastrigin": "#d62728"}
@@ -176,7 +166,7 @@ def plot_diversity(diversity_csv: Path, out_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(9, 5), constrained_layout=True)
 
     for func in target_funcs:
-        sub = df[df["function"] == func]
+        sub = sub_dim[sub_dim["function"] == func]
         if sub.empty:
             continue
         mean_div = sub.groupby("iteration")["diversity"].mean().sort_index()
@@ -189,29 +179,27 @@ def plot_diversity(diversity_csv: Path, out_path: Path) -> None:
             label=FUNC_LABEL.get(func, func),
         )
 
-    # Vẽ đường ngưỡng diversity_threshold = 1e-3
-    ax.axhline(1e-3, color="grey", linestyle=":", linewidth=1.2, label="Ngưỡng (1e-3)")
+    ax.axhline(1e-3, color="grey", linestyle=":", linewidth=1.2, label="Ngưỡng kích hoạt (1e-3)")
 
     ax.set_xlabel("Iteration", fontsize=11)
     ax.set_ylabel("Diversity trung bình", fontsize=11)
-    ax.set_title("Diversity IDBO — dim=10, M=30  (Sphere vs Rastrigin)", fontsize=12, fontweight="bold")
+    ax.set_title(f"Diversity IDBO — dim={dim}, M=30  (Sphere vs Rastrigin)", fontsize=12, fontweight="bold")
     ax.legend(fontsize=10)
     ax.grid(True, linestyle=":", alpha=0.5)
     ax.tick_params(labelsize=9)
 
-    # Y-log nếu diversity về gần 0
-    if df["diversity"].min() > 0:
+    if sub_dim["diversity"].min() > 0:
         ax.set_yscale("log")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
-    print(f"[OK] F3 saved: {out_path}")
+    print(f"[OK] F3 Diversity dim={dim} saved: {out_path}")
 
 
 # ─── main ─────────────────────────────────────────────────────────────────────
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Vẽ 3 hình so sánh DBO vs IDBO tuần 5–6.")
+    parser = argparse.ArgumentParser(description="Vẽ hình so sánh DBO vs IDBO tuần 5–6 cho mọi dim.")
     parser.add_argument(
         "--out-dir",
         type=str,
@@ -227,20 +215,36 @@ def main() -> None:
 
     print(f"Input/output dir: {out_dir}\n")
 
-    plot_convergence(
-        history_csv=out_dir / "idbo_vs_dbo_history.csv",
-        out_path=out_dir / "fig_convergence_dim10.png",
-    )
-    plot_boxplot(
-        runs_csv=out_dir / "idbo_vs_dbo_runs.csv",
-        out_path=out_dir / "fig_boxplot_dim10.png",
-    )
-    plot_diversity(
-        diversity_csv=out_dir / "idbo_diversity.csv",
-        out_path=out_dir / "fig_diversity_dim10.png",
-    )
+    dims = [10, 30, 50]
 
-    print("\nXong. Kiểm tra kết quả trong:", out_dir)
+    # F1 Convergence
+    history_csv = out_dir / "idbo_vs_dbo_history.csv"
+    if history_csv.exists():
+        df_hist = pd.read_csv(history_csv)
+        for d in dims:
+            plot_convergence_for_dim(df_hist, d, out_path=out_dir / f"fig_convergence_dim{d}.png")
+    else:
+        print(f"[SKIP F1] Không tìm thấy {history_csv}")
+
+    # F2 Boxplot
+    runs_csv = out_dir / "idbo_vs_dbo_runs.csv"
+    if runs_csv.exists():
+        df_runs = pd.read_csv(runs_csv)
+        for d in dims:
+            plot_boxplot_for_dim(df_runs, d, out_path=out_dir / f"fig_boxplot_dim{d}.png")
+    else:
+        print(f"[SKIP F2] Không tìm thấy {runs_csv}")
+
+    # F3 Diversity
+    diversity_csv = out_dir / "idbo_diversity.csv"
+    if diversity_csv.exists():
+        df_div = pd.read_csv(diversity_csv)
+        for d in dims:
+            plot_diversity_for_dim(df_div, d, out_path=out_dir / f"fig_diversity_dim{d}.png")
+    else:
+        print(f"[SKIP F3] Không tìm thấy {diversity_csv}")
+
+    print("\nHoàn tất sinh toàn bộ hình ảnh cho các dims (10, 30, 50).")
 
 
 if __name__ == "__main__":

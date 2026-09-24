@@ -169,20 +169,19 @@ def main() -> None:
                     all_results.append(row)
                     completed_runs += 1
 
-                    # Lưu history dim=10 cho mọi algo (F1, F2)
-                    if dim == 10:
-                        for iter_idx, f_val in enumerate(result.history):
-                            history_rows.append({
-                                "algorithm": algo,
-                                "function": bench.name,
-                                "dim": dim,
-                                "run": r + 1,
-                                "iteration": iter_idx,
-                                "best_fitness": f_val,
-                            })
+                    # Lưu history cho mọi algo và mọi dim (F1, F2)
+                    for iter_idx, f_val in enumerate(result.history):
+                        history_rows.append({
+                            "algorithm": algo,
+                            "function": bench.name,
+                            "dim": dim,
+                            "run": r + 1,
+                            "iteration": iter_idx,
+                            "best_fitness": f_val,
+                        })
 
-                    # Lưu diversity dim=10 cho IDBO (F3)
-                    if dim == 10 and algo == "idbo" and hasattr(result, "diversity_history"):
+                    # Lưu diversity cho IDBO ở mọi dim (F3)
+                    if algo == "idbo" and hasattr(result, "diversity_history"):
                         for iter_idx, div_val in enumerate(result.diversity_history, start=1):
                             diversity_rows.append({
                                 "function": bench.name,
@@ -271,9 +270,9 @@ def main() -> None:
             writer = csv.DictWriter(f, fieldnames=hist_fields)
             writer.writeheader()
             writer.writerows(history_rows)
-        print(f"[OK] Convergence history (dim=10) written to: {history_csv}")
+        print(f"[OK] Convergence history written to: {history_csv}")
 
-    # Lưu diversity IDBO dim=10 (dùng cho F3 diversity plot)
+    # Lưu diversity IDBO mọi dim (dùng cho F3 diversity plot)
     if diversity_rows:
         diversity_csv = out_dir / "idbo_diversity.csv"
         div_fields = ["function", "dim", "run", "iteration", "diversity"]
@@ -281,7 +280,7 @@ def main() -> None:
             writer = csv.DictWriter(f, fieldnames=div_fields)
             writer.writeheader()
             writer.writerows(diversity_rows)
-        print(f"[OK] IDBO diversity (dim=10) written to: {diversity_csv}\n")
+        print(f"[OK] IDBO diversity written to: {diversity_csv}\n")
 
     header = (
         f"{'Algo':<6} {'Function':<16} {'Dim':<5} {'Runs':<5} "

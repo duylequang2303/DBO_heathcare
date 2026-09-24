@@ -190,8 +190,8 @@ def main() -> None:
                 all_results.append(res)
                 completed_runs += 1
 
-                # Lưu history dim=10 cho W4-F1
-                if dim == 10 and "history" in res:
+                # Lưu history cho mọi dim để vẽ biểu đồ
+                if "history" in res:
                     for iter_idx, f_val in enumerate(res["history"]):
                         history_rows.append({
                             "function": canonical_name,
@@ -221,15 +221,25 @@ def main() -> None:
         writer.writerows(all_results)
     print(f"\n[OK] Detailed runs written to: {runs_csv}")
 
-    # Lưu history dim=10 (dùng cho W4-F1)
+    # Lưu history tất cả các dim và dim 10
     if history_rows:
-        history_csv = out_dir / "dbo_history_dim10.csv"
         hist_fields = ["function", "dim", "run", "iteration", "best_fitness"]
+        history_csv = out_dir / "dbo_history.csv"
         with open(history_csv, mode="w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=hist_fields)
             writer.writeheader()
             writer.writerows(history_rows)
-        print(f"[OK] History dim=10 written to: {history_csv}")
+        print(f"[OK] History written to: {history_csv}")
+
+        # Đồng thời lưu riêng dim=10 cho tương thích ngược
+        hist_dim10 = [r for r in history_rows if r["dim"] == 10]
+        if hist_dim10:
+            history_dim10_csv = out_dir / "dbo_history_dim10.csv"
+            with open(history_dim10_csv, mode="w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=hist_fields)
+                writer.writeheader()
+                writer.writerows(hist_dim10)
+            print(f"[OK] History dim=10 written to: {history_dim10_csv}")
 
     # Compute summary statistics
     summaries: List[dict] = []
