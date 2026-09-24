@@ -73,6 +73,7 @@ def run_single_experiment(
         "best_fitness": result.best_fitness,
         "runtime_s": round(result.runtime_s, 4),
         "n_evaluations": result.n_evaluations,
+        "history": result.history,  # dùng nội bộ để lưu history CSV, không ghi vào runs CSV
     }
 
 
@@ -168,6 +169,7 @@ def main() -> None:
     start_total_time = time.perf_counter()
 
     all_results: List[dict] = []
+    history_rows: List[dict] = []  # history dim=10 cho W4-F1
 
     for f_idx, func_name in enumerate(args.functions):
         # Resolve to canonical name once so CSV records always use the normalised key
@@ -188,6 +190,17 @@ def main() -> None:
                 all_results.append(res)
                 completed_runs += 1
 
+                # Lưu history dim=10 cho W4-F1
+                if dim == 10 and "history" in res:
+                    for iter_idx, f_val in enumerate(res["history"]):
+                        history_rows.append({
+                            "function": canonical_name,
+                            "dim": dim,
+                            "run": r + 1,
+                            "iteration": iter_idx,
+                            "best_fitness": f_val,
+                        })
+
     total_runtime = time.perf_counter() - start_total_time
 
     # Save detailed runs CSV
@@ -203,10 +216,20 @@ def main() -> None:
         "n_evaluations",
     ]
     with open(runs_csv, mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(all_results)
     print(f"\n[OK] Detailed runs written to: {runs_csv}")
+
+    # Lưu history dim=10 (dùng cho W4-F1)
+    if history_rows:
+        history_csv = out_dir / "dbo_history_dim10.csv"
+        hist_fields = ["function", "dim", "run", "iteration", "best_fitness"]
+        with open(history_csv, mode="w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=hist_fields)
+            writer.writeheader()
+            writer.writerows(history_rows)
+        print(f"[OK] History dim=10 written to: {history_csv}")
 
     # Compute summary statistics
     summaries: List[dict] = []

@@ -131,6 +131,8 @@ def main() -> None:
     completed_runs = 0
     start_total_time = time.perf_counter()
     all_results: List[dict] = []
+    history_rows: List[dict] = []   # dim=10 only — cột: algorithm,function,dim,run,iteration,best_fitness
+    diversity_rows: List[dict] = [] # IDBO dim=10 only — cột: function,dim,run,iteration,diversity
 
     for f_idx, func_name in enumerate(args.functions):
         canonical_name = get_benchmark(func_name).name
@@ -142,19 +144,53 @@ def main() -> None:
                 algo_order = list(args.algorithms)
                 order_rng.shuffle(algo_order)
                 for exec_idx, algo in enumerate(algo_order, start=1):
-                    row = run_single(
-                        algorithm=algo,
-                        benchmark_name=canonical_name,
-                        dim=dim,
-                        run_idx=r + 1,
-                        seed=seed,
-                        n_agents=args.n_agents,
-                        max_iter=args.max_iter,
-                        behaviors=behaviors,
+                    bench = get_benchmark(canonical_name)
+                    if algo == "dbo":
+                        optimizer = DBO(n_agents=args.n_agents, max_iter=args.max_iter, behaviors=behaviors)
+                    else:
+                        optimizer = IDBO(n_agents=args.n_agents, max_iter=args.max_iter, behaviors=behaviors)
+                    result = optimizer.optimize(
+                        objective=bench.func, dim=dim, lb=bench.lb, ub=bench.ub, seed=seed
                     )
-                    row["execution_order"] = exec_idx
+                    row = {
+                        "algorithm": algo,
+                        "function": bench.name,
+                        "category": bench.category,
+                        "dim": dim,
+                        "run": r + 1,
+                        "seed": seed,
+                        "best_fitness": result.best_fitness,
+                        "runtime_s": round(result.runtime_s, 4),
+                        "n_evaluations": result.n_evaluations,
+                        "n_perturbations": getattr(result, "n_perturbations", 0),
+                        "n_restarts": getattr(result, "n_restarts", 0),
+                        "execution_order": exec_idx,
+                    }
                     all_results.append(row)
                     completed_runs += 1
+
+                    # Lưu history dim=10 cho mọi algo (F1, F2)
+                    if dim == 10:
+                        for iter_idx, f_val in enumerate(result.history):
+                            history_rows.append({
+                                "algorithm": algo,
+                                "function": bench.name,
+                                "dim": dim,
+                                "run": r + 1,
+                                "iteration": iter_idx,
+                                "best_fitness": f_val,
+                            })
+
+                    # Lưu diversity dim=10 cho IDBO (F3)
+                    if dim == 10 and algo == "idbo" and hasattr(result, "diversity_history"):
+                        for iter_idx, div_val in enumerate(result.diversity_history, start=1):
+                            diversity_rows.append({
+                                "function": bench.name,
+                                "dim": dim,
+                                "run": r + 1,
+                                "iteration": iter_idx,
+                                "diversity": div_val,
+                            })
 
     total_runtime = time.perf_counter() - start_total_time
 
@@ -226,6 +262,26 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(summaries)
     print(f"[OK] Summary statistics written to: {summary_csv}\n")
+
+    # Lưu lịch sử hội tụ dim=10 (dùng cho F1 convergence plot)
+    if history_rows:
+        history_csv = out_dir / "idbo_vs_dbo_history.csv"
+        hist_fields = ["algorithm", "function", "dim", "run", "iteration", "best_fitness"]
+        with open(history_csv, mode="w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=hist_fields)
+            writer.writeheader()
+            writer.writerows(history_rows)
+        print(f"[OK] Convergence history (dim=10) written to: {history_csv}")
+
+    # Lưu diversity IDBO dim=10 (dùng cho F3 diversity plot)
+    if diversity_rows:
+        diversity_csv = out_dir / "idbo_diversity.csv"
+        div_fields = ["function", "dim", "run", "iteration", "diversity"]
+        with open(diversity_csv, mode="w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=div_fields)
+            writer.writeheader()
+            writer.writerows(diversity_rows)
+        print(f"[OK] IDBO diversity (dim=10) written to: {diversity_csv}\n")
 
     header = (
         f"{'Algo':<6} {'Function':<16} {'Dim':<5} {'Runs':<5} "
