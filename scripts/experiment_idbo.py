@@ -1,8 +1,8 @@
 """Compare original DBO vs IDBO on the week-4 benchmark suite.
 
 Usage:
-    python scripts/experiment_idbo.py --runs 3 --dims 2 10 --max-iter 80 --functions sphere rastrigin
-    python scripts/experiment_idbo.py --runs 30 --dims 2 10 30 --max-iter 500
+    python scripts/experiment_idbo.py --runs 3 --dims 10 30 --max-iter 80 --functions sphere rastrigin
+    python scripts/experiment_idbo.py --runs 30 --dims 10 30 50 --max-iter 500
 """
 
 from __future__ import annotations
@@ -78,7 +78,7 @@ def run_single(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Compare DBO vs IDBO on benchmarks.")
     parser.add_argument("--functions", nargs="+", default=list_benchmarks())
-    parser.add_argument("--dims", nargs="+", type=int, default=[2, 10, 30])
+    parser.add_argument("--dims", nargs="+", type=int, default=[10, 30, 50])
     parser.add_argument("--runs", type=int, default=30)
     parser.add_argument("--max-iter", type=int, default=500)
     parser.add_argument("--n-agents", type=int, default=30)
@@ -230,6 +230,9 @@ def main() -> None:
                     continue
                 arr = np.array([r["best_fitness"] for r in matching], dtype=float)
                 evals = np.array([r["n_evaluations"] for r in matching], dtype=float)
+                runtimes = np.array([r["runtime_s"] for r in matching], dtype=float)
+                perts = np.array([r["n_perturbations"] for r in matching], dtype=float)
+                restarts = np.array([r["n_restarts"] for r in matching], dtype=float)
                 summaries.append(
                     {
                         "algorithm": algo,
@@ -241,6 +244,9 @@ def main() -> None:
                         "std": float(np.std(arr)),
                         "worst": float(np.max(arr)),
                         "mean_n_evaluations": float(np.mean(evals)),
+                        "mean_runtime_s": float(np.mean(runtimes)),
+                        "mean_n_perturbations": float(np.mean(perts)),
+                        "mean_n_restarts": float(np.mean(restarts)),
                     }
                 )
 
@@ -255,6 +261,9 @@ def main() -> None:
         "std",
         "worst",
         "mean_n_evaluations",
+        "mean_runtime_s",
+        "mean_n_perturbations",
+        "mean_n_restarts",
     ]
     with open(summary_csv, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=sum_fields)

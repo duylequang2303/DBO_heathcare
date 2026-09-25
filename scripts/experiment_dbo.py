@@ -9,7 +9,7 @@ Usage:
     py scripts/experiment_dbo.py --dry-run --runs 2 --dims 2 10 --max-iter 20
 
     # Full benchmark experiment (once behaviors.py is available):
-    py scripts/experiment_dbo.py --runs 30 --dims 2 10 30 --max-iter 500
+    py scripts/experiment_dbo.py --runs 30 --dims 10 30 50 --max-iter 500
 """
 
 from __future__ import annotations
@@ -96,8 +96,8 @@ def main() -> None:
         "--dims",
         nargs="+",
         type=int,
-        default=[2, 10, 30],
-        help="Dimensions to evaluate (default: 2 10 30)",
+        default=[10, 30, 50],
+        help="Dimensions to evaluate (default: 10 30 50)",
     )
     parser.add_argument(
         "--runs",
