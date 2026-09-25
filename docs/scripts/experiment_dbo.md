@@ -46,10 +46,10 @@ Chạy thí nghiệm **M lần lặp độc lập** DBO trên bộ benchmark, th
 
 ```bash
 # Dry-run smoke test
-python scripts/experiment_dbo.py --dry-run --runs 2 --dims 2 10 --max-iter 20
+python scripts/experiment_dbo.py --dry-run --runs 2 --dims 10 30 --max-iter 20
 
 # Full experiment
-python scripts/experiment_dbo.py --runs 30 --dims 2 10 30 --max-iter 500
+python scripts/experiment_dbo.py --runs 30 --dims 10 30 50 --max-iter 500
 ```
 
 ## Output

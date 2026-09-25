@@ -150,7 +150,7 @@ Chi tiết API cho module biểu diễn: mục **Hướng dẫn cho Cương** tr
 - Dựng package `src/algorithms/` với `dbo.py`, `behaviors.py`, `benchmarks.py`.
 - DBO gốc theo Xue & Shen (2023): 4 hành vi (ball-rolling, reproduction, foraging, thieving), vòng lặp chính, chọn lọc.
 - Bộ 6 hàm benchmark: Sphere, Rastrigin, Rosenbrock, Ackley, Griewank, Schwefel 2.22.
-- Thí nghiệm M=30 lần với dim ∈ {2, 10, 30} → CSV + thống kê best/mean/std/worst (`scripts/experiment_dbo.py`).
+- Thí nghiệm M=30 lần với dim ∈ {10, 30, 50} → CSV + thống kê best/mean/std/worst (`scripts/experiment_dbo.py`).
 - Demo: `scripts/demo_week4.py` chạy DBO 1 lần, in `best_x`, `best_fitness`, lịch sử hội tụ.
 - Kiểm tra lại trước tuần 5–6: **111 test passed**; Sphere 10D hội tụ `1.47e-204`.
 
@@ -235,7 +235,7 @@ python scripts/demo_week4.py --function sphere --dim 10
 python scripts/demo_week5_6.py --function rastrigin --dim 10
 
 # So sánh DBO vs IDBO (CSV vào experiments/week5_6/)
-python scripts/experiment_idbo.py --runs 3 --dims 2 10 --max-iter 80 --functions sphere rastrigin
+python scripts/experiment_idbo.py --runs 3 --dims 10 30 --max-iter 80 --functions sphere rastrigin
 ```
 
 ## Tài liệu tham khảo
