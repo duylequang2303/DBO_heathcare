@@ -7,13 +7,13 @@ Hệ thống đề xuất thực đơn dinh dưỡng cá nhân hóa dựa trên 
 Trường Đại học Công Thương TP.HCM - Khoa Công nghệ Thông tin
 GVHD: Đinh Nguyễn Trọng Nghĩa (`nghiadnt@huit.edu.vn`)
 
-| Thành viên | MSSV | Vai trò tuần 5–6 |
+| Thành viên | MSSV | Vai trò tuần 7 |
 | :--- | :--- | :--- |
-| Lê Quang Duy | 2001230123 | Trưởng nhóm — khung IDBO & tích hợp |
-| Đặng Nguyễn Minh Đăng | 2001230175 | Thí nghiệm so sánh DBO vs IDBO |
-| Hồ Trung Cương | 2001230070 | Perturbation, restart, đo diversity |
+| Lê Quang Duy | 2001230123 | Trưởng nhóm — adapter fitness thực đơn, demo, gộp Word |
+| Đặng Nguyễn Minh Đăng | 2001230175 | Thí nghiệm DBO vs IDBO trên profile P1 |
+| Hồ Trung Cương | 2001230070 | Sampler `food_ids` hợp lệ, mục biểu diễn/ràng buộc |
 
-Đề cương chi tiết: `docs/CNTT-KLCN142 - ing.docx`. Phân công/tiến độ theo tuần: `docs/TASK_WEEK1.md` → `docs/TASK_WEEK5_6.md`.
+Đề cương chi tiết: `docs/CNTT-KLCN142 - ing.docx`. Phân công/tiến độ theo tuần: `docs/TASK_WEEK1.md` → `docs/TASK_WEEK7.md`.
 
 ## Mục tiêu
 
@@ -162,6 +162,20 @@ Chi tiết API cho module biểu diễn: mục **Hướng dẫn cho Cương** tr
 - Demo: `scripts/demo_week5_6.py`. So sánh DBO vs IDBO: `scripts/experiment_idbo.py`.
 - Phân công chi tiết: `docs/TASK_WEEK5_6.md`.
 
+## Tiến độ tuần 7 (IDBO → thực đơn)
+
+Phân công: `docs/TASK_WEEK7.md`. Chưa làm web, chưa quét nhiều profile (tuần 8).
+
+- IDBO chỉ tối ưu khẩu phần `x` (gram, `dim=8`, biên 25–350); `food_ids` chọn trước 1 lần.
+- Adapter: `objective(x) = -evaluate(Menu.decode(...))` vì DBO minimize, fitness thực đơn maximize.
+- Profile bắt buộc P1 = demo tuần 3 (Duy, 22t, 170 cm, 65 kg, MODERATE, MAINTAIN, 2-2-2-2).
+- Thí nghiệm: `n_agents=30`, `max_iter=200`, `M=10` (không copy M=30 / 500 iter của benchmark).
+
+```bash
+python scripts/demo_week7.py
+python scripts/experiment_week7.py --runs 10 --max-iter 200 --n-agents 30
+```
+
 ## Kết quả kiểm thử
 
 ```text
@@ -206,7 +220,7 @@ DBO_heathcare/
 ├── tests/
 ├── docs/
 │   ├── CNTT-KLCN142 - ing.docx      # Đề cương
-│   └── TASK_WEEK1.md … TASK_WEEK5_6.md
+│   └── TASK_WEEK1.md … TASK_WEEK7.md
 ├── requirements.txt
 └── README.md
 ```

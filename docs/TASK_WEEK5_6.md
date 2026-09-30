@@ -271,7 +271,7 @@ optimize(objective, dim, lb, ub, seed=42) -> IDBOResult
 - [ ] Mục 2–3 Word + bảng perturb/restart (Cương).
 - [ ] `docs/BaoCao_Tuan5_6.docx` đủ 7 mục (Duy gộp).
 
-Tuần 7: gắn `objective` sang fitness thực đơn. Không làm trong mốc này.
+Tuần 7: gắn `objective` sang fitness thực đơn. Không làm trong mốc này. Phân công tuần 7: `docs/TASK_WEEK7.md`.
 
 ## Quy ước
 

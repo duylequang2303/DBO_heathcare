@@ -51,3 +51,7 @@ experiments/week4/*.json
 experiments/week5_6/*.csv
 experiments/week5_6/*.png
 experiments/week5_6/*.json
+experiments/week7/*.csv
+experiments/week7/*.png
+experiments/week7/*.json
+experiments/week7/*.txt
