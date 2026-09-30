@@ -133,19 +133,37 @@ Không commit `experiments/week7/*.csv` hay `*.png`.
 
 ---
 
-## Phân công
+## Phân công & Quy trình Song Song (Parallel Execution Plan)
 
-| Thành viên | Việc chính | Nộp gì |
-| :--- | :--- | :--- |
-| **Lê Quang Duy** | Adapter + demo + gộp Word + Git | `menu_objective.py`, `demo_week7.py`, `tests/test_menu_objective.py`, `docs/BaoCao_Tuan7.docx` |
-| **Hồ Trung Cương** | Sampler `food_ids` + giải thích biểu diễn/ràng buộc trong Word | `food_sampler.py`, `tests/test_food_sampler.py`, mục 2–3 Word |
-| **Đặng Nguyễn Minh Đăng** | Thí nghiệm DBO vs IDBO trên P1 | CSV + 2 PNG + bảng số + mục 4–5 Word |
+Nhóm chia làm 3 luồng công việc, trong đó **Hồ Trung Cương và Đặng Nguyễn Minh Đăng triển khai song song** ngay từ đầu dựa trên hợp đồng giao diện (interface contract) đã chốt:
 
-Thứ tự: sampler (Cương) → adapter (Duy) → experiment (Đăng). Duy merge. Trước merge: `python -m pytest tests/`.
+| Thành viên | Pha 1: Triển khai độc lập & Song song | Pha 2: Khớp nối & Chạy thực nghiệm | Pha 3: Nghiệm thu & Báo cáo | Nộp gì |
+| :--- | :--- | :--- | :--- | :--- |
+| **Hồ Trung Cương** (Song song) | • Code `src/models/food_sampler.py`<br>• Viết 6 tests trong `tests/test_food_sampler.py`<br>• Soạn nháp Mục 2 & 3 Word (Biểu diễn & Ràng buộc) | Cung cấp sampler `food_ids` (seed 7000) cho Duy & Đăng | Rà soát Mục 2–3 trong bản gộp cuối | `food_sampler.py`, `tests/test_food_sampler.py`, mục 2–3 Word |
+| **Đặng Nguyễn Minh Đăng** (Song song) | • Dựng khung `scripts/experiment_week7.py`<br>• Dựng script vẽ `scripts/plot_week7.py`<br>• Chuẩn bị schema 3 file CSV & 2 hình<br>• Soạn nháp Mục 4 & khung Mục 5 Word | Nhận sampler & adapter $\rightarrow$ Bấm chạy M=10 runs thực nghiệm DBO vs IDBO, xuất CSV + PNG | Trả lời 5 câu hỏi mục 5; điền số Bảng 1 & 2 Word | CSV (`runs`, `summary`, `history`), 2 PNG (W7-F1, W7-F2), mục 4–5 Word |
+| **Lê Quang Duy** (Trưởng nhóm) | • Code `src/algorithms/menu_objective.py`<br>• Viết tests `tests/test_menu_objective.py`<br>• Code script `scripts/demo_week7.py`<br>• Soạn Mục 1 Word | Khớp nối pipeline, kiểm tra tương thích giữa các module | Tổng hợp toàn bộ Word `docs/BaoCao_Tuan7.docx` (Mục 1, 6, 7, Phụ lục), test toàn hệ thống, quản lý Git | `menu_objective.py`, `demo_week7.py`, `tests/test_menu_objective.py`, `docs/BaoCao_Tuan7.docx` |
+
+### Quy trình phối hợp song song 4 bước:
+
+1. **Bước 1 (Song song độc lập):**
+   - **Cương**: Code `food_sampler.py` và hoàn thành 6 unit tests cho sampler. Đồng thời soạn nháp Mục 2 & 3 của báo cáo Word.
+   - **Đăng**: Viết sẵn khung script thí nghiệm `experiment_week7.py` và script vẽ đồ thị `plot_week7.py` dựa trên hợp đồng hàm đã chốt ở mục 1.1 và 2.1. Đồng thời soạn nháp Mục 4 của báo cáo Word.
+   - **Duy**: Code adapter `menu_objective.py` và unit tests. Soạn nháp Mục 1 của báo cáo Word.
+2. **Bước 2 (Khớp nối module):**
+   - Duy kiểm thử `demo_week7.py` với `food_sampler.py` và `menu_objective.py`. Chạy `pytest tests/` bảo đảm 100% test xanh.
+3. **Bước 3 (Đăng chạy thực nghiệm & phân tích):**
+   - Đăng chạy pipeline thực nghiệm chính thức ($M=10$, $max\_iter=200$, $N=30$) trên Profile P1.
+   - Xuất 3 file CSV, vẽ 2 hình W7-F1 và W7-F2, trả lời 5 câu hỏi phân tích định lượng (Mục 5).
+4. **Bước 4 (Duy nghiệm thu & tổng hợp báo cáo):**
+   - Duy gộp các phần văn bản từ Cương (Mục 2-3) và Đăng (Mục 4-5) vào báo cáo chuẩn `docs/BaoCao_Tuan7.docx`.
+   - Viết Mục 1 (Mở đầu), Mục 6 (Thảo luận khoa học), Mục 7 (Kết luận & Định hướng Tuần 8), Phụ lục.
+   - Chạy toàn bộ test suite, cập nhật README và commit/push lên GitHub.
 
 ---
 
 ## 1. Cương — chọn món hợp lệ
+
+> **Phương thức làm việc song song (Pha 1):** Cương triển khai độc lập module `src/models/food_sampler.py`, viết đủ 6 unit tests cho sampler, đồng thời soạn thảo nháp nội dung Mục 2 (Biểu diễn nghiệm) và Mục 3 (Xử lý ràng buộc) cho báo cáo Word mà không phải chờ đợi các thành viên khác.
 
 Cương **không** sửa `behaviors.py` / `idbo.py`. File được phép: `src/models/food_sampler.py`, `tests/test_food_sampler.py`. Được đọc `menu.py`, `constraints.py`, `data_loader.py`; không đổi API `encode`/`decode`.
 
@@ -304,6 +322,8 @@ Trước merge: `python -m pytest tests/`. Thêm `experiments/week7/*.csv|png|js
 ---
 
 ## 3. Đăng — thí nghiệm P1
+
+> **Phương thức làm việc song song (Pha 1):** Đăng không cần đợi Cương hay Duy hoàn thành mới bắt đầu. Dựa vào hợp đồng hàm đã chốt (Mục 1.1 và 2.1), Đăng viết sẵn cấu trúc script `scripts/experiment_week7.py` (khung vòng lặp, tính vi phạm, dinh dưỡng, xuất CSV) và `scripts/plot_week7.py` (đồ thị W7-F1 và W7-F2), đồng thời soạn nháp trước Mục 4 và dàn ý Mục 5 trong báo cáo Word.
 
 File được phép: `scripts/experiment_week7.py`, `scripts/plot_week7.py`, `requirements.txt` (matplotlib đã có thì không thêm). Không sửa `idbo.py`.
 
