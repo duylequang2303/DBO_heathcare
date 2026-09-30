@@ -262,7 +262,7 @@ In ra (tiếng Việt, không screenshot IDE):
 3. `best_fitness` **gốc** (`-result.best_fitness`), `n_evaluations`, `runtime_s`.
 4. Tổng calo / protein / carb / fat / fiber vs target.
 5. `validate_menu` — số vi phạm (được phép > 0; ghi rõ).
-6. 5 mốc `history` (đổi dấu): iter 0, 50, 100, 150, cuối.
+6. 5 mốc `history` (đổi dấu) chia đều theo `max_iter`, mốc cuối in đúng 1 lần (ví dụ `max_iter=50` → iter 0, 12, 25, 37, 50).
 
 Mặc định: `--algo idbo`, `--max-iter 50`, `--n-agents 30`, seed chọn món `7000`.
 
