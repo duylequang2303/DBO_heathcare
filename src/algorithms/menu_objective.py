@@ -33,6 +33,7 @@ def make_menu_objective(
     cached_targets = dict(targets)
 
     def objective(x: np.ndarray) -> float:
+        """Evaluate continuous portion vector x and return negative menu fitness."""
         if len(x) != expected_dim:
             raise ValueError(
                 f"len(x) ({len(x)}) must equal dim ({expected_dim})"
