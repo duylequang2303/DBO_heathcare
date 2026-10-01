@@ -11,7 +11,6 @@ ROOT = Path(__file__).resolve().parents[1]
 EXP_W4 = ROOT / "experiments" / "week4"
 EXP_W5 = ROOT / "experiments" / "week5_6"
 OUT_MERGED = ROOT / "docs" / "Bao_Cao_Tien_Do_Tuan_4_5_6_Cuong.docx"
-OUT_W4 = ROOT / "docs" / "Bao_Cao_Tuan_4_Cuong.docx"
 
 FUNC_ORDER = ['sphere', 'schwefel_2_22', 'rosenbrock', 'rastrigin', 'ackley', 'griewank']
 DIMS_ORDER = [10, 30, 50]
@@ -537,11 +536,9 @@ def generate_report():
         "(Lưu ý: Nội dung này thuộc kế hoạch tuần 7, tuần này chưa triển khai)."
     )
 
-    # Lưu cả 2 file: file báo cáo tiến độ tuần 4-5-6 và file tuần 4
+    # Lưu file báo cáo tiến độ tuần 4-5-6
     doc.save(str(OUT_MERGED))
     print(f"[OK] Saved merged report to: {OUT_MERGED}")
-    doc.save(str(OUT_W4))
-    print(f"[OK] Also synchronized: {OUT_W4}")
 
 if __name__ == "__main__":
     generate_report()
