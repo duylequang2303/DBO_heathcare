@@ -327,7 +327,9 @@ def load_baseline_metrics(exp_dir: Path) -> Dict[str, float]:
                 "mean_fitness": float(df["mean_fitness"].iloc[0]),
                 "mean_calories": float(df["mean_calories"].iloc[0]),
             }
-    return {"mean_violations": 2.70, "mean_fitness": 47.22, "mean_calories": 3376.8}
+    raise FileNotFoundError(
+        f"Không tìm thấy {baseline_file}. Hãy chạy `python scripts/experiment_week7.py` trước."
+    )
 
 
 def build_full_report(exp_dir: Path, docs_dir: Path) -> None:
@@ -618,6 +620,7 @@ def build_full_report(exp_dir: Path, docs_dir: Path) -> None:
     dbo_cals = float(runs_df[runs_df["algorithm"] == "dbo"]["calories"].mean())
     cals_target = targets["calories"]
     cals_pct_diff = (abs(dbo_cals - cals_target) / cals_target) * 100
+    opt_viols = float(runs_df["n_violations"].mean())
 
     add_h2(doc, "5.4. Trả lời chi tiết 5 câu hỏi định lượng theo yêu cầu Mục 3.4")
 
@@ -632,8 +635,8 @@ def build_full_report(exp_dir: Path, docs_dir: Path) -> None:
     add_bullet(doc, "Câu 2 — Mức độ giảm vi phạm so với thực đơn ngẫu nhiên",
                f"Kết quả ngẫu nhiên (10 mẫu khẩu phần phân bố đều x ~ U(25, 350)): số vi phạm trung bình là {baseline['mean_violations']:.2f} vi phạm/thực đơn "
                f"(điểm fitness trung bình chỉ đạt {baseline['mean_fitness']:.2f}, năng lượng đạt {baseline['mean_calories']:.1f} kcal). "
-               f"Sau khi tối ưu bằng DBO/IDBO: số vi phạm trung bình giảm về đúng 0.00 vi phạm/thực đơn. "
-               f"Thuật toán đã GIẢM TRIỆT ĐỂ 100% SỐ VI PHẠM (giảm {baseline['mean_violations']:.2f} lỗi về 0 lỗi hoàn toàn).")
+               f"Sau khi tối ưu bằng DBO/IDBO: số vi phạm trung bình còn {opt_viols:.2f} vi phạm/thực đơn. "
+               f"Mức giảm so với thực đơn ngẫu nhiên là {baseline['mean_violations'] - opt_viols:.2f} vi phạm/thực đơn.")
 
     # Q3
     add_bullet(doc, "Câu 3 — Độ lệch năng lượng (Calories) trung bình so với mục tiêu",
@@ -647,12 +650,15 @@ def build_full_report(exp_dir: Path, docs_dir: Path) -> None:
                f"IDBO {'nhanh hơn khoảng ' + f'{abs(time_diff_pct):.1f}%' if time_diff_pct < 0 else 'chậm hơn ' + f'{time_diff_pct:.1f}%'} so với DBO gốc, "
                f"cho thấy thuật toán vận hành rất nhẹ và ổn định.")
 
+    hist_df = pd.read_csv(exp_dir / "menu_history.csv")
+    mean_curve = hist_df.groupby("iteration")["fitness"].mean().sort_index()
+    final_fit = float(mean_curve.iloc[-1])
+    plateau_iter = int(mean_curve[mean_curve >= 0.99 * final_fit].index[0])
+
     # Q5
     add_bullet(doc, "Câu 5 — Xu hướng hội tụ trên đồ thị W7-F1",
-               "Quan sát Hình 5.1 cho thấy đường cong fitness tăng trưởng rất dốc trong 30 vòng lặp đầu tiên. "
-               "Sau đó, đường cong bắt đầu đi vào vùng bình nguyên (plateau) tại khoảng vòng lặp 50 (đạt >99.0). "
-               "Từ vòng lặp 80 đến 200, đồ thị gần như nằm ngang hoàn toàn. "
-               "Điều này chứng minh thuật toán đã hội tụ vững chắc và số vòng lặp hiện tại là hoàn toàn đủ để tìm kiếm lời giải tối ưu.")
+               f"Quan sát Hình 5.1, đường cong fitness tăng nhanh trong các vòng lặp đầu và đạt ~99% giá trị cuối ({final_fit:.4f}) quanh vòng lặp {plateau_iter}. "
+               f"Từ đó đến vòng lặp {int(mean_curve.index.max())}, đồ thị gần như đi ngang, cho thấy thuật toán đã hội tụ ổn định và max_iter hiện tại là đủ.")
 
     # ──────────────────────────────────────────────────────────────────────────
     # MỤC 6: THẢO LUẬN KHOA HỌC
@@ -666,10 +672,10 @@ def build_full_report(exp_dir: Path, docs_dir: Path) -> None:
 
     add_p(doc,
           "2. So sánh hành vi DBO vs IDBO trong bài toán khẩu phần: "
-          "Khác với các hàm benchmark đa cực phức tạp (như Rastrigin, Griewank ở số chiều 30, 50 nơi IDBO vượt trội rõ rệt), "
-          "bài toán khẩu phần liên tục với danh sách món cố định có bề mặt hàm mục tiêu tương đối đơn hướng và lồi xung quanh "
-          "điểm cân bằng năng lượng. Do đó, cả DBO và IDBO đều dễ dàng đạt tới điểm tối ưu toàn cục (fitness ~99.2). "
-          "Cải tiến của IDBO sẽ phát huy vai trò quyết định hơn khi nhóm bước sang giai đoạn tối ưu hỗn hợp (đồng thời chọn món và chọn gram) ở các tuần tới.")
+          "Trên 6 hàm benchmark chuẩn ở tuần 5-6, IDBO và DBO cho kết quả hòa trên toàn bộ 18/18 cấu hình (hàm × dim, ngưỡng 1%). "
+          "Với bài toán khẩu phần liên tục có danh sách món cố định, bề mặt hàm mục tiêu tương đối đơn hướng và lồi quanh "
+          f"điểm cân bằng năng lượng, nên cả DBO và IDBO đều đạt tới điểm tối ưu toàn cục (fitness ~{dbo_mean_fit:.2f}). "
+          "Vai trò của cơ chế cải tiến trong IDBO sẽ thể hiện rõ hơn khi nhóm chuyển sang tối ưu hỗn hợp (đồng thời chọn món và chọn gram) ở các tuần tới.")
 
     # ──────────────────────────────────────────────────────────────────────────
     # MỤC 7: KẾT LUẬN VÀ KẾ HOẠCH TUẦN 8
@@ -789,17 +795,22 @@ def build_dang_report(exp_dir: Path, docs_dir: Path) -> None:
     cals_target = targets["calories"]
     cals_pct_diff = (abs(dbo_cals - cals_target) / cals_target) * 100
 
+    hist_df = pd.read_csv(exp_dir / "menu_history.csv")
+    mean_curve = hist_df.groupby("iteration")["fitness"].mean().sort_index()
+    final_fit = float(mean_curve.iloc[-1])
+    plateau_iter = int(mean_curve[mean_curve >= 0.99 * final_fit].index[0])
+
     add_h2(doc, "5.4. Trả lời chi tiết 5 câu hỏi định lượng")
     add_bullet(doc, "Câu 1 — So sánh Mean Fitness theo ngưỡng 1%",
-               f"{winner_verdict.upper()}. Cả DBO và IDBO đều đạt fitness trung bình {dbo_mean_fit:.4f} (±{dbo_std_fit:.4f}) và {idbo_mean_fit:.4f} (±{idbo_std_fit:.4f}). Độ chênh lệch là {rel_diff * 100:.2f}% (< 1.0%).")
+               f"{winner_verdict.upper()}. Cả DBO và IDBO đều đạt fitness trung bình {dbo_mean_fit:.4f} (±{dbo_std_fit:.4f}) và {idbo_mean_fit:.4f} (±{idbo_std_fit:.4f}). Độ chênh lệch là {rel_diff * 100:.2f}%, {'dưới' if rel_diff < 0.01 else 'vượt'} ngưỡng 1.0%.")
     add_bullet(doc, "Câu 2 — Mức độ giảm vi phạm so với ngẫu nhiên",
-               f"Thực đơn ngẫu nhiên có trung bình {baseline['mean_violations']:.2f} vi phạm. Thực đơn DBO/IDBO đạt 0.00 vi phạm. Giảm triệt để 100% số vi phạm.")
+               f"Thực đơn ngẫu nhiên có trung bình {baseline['mean_violations']:.2f} vi phạm. Thực đơn DBO/IDBO còn trung bình {float(runs_df['n_violations'].mean()):.2f} vi phạm.")
     add_bullet(doc, "Câu 3 — Độ lệch năng lượng (Calories) trung bình",
                f"Năng lượng đạt {dbo_cals:.2f} kcal so với mục tiêu {cals_target:.2f} kcal. Độ lệch chỉ {cals_pct_diff:.3f}% (~{cals_pct_diff:.2f}%).")
     add_bullet(doc, "Câu 4 — So sánh tốc độ thực thi (Runtime)",
                f"DBO chạy trung bình {dbo_time:.2f}s; IDBO chạy {idbo_time:.2f}s. IDBO {'nhanh hơn DBO khoảng ' + f'{abs(time_diff_pct):.1f}%' if time_diff_pct < 0 else 'chậm hơn ' + f'{time_diff_pct:.1f}%'}.")
     add_bullet(doc, "Câu 5 — Xu hướng hội tụ",
-               "Fitness tăng dốc trong 30 vòng lặp đầu, tiệm cận vùng tối ưu >99.0 ở vòng lặp 50, và duy trì ổn định đến vòng lặp 200.")
+               f"Fitness tăng nhanh trong các vòng đầu, đạt ~99% giá trị cuối ({final_fit:.4f}) quanh vòng lặp {plateau_iter} và duy trì ổn định đến vòng lặp {int(mean_curve.index.max())}.")
 
     out_file = docs_dir / "Phan_Dang_Tuan7.docx"
     doc.save(str(out_file))
@@ -808,7 +819,8 @@ def build_dang_report(exp_dir: Path, docs_dir: Path) -> None:
 
 def main():
     """Verify prerequisites and generate both full and individual Week 7 reports."""
-    required = [EXP_DIR / "menu_summary.csv", EXP_DIR / "menu_runs.csv"]
+    required = [EXP_DIR / "menu_summary.csv", EXP_DIR / "menu_runs.csv",
+                EXP_DIR / "menu_baseline.csv", EXP_DIR / "menu_history.csv"]
     missing = [p for p in required if not p.exists()]
     if missing:
         print(f"[ERROR] Missing experiment CSVs: {missing}", file=sys.stderr)
