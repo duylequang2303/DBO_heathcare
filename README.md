@@ -187,15 +187,17 @@ python -m pytest tests/
 | `tests/test_benchmarks.py` | 6 hàm benchmark tại optimum đã biết |
 | `tests/test_constraints.py` | Ràng buộc thực đơn |
 | `tests/test_dbo.py` | DBO gốc: seed, history, biên, Sphere 10D |
+| `tests/test_food_sampler.py` | Chọn món hợp lệ: nhãn bữa, dị ứng, seed |
 | `tests/test_idbo.py` | IDBO: diversity, perturb/restart, seed, hội tụ |
 | `tests/test_menu.py` | Encode/decode thực đơn |
+| `tests/test_menu_objective.py` | Adapter tối ưu thực đơn DBO/IDBO |
 | `tests/test_model.py` | Hồ sơ → fitness |
 | `tests/test_nutrition.py` | BMR/TDEE, DRI |
 | `tests/test_objective.py` | Trọng số fitness |
 
 ### Cách chạy test
 
-Xem mục **Cài đặt và chạy** bên dưới.
+Xem mục **Cài đặt và chạy** bên dưới. Toàn bộ **138 test** chạy tự động qua pytest.
 
 ## Cấu trúc dự án
 
@@ -205,9 +207,9 @@ DBO_heathcare/
 │   ├── raw/                         # USDA + bảng thành phần VN
 │   └── processed/merged_food_nutrition.csv
 ├── src/
-│   ├── models/                      # UserProfile, Menu, ràng buộc, fitness
+│   ├── models/                      # UserProfile, Menu, ràng buộc, fitness, food_sampler
 │   ├── utils/                       # data_loader, BMR/TDEE
-│   ├── algorithms/                  # DBO (tuần 4), IDBO (tuần 5–6)
+│   ├── algorithms/                  # DBO (tuần 4), IDBO (tuần 5–6), menu_objective (tuần 7)
 │   └── api/                         # Backend web (tuần 9+)
 ├── web/                             # Giao diện (tuần 9+)
 ├── scripts/
@@ -216,10 +218,15 @@ DBO_heathcare/
 │   ├── demo_week4.py
 │   ├── experiment_dbo.py
 │   ├── demo_week5_6.py
-│   └── experiment_idbo.py
+│   ├── experiment_idbo.py
+│   ├── demo_week7.py
+│   ├── experiment_week7.py
+│   ├── plot_week7.py
+│   └── build_report_week7.py
 ├── tests/
 ├── docs/
 │   ├── CNTT-KLCN142 - ing.docx      # Đề cương
+│   ├── BaoCao_Tuan7.docx            # Báo cáo Word hoàn chỉnh Tuần 7
 │   └── TASK_WEEK1.md … TASK_WEEK7.md
 ├── requirements.txt
 └── README.md
@@ -235,7 +242,7 @@ source venv/bin/activate
 # Cài thư viện
 pip install -r requirements.txt
 
-# Test
+# Test toàn bộ
 python -m pytest tests/
 python -m pytest tests/ -v
 
@@ -250,6 +257,18 @@ python scripts/demo_week5_6.py --function rastrigin --dim 10
 
 # So sánh DBO vs IDBO (CSV vào experiments/week5_6/)
 python scripts/experiment_idbo.py --runs 3 --dims 10 30 --max-iter 80 --functions sphere rastrigin
+
+# Demo tuần 7: Tối ưu khẩu phần thực đơn Profile P1
+python scripts/demo_week7.py
+
+# Thí nghiệm tuần 7: M=10 runs so sánh DBO vs IDBO trên P1
+python scripts/experiment_week7.py --runs 10 --max-iter 200 --n-agents 30
+
+# Vẽ 2 đồ thị hội tụ và boxplot tuần 7
+python scripts/plot_week7.py
+
+# Tạo báo cáo Word chuẩn Tuần 7
+python scripts/build_report_week7.py
 ```
 
 ## Tài liệu tham khảo
