@@ -34,6 +34,7 @@ from src.utils.nutrition import calc_bmr, calc_calorie_target, calc_tdee, daily_
 
 
 def main():
+    """Run a single demo menu optimization on Profile P1 using DBO or IDBO."""
     if hasattr(sys.stdout, "reconfigure"):
         try:
             sys.stdout.reconfigure(encoding="utf-8")

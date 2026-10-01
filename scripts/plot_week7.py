@@ -70,7 +70,7 @@ def plot_convergence(hist_df: pd.DataFrame, out_path: Path, max_iter: int = 200,
         )
 
     plt.title(
-        f"W7-F1: Đường cong hội tụ tối ưu thực đơn Profile P1\n(dim=8, N=30 cá thể, max_iter={max_iter}, M={m_runs} runs)",
+        f"W7-F1: Đường cong hội tụ tối ưu thực đơn Profile P1\n(max_iter={max_iter}, M={m_runs} runs)",
         fontsize=12,
         fontweight="bold",
         pad=12,
@@ -135,7 +135,7 @@ def plot_boxplot(runs_df: pd.DataFrame, out_path: Path, max_iter: int = 200, m_r
         )
 
     plt.title(
-        f"W7-F2: Phân bố Best Fitness thực đơn Profile P1\n(dim=8, N=30, max_iter={max_iter}, M={m_runs} runs)",
+        f"W7-F2: Phân bố Best Fitness thực đơn Profile P1\n(max_iter={max_iter}, M={m_runs} runs)",
         fontsize=12,
         fontweight="bold",
         pad=12,
@@ -151,6 +151,7 @@ def plot_boxplot(runs_df: pd.DataFrame, out_path: Path, max_iter: int = 200, m_r
 
 
 def main():
+    """Load Week 7 experiment CSVs and generate convergence and boxplot figures."""
     parser = argparse.ArgumentParser(description="Generate Week 7 Plots")
     parser.add_argument("--exp-dir", type=str, default=None, help="Directory containing experiment CSVs")
     args = parser.parse_args()

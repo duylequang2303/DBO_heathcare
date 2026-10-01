@@ -96,6 +96,15 @@ def run_experiment(
     seed_sampler: int = 7000,
     output_dir: Path | None = None,
 ) -> None:
+    """Execute repeated menu optimization experiments comparing DBO and IDBO.
+
+    Args:
+        runs: Number of independent runs (M) per algorithm.
+        max_iter: Maximum number of search iterations per run.
+        n_agents: Swarm population size.
+        seed_sampler: Random seed for food selection.
+        output_dir: Target directory for CSV and text artifacts.
+    """
     if output_dir is None:
         output_dir = ROOT / "experiments" / "week7"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -137,6 +146,12 @@ def run_experiment(
     print(f"  Random Menu Mean Violations: {baseline['mean_violations']:.2f}")
     print(f"  Random Menu Mean Fitness:    {baseline['mean_fitness']:.2f}")
     print(f"  Random Menu Mean Calories:   {baseline['mean_calories']:.1f} kcal")
+    baseline_csv = output_dir / "menu_baseline.csv"
+    with open(baseline_csv, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["mean_violations", "mean_fitness", "mean_calories"])
+        writer.writeheader()
+        writer.writerow(baseline)
+    print(f"Saved baseline metrics to {baseline_csv}")
 
     # 4. Run DBO and IDBO
     print(f"[4/5] Running optimization algorithms (DBO and IDBO)...")
@@ -282,6 +297,7 @@ def run_experiment(
 
 
 def main():
+    """Parse CLI arguments and run Week 7 menu optimization experiment."""
     parser = argparse.ArgumentParser(description="Week 7 Menu Optimization Experiment")
     parser.add_argument("--runs", type=int, default=10, help="Number of independent runs (M)")
     parser.add_argument("--max-iter", type=int, default=200, help="Max iterations per run")
