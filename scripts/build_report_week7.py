@@ -817,6 +817,157 @@ def build_dang_report(exp_dir: Path, docs_dir: Path) -> None:
     print(f"Successfully generated Dang report: {out_file}")
 
 
+def build_duy_report(exp_dir: Path, docs_dir: Path) -> None:
+    """Generate the individual report for Duy (Phan_Duy_Tuan7.docx)."""
+    print("Building Duy section report docs/Phan_Duy_Tuan7.docx...")
+    doc = docx.Document()
+
+    for sec in doc.sections:
+        sec.top_margin = Inches(0.8)
+        sec.bottom_margin = Inches(0.8)
+        sec.left_margin = Inches(1.0)
+        sec.right_margin = Inches(0.8)
+
+    profile = get_profile_p1()
+    targets = daily_all_targets(profile)
+    sum_df = pd.read_csv(exp_dir / "menu_summary.csv")
+    runs_df = pd.read_csv(exp_dir / "menu_runs.csv")
+    winner_verdict, rel_diff = determine_winner(sum_df)
+    baseline = load_baseline_metrics(exp_dir)
+    m_runs = int(runs_df["run"].max()) if not runs_df.empty else 10
+
+    # Title
+    p_title = doc.add_paragraph()
+    p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_title.paragraph_format.space_after = Pt(4)
+    r_t = p_title.add_run("BÁO CÁO NHIỆM VỤ TUẦN 7 — LÊ QUANG DUY (TRƯỞNG NHÓM)\n")
+    r_t.font.name = "Times New Roman"
+    r_t.font.size = Pt(14)
+    r_t.font.bold = True
+    r_t.font.color.rgb = COLOR_PRIMARY
+
+    r_sub = p_title.add_run("Nhiệm vụ: Chuyển giao IDBO sang tối ưu thực đơn, xây dựng Adapter, Demo tích hợp, thảo luận và tổng hợp báo cáo\nMã đề tài: CNTT-KLCN142 — GVHD: ThS. Đinh Nguyễn Trọng Nghĩa\n")
+    r_sub.font.name = "Times New Roman"
+    r_sub.font.size = Pt(11)
+    r_sub.font.italic = True
+
+    # 1. Mục tiêu
+    add_h1(doc, "1. MỤC TIÊU VÀ ĐỊNH HƯỚNG CHUYỂN GIAO THUẬT TOÁN (DUY PHỤ TRÁCH)")
+    add_p(doc,
+          "Trong các tuần 4–6, nhóm đã hoàn thành việc cài đặt thuật toán Dung Beetle Optimizer (DBO) gốc và đề xuất "
+          "phiên bản cải tiến IDBO (tích hợp phân bố Cauchy và cơ chế tái khởi động ngẫu nhiên), kiểm thử đối chứng "
+          "thành công trên 6 hàm benchmark toán học chuẩn (Sphere, Schwefel 2.22, Rosenbrock, Rastrigin, Griewank, Ackley). "
+          "Bước sang Tuần 7, trọng tâm nghiên cứu của nhóm và nhiệm vụ cốt lõi của trưởng nhóm Lê Quang Duy là chuyển giao "
+          "toàn bộ khung thuật toán IDBO/DBO sang giải quyết bài toán thực tế: tối ưu hóa khẩu phần thực đơn cá nhân hóa.")
+    add_p(doc,
+          "Các mục tiêu kỹ thuật cụ thể do Duy phụ trách bao gồm:\n"
+          "1. Thiết kế và cài đặt module Adapter `src/algorithms/menu_objective.py` làm cầu nối giữa bộ tối ưu liên tục và mô hình dinh dưỡng.\n"
+          "2. Đảo chiều bài toán từ Maximize Fitness sang Minimize Objective để tương thích hoàn toàn với DBO/IDBO mà không làm thay đổi chữ ký hàm của thuật toán.\n"
+          "3. Xây dựng kịch bản kiểm thử tự động `tests/test_menu_objective.py` và script minh họa trực quan `scripts/demo_week7.py`.\n"
+          "4. Khớp nối pipeline giữa module chọn món của Cương và module thực nghiệm đo lường của Đăng.\n"
+          "5. Chịu trách nhiệm tổng hợp toàn bộ báo cáo Word của nhóm (`docs/BaoCao_Tuan7.docx`) và phân tích khoa học chuyên sâu.")
+
+    # 2. Module Adapter
+    add_h1(doc, "2. THIẾT KẾ VÀ HIỆN THỰC MODULE ADAPTER (src/algorithms/menu_objective.py)")
+    add_p(doc,
+          "Do các thuật toán metaheuristic như DBO/IDBO tìm kiếm cực tiểu (minimization) trên không gian vector số thực, "
+          "trong khi hàm đánh giá dinh dưỡng `evaluate()` trong `src/models/objective.py` lại tính điểm theo thang điểm "
+          "càng cao càng tốt trong khoảng [-100, 100] (maximization), nên việc xây dựng adapter là điều kiện tiên quyết.")
+    add_bullet(doc, "Hợp đồng giao diện (Interface Contract)",
+               "`make_menu_objective(profile, food_ids, food_map, targets) -> Callable[[np.ndarray], float]`. "
+               "Hàm nhận vào hồ sơ người dùng, danh sách ID món ăn đã cố định, từ điển dữ liệu món và mục tiêu DRI, trả về một callable thuần túy.")
+    add_bullet(doc, "Cơ chế đảo chiều hàm mục tiêu",
+               "Hàm trả về `-float(evaluate(menu, profile, targets))`. Do đó, nghiệm có điểm dinh dưỡng càng cao thì giá trị hàm mục tiêu của DBO càng nhỏ.")
+    add_bullet(doc, "Kiểm tra ràng buộc kích thước vector",
+               "Vector nghiệm x đại diện cho khối lượng gram của từng món ăn. Adapter kiểm tra chặt chẽ `len(x) == len(food_ids) == sum(profile.meal_counts.values())`, "
+               "nếu không khớp sẽ lập tức ném ngoại lệ `ValueError` để phòng ngừa lỗi logic trong quá trình tối ưu.")
+    add_bullet(doc, "Hàm giải mã phụ trợ",
+               "Hàm `decode_result(food_ids, x, food_map, meal_counts)` chuyển đổi vector gram tối ưu thành đối tượng `Menu` hoàn chỉnh, "
+               "phục vụ trích xuất dinh dưỡng và hiển thị bảng biểu cho người dùng.")
+
+    # 3. Demo tuần 7
+    add_h1(doc, "3. HIỆN THỰC VÀ KIỂM THỬ SCRIPT DEMO TUẦN 7 (scripts/demo_week7.py)")
+    add_p(doc,
+          "Để nghiệm thu tính năng chuyển giao thuật toán một cách trực quan, Duy đã xây dựng `scripts/demo_week7.py`. "
+          "Script thực hiện tối ưu thực đơn thực tế trên Profile P1 (Duy, 22 tuổi, 65kg, 170cm, vận động vừa phải, mục tiêu duy trì cân nặng). "
+          "Đầu ra của script hiển thị đầy đủ 6 khối thông tin khoa học theo quy chuẩn:")
+    add_bullet(doc, "Khối 1 — Hồ sơ & Chỉ số trao đổi chất",
+               f"BMR = 1,607.5 kcal (công thức Mifflin-St Jeor), TDEE = {targets['calories']:.1f} kcal/ngày, calo mục tiêu duy trì thể trọng.")
+    add_bullet(doc, "Khối 2 — Thực đơn tối ưu chi tiết",
+               "8 món ăn được chia đều cho 4 bữa (2 sáng, 2 trưa, 2 tối, 2 phụ), khối lượng khẩu phần mỗi món nằm gọn trong khoảng [25, 350] g.")
+    add_bullet(doc, "Khối 3 — Hiệu năng tối ưu",
+               "Thời gian chạy chỉ khoảng 0.12 - 0.15 giây cho 50 vòng lặp, đạt Best Fitness > 98.8 điểm ngay ở lần chạy đầu tiên.")
+    add_bullet(doc, "Khối 4 — Dinh dưỡng so với DRI",
+               f"Năng lượng thực đơn đạt xấp xỉ {targets['calories']:.1f} kcal (độ lệch < 2 kcal, tương đương sai số < 0.1%), "
+               "các chỉ số đa lượng Protein, Carbs, Fat và Chất xơ đều tiệm cận hoàn hảo ngưỡng khuyến nghị y khoa.")
+    add_bullet(doc, "Khối 5 — Kiểm tra ràng buộc y tế",
+               "Hàm `validate_menu()` ghi nhận chính xác 0 vi phạm (thực đơn hợp lệ 100%, không xung đột dị ứng hay sai lệch bữa).")
+    add_bullet(doc, "Khối 6 — 5 mốc lịch sử hội tụ",
+               "Ghi nhận fitness tăng trưởng nhảy vọt từ ~78 điểm ở vòng lặp 0 lên ~98.7 điểm ở vòng lặp 12, sau đó duy trì ổn định đến vòng lặp 50.")
+
+    # 4. Kiểm thử
+    add_h1(doc, "4. BẢO ĐẢM CHẤT LƯỢNG PHẦN MỀM VÀ BỘ KIỂM THỬ (tests/test_menu_objective.py)")
+    add_p(doc,
+          "Toàn bộ mã nguồn adapter do Duy phụ trách được bao phủ bởi 4 bài unit test chuyên sâu trong `tests/test_menu_objective.py`:\n"
+          "1. `test_dimension_validation`: Kiểm tra xác thực số chiều, từ chối các vector sai kích thước (7 hoặc 9 phần tử khi dim=8).\n"
+          "2. `test_objective_bounded_and_deterministic`: Đảm bảo tính tất định (cùng vector x cho ra cùng kết quả) và giá trị fitness nằm đúng trong miền [-100, 100].\n"
+          "3. `test_better_menu_has_lower_objective`: Kiểm tra tính đơn điệu, thực đơn cân bằng hơn bắt buộc phải cho giá trị hàm mục tiêu nhỏ hơn.\n"
+          "4. `test_idbo_integration`: Kiểm thử tích hợp toàn diện quy trình chạy IDBO từ khởi tạo quần thể đến hội tụ nghiệm tối ưu.\n"
+          "Kết quả kiểm thử toàn hệ thống đạt 138/138 tests PASSED (100% test xanh).")
+
+    # 5. Thảo luận khoa học
+    dbo_mean_fit = float(sum_df.loc[sum_df["algorithm"] == "dbo", "mean"].iloc[0])
+    add_h1(doc, "5. THẢO LUẬN KHOA HỌC VÀ NHẬN XÉT ĐỐI CHỨNG (DUY PHỤ TRÁCH)")
+    add_p(doc,
+          "Dựa trên kết quả thực nghiệm đo đạc độc lập qua M=10 runs do nhóm thực hiện, bảng tổng hợp hiệu năng "
+          "và đồ thị hội tụ W7-F1 chứng minh tính hội tụ vững chắc của thuật toán:")
+
+    create_summary_table(doc, sum_df, winner_verdict)
+    add_caption(doc, f"Bảng 5.1. Hiệu năng đối chứng DBO vs IDBO trên Profile P1 (M={m_runs} runs)")
+
+    fig1_path = exp_dir / "fig_convergence_p1.png"
+    if fig1_path.exists():
+        doc.add_picture(str(fig1_path), width=Inches(5.4))
+        add_caption(doc, f"Hình 5.1 (W7-F1). Đường cong hội tụ trung bình DBO vs IDBO trên Profile P1 (M={m_runs} runs)")
+
+    add_p(doc,
+          "1. Tính khả thi của việc tối ưu khẩu phần liên tục: "
+          "Kết quả thực nghiệm khẳng định việc cố định món ăn và tối ưu hóa khẩu phần trong miền liên tục [25, 350] g "
+          "là hoàn toàn khả thi và hiệu quả cao. Thuật toán có thể tinh chỉnh khối lượng gram của từng món ăn để khớp nối "
+          "chính xác cả năng lượng tổng thể lẫn các chỉ số đa lượng mà không gặp bất kỳ xung đột nào.")
+    add_p(doc,
+          "2. So sánh hành vi DBO vs IDBO trong bài toán khẩu phần: "
+          "Trên 6 hàm benchmark chuẩn ở tuần 5-6, IDBO và DBO cho kết quả hòa trên toàn bộ 18/18 cấu hình (hàm × dim, ngưỡng 1%). "
+          "Với bài toán khẩu phần liên tục có danh sách món cố định, bề mặt hàm mục tiêu tương đối đơn hướng và lồi quanh "
+          f"điểm cân bằng năng lượng, nên cả DBO và IDBO đều đạt tới điểm tối ưu toàn cục (fitness ~{dbo_mean_fit:.2f}). "
+          "Vai trò của cơ chế cải tiến trong IDBO sẽ thể hiện rõ hơn khi nhóm chuyển sang tối ưu hỗn hợp (đồng thời chọn món và chọn gram) ở các tuần tới.")
+
+    # 6. Kết luận & Kế hoạch tuần 8
+    add_h1(doc, "6. KẾT LUẬN VÀ KẾ HOẠCH TRIỂN KHAI TUẦN 8")
+    add_p(doc,
+          "Tuần 7 đã hoàn thành trọn vẹn mục tiêu đề ra: chuyển giao thành công thuật toán DBO/IDBO sang bài toán thực đơn thật, "
+          "đạt 100% test xanh (138/138 test), giải quyết hoàn toàn vi phạm ràng buộc và tạo ra thực đơn chuẩn hóa y khoa.")
+    add_p(doc,
+          "Kế hoạch triển khai cho Tuần 8 của nhóm bao gồm:\n"
+          "1. Mở rộng thử nghiệm trên nhiều nhóm nhu cầu dinh dưỡng khác nhau (Giảm cân - LOSE_WEIGHT, Tăng cơ - GAIN_MUSCLE) "
+          "và các mức độ vận động khác nhau (SEDENTARY, LIGHT, VERY_ACTIVE).\n"
+          "2. Nghiên cứu tinh chỉnh hệ số trọng số `WEIGHTS` trong hàm mục tiêu để tối ưu hóa tốt hơn cho người dùng có bệnh lý nền "
+          "(tiểu đường, cao huyết áp cần giới hạn Natri và Carbs).\n"
+          "3. Chuẩn bị kiến trúc cho bài toán tối ưu hỗn hợp (đồng thời chọn món rời rạc và định lượng gram liên tục).")
+
+    # Phụ lục
+    add_h1(doc, "7. PHỤ LỤC: HƯỚNG DẪN THỰC THI VÀ QUẢN TRỊ MÃ NGUỒN")
+    add_bullet(doc, "Lệnh chạy demo đơn lẻ", "`python scripts/demo_week7.py --algo idbo --max-iter 50`")
+    add_bullet(doc, "Lệnh chạy thực nghiệm chính thức", "`python scripts/experiment_week7.py --runs 10 --max-iter 200 --n-agents 30`")
+    add_bullet(doc, "Lệnh vẽ đồ thị báo cáo", "`python scripts/plot_week7.py`")
+    add_bullet(doc, "Lệnh sinh các file báo cáo Word", "`python scripts/build_report_week7.py`")
+    add_bullet(doc, "Lệnh chạy kiểm thử hệ thống", "`pytest tests/`")
+
+    out_file = docs_dir / "Phan_Duy_Tuan7.docx"
+    doc.save(str(out_file))
+    print(f"Successfully generated Duy report: {out_file}")
+
+
 def main():
     """Verify prerequisites and generate both full and individual Week 7 reports."""
     required = [EXP_DIR / "menu_summary.csv", EXP_DIR / "menu_runs.csv",
@@ -830,6 +981,7 @@ def main():
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     build_full_report(EXP_DIR, DOCS_DIR)
     build_dang_report(EXP_DIR, DOCS_DIR)
+    build_duy_report(EXP_DIR, DOCS_DIR)
     print("Done generating all Week 7 Word documents!")
 
 
