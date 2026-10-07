@@ -16,12 +16,16 @@ from src.algorithms.benchmarks import (
 )
 from src.algorithms.dbo import DBO, DBOResult
 from src.algorithms.idbo import IDBO, IDBOResult
+from src.algorithms.two_tier_solver import TwoTierConfig, TwoTierResult, two_tier_optimize
 
 __all__ = [
     "DBO",
     "DBOResult",
     "IDBO",
     "IDBOResult",
+    "TwoTierConfig",
+    "TwoTierResult",
+    "two_tier_optimize",
     "BenchmarkFunction",
     "get_benchmark",
     "list_benchmarks",
