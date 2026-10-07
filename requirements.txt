@@ -1,6 +1,6 @@
 numpy
 pandas
 pytest
-matplotlib
+matplotlib>=3.9.0
 python-docx
 python-pptx

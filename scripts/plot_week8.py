@@ -142,9 +142,7 @@ def plot_boxplot(runs_df: pd.DataFrame, out_path: Path) -> None:
         plt.close()
         return
 
-    bp = plt.boxplot(
-        data,
-        tick_labels=labels,
+    bp_kwargs = dict(
         patch_artist=True,
         widths=0.45,
         medianprops=dict(color="black", linewidth=2.0),
@@ -152,6 +150,10 @@ def plot_boxplot(runs_df: pd.DataFrame, out_path: Path) -> None:
         capprops=dict(color="#555555", linewidth=1.5),
         flierprops=dict(marker="o", markerfacecolor="red", markersize=6, alpha=0.7),
     )
+    try:
+        bp = plt.boxplot(data, tick_labels=labels, **bp_kwargs)
+    except TypeError:
+        bp = plt.boxplot(data, labels=labels, **bp_kwargs)
 
     for patch, col in zip(bp["boxes"], colors):
         patch.set_facecolor(col)
