@@ -31,6 +31,7 @@ from src.models.food_sampler import sample_food_ids
 from src.models.user_profile import ActivityLevel, DietType, Gender, Goal, UserProfile
 from src.utils.data_loader import build_food_map, load_food_db
 from src.utils.nutrition import calc_bmr, calc_calorie_target, calc_tdee, daily_all_targets
+from src.utils.portion_utils import round_portions
 
 
 def main():
@@ -99,6 +100,7 @@ def main():
     best_fitness = -float(res.best_fitness)
 
     menu = decode_result(food_ids, res.best_x, food_map, profile.meal_counts)
+    rounded_x = round_portions(res.best_x, step=5)
 
     print("\n2. DANH SÁCH MÓN ĂN & KHẨU PHẦN TỐI ƯU")
     meal_names = {"breakfast": "Bữa sáng", "lunch": "Bữa trưa", "dinner": "Bữa tối", "snack": "Bữa phụ"}
@@ -107,8 +109,12 @@ def main():
         m_name = meal_names.get(meal_type_enum.value, meal_type_enum.value)
         for item in meal.items:
             portion = res.best_x[idx]
-            print(f"   - [{m_name}] {item.food_name[:45]:<45} : {portion:>6.1f} g  (ID: {item.food_id})")
+            portion_rounded = rounded_x[idx]
+            print(f"   - [{m_name}] {item.food_name[:45]:<45} : {portion:>6.1f} g (thực tế: {portion_rounded:>3d} g, ID: {item.food_id})")
             idx += 1
+
+    print(f"\n   * Gram tối ưu (gốc): {np.round(res.best_x, 1).tolist()}")
+    print(f"   * Gram thực tế (5g): {rounded_x.tolist()}")
 
     print("\n3. HIỆU NĂNG TỐI ƯU")
     print(f"   Best Fitness gốc:   {best_fitness:.4f} (thang [-100, 100])")
