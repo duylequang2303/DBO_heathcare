@@ -157,7 +157,14 @@ docs/
   BaoCao_Tuan8.docx
 ```
 
-### 1.3 food_selector.py — Cương làm
+### 1.3 food_selector.py — Cương làm (Kế hoạch phối hợp Phương án 2)
+
+> **💡 Điều phối tiến độ nhóm (Phương án 2):**
+> - Duy đã hỗ trợ dựng baseline code `food_selector.py` và 6 tests để **unblock ngay cho Đăng** chạy thực nghiệm Two-Tier Tuần 8 mà không bị trễ hạn.
+> - **Cương nhận nhiệm vụ bù đắp đóng góp:**
+>   1. **Git Commit cá nhân:** Cương checkout branch `261003-feat-week8-food-selector`, review hoàn thiện docstring toán học và bổ sung test cases góc (edge cases) để có commit mang tên mình trên GitHub.
+>   2. **Báo cáo Word Tuần 8:** Cương phụ trách viết chính **Mục 2 & Mục 4** trong `BaoCao_Tuan8.docx` (Lý thuyết Mixed-Integer, Candidate Pools từ 15.929 món và thuật toán Linear Probing chống trùng món).
+>   3. **Làm sớm Tuần 9 (Head Start):** Cương nhận làm sớm module cốt lõi Tuần 9: `src/models/diversity_penalty.py` và `tests/test_diversity_penalty.py`.
 
 **Hợp đồng hàm chốt:**
 
@@ -281,28 +288,29 @@ python scripts/experiment_week8.py --runs 10 --outer-iter 100 --inner-iter 50
 
 ### 1.7 Phân Công Tuần 8
 
-| Thành viên | Việc chính | Nhánh |
-| :--- | :--- | :--- |
-| **Hồ Trung Cương** | `food_selector.py` + 6 tests + Mục 2 Word T8 | `261003-feat-week8-food-selector` |
-| **Đặng Nguyễn Minh Đăng** | `experiment_week8.py` + `plot_week8.py` + CSV/PNG + Bảng W8-1/W8-2 | `261003-feat-week8-experiment` |
-| **Lê Quang Duy** | Fix 0.1+0.2 + `two_tier_solver.py` + `demo_week8.py` + Word T8 | `261003-feat-week8-solver` |
+| Thành viên | Việc chính Tuần 8 | Việc chính Tuần 9 | Nhánh |
+| :--- | :--- | :--- | :--- |
+| **Hồ Trung Cương** | - Review & test biên `food_selector.py`<br/>- Viết Mục 2 & 4 Word T8<br/>- *(Làm sớm T9)* `diversity_penalty.py` | - Hoàn thiện 7-Day diversity analysis<br/>- Báo cáo chu kỳ thực đơn tuần | `261003-feat-week8-food-selector` |
+| **Đặng Nguyễn Minh Đăng** | - `experiment_week8.py` + `plot_week8.py`<br/>- CSV/PNG + Bảng W8-1/W8-2 | - Thực nghiệm so sánh 7-Day Planner<br/>- Biểu đồ radar & phân phối 7 ngày | `261003-feat-week8-experiment` |
+| **Lê Quang Duy** | - Fix 0.1+0.2 (đã merge `main`)<br/>- `two_tier_solver.py` + `demo_week8.py`<br/>- Viết Mục 1, 3, 5 Word T8 | - Mở rộng profile P2 (Tiểu đường), P3 (Huyết áp)<br/>- Triển khai 7-Day Weekly Solver | `261003-feat-week8-solver` |
 
-**Thứ tự merge:**
-1. Fix 0.1 + 0.2 (Duy) → `main`.
-2. `food_selector.py` (Cương) → unblock Duy.
-3. `two_tier_solver.py` (Duy) → unblock Đăng.
-4. Thí nghiệm + báo cáo.
+**Thứ tự triển khai (Phương án 2):**
+1. ✅ **Fix 0.1 + 0.2 (Duy):** Đã hoàn tất và merge vào `main`.
+2. ✅ **Baseline `two_tier_solver.py` + `food_selector.py` (Duy):** Đã hoàn tất, unblock Đăng chạy thực nghiệm ngay.
+3. ⏳ **Thực nghiệm & Vẽ hình (Đăng):** Chạy `experiment_week8.py` trên nhánh `261003-feat-week8-solver`.
+4. ⏳ **Review & Báo cáo & Head Start T9 (Cương):** Review commit `food_selector.py`, viết Mục 2 & 4 Word T8, làm sớm `diversity_penalty.py`.
+5. ⏳ **Tổng hợp Word T8 & PR merge vào `main`**.
 
 ### 1.8 Checklist Nghiệm Thu Tuần 8
 
-- [ ] `portion_utils.py`: `round_portions()` hoạt động đúng.
-- [ ] `ab_test_week7_fix.py`: bảng A/B có số, giải thích khoa học khi hòa.
-- [ ] `food_selector.py`: 6 tests xanh, pool ≥ 20 món P1.
-- [ ] `two_tier_solver.py`: 5 tests xanh, smoke < 30s.
-- [ ] `experiment_week8.py`: 4 CSV + 3 PNG, bảng W8-1/W8-2 đủ số.
-- [ ] `demo_week8.py`: in thực đơn đa dạng mỗi lần chạy (không cố định).
-- [ ] `BaoCao_Tuan8.docx`: đủ 6 mục + phụ lục.
-- [ ] `python -m pytest tests/` xanh toàn bộ.
+- [x] `portion_utils.py`: `round_portions()` hoạt động đúng (Fix 0.1 - Duy).
+- [x] `ab_test_week7_fix.py`: bảng A/B có số, giải thích khoa học khi hòa (Fix 0.2 - Duy).
+- [x] `food_selector.py`: 6 tests xanh, pool ≥ 20 món P1 (Baseline Duy dựng; Cương review & hoàn thiện).
+- [x] `two_tier_solver.py`: 5 tests xanh, smoke 0.65s (Duy).
+- [x] `demo_week8.py`: in thực đơn đa dạng mỗi lần chạy từ kho 15.929 món (Duy).
+- [ ] `experiment_week8.py`: 4 CSV + 3 PNG, bảng W8-1/W8-2 đủ số (Đăng).
+- [ ] `BaoCao_Tuan8.docx`: đủ 6 mục + phụ lục (Cả nhóm: Duy 1,3,5; Cương 2,4; Đăng số liệu).
+- [x] `python -m pytest tests/` xanh toàn bộ (159/159 passed).
 - [ ] Không commit CSV/PNG experiments.
 
 ---
