@@ -55,3 +55,7 @@ experiments/week7/*.csv
 experiments/week7/*.png
 experiments/week7/*.json
 experiments/week7/*.txt
+
+# Internal workflow files (private - never push)
+.agents/
+workflow_guidelines.md
