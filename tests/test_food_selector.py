@@ -124,3 +124,31 @@ def test_min_pool_size_satisfied_for_p1(food_map_fixture, sample_profile):
     for slot in slots:
         assert slot in pools
         assert len(pools[slot]) >= 20
+
+
+# Cương — Week 8: edge-case coverage for linear probing.
+def test_all_candidates_exhausted_raises():
+    pools = {"lunch_0": ["F1"], "lunch_1": ["F1"]}
+    with pytest.raises(ValueError, match="Not enough unique"):
+        decode_food_selection(np.array([0.0, 0.0]), pools, list(pools))
+
+def test_duplicate_ids_in_pool_cannot_bypass_probing():
+    pools = {"dinner_0": ["F1", "F1"], "dinner_1": ["F1", "F1"]}
+    with pytest.raises(ValueError, match="Not enough unique"):
+        decode_food_selection(np.array([0.0, 0.0]), pools, list(pools))
+
+@pytest.mark.parametrize("bad", [np.nan, np.inf, -np.inf])
+def test_nonfinite_coordinates_rejected(bad):
+    with pytest.raises(ValueError, match="finite"):
+        decode_food_selection(np.array([bad]), {"lunch_0": ["F1"]}, ["lunch_0"])
+
+def test_boundary_coordinates_are_clamped():
+    pools = {"lunch_0": ["F1", "F2", "F3"]}
+    assert decode_food_selection(np.array([-0.1]), pools, ["lunch_0"]) == ["F1"]
+    assert decode_food_selection(np.array([1.0]), pools, ["lunch_0"]) == ["F3"]
+
+def test_missing_slot_and_shape_rejected():
+    with pytest.raises(ValueError, match="empty or missing"):
+        decode_food_selection(np.array([0.2]), {}, ["lunch_0"])
+    with pytest.raises(ValueError, match="one-dimensional"):
+        decode_food_selection(np.array([[0.2]]), {"lunch_0": ["F1"]}, ["lunch_0"])
