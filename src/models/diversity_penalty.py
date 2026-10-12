@@ -1,81 +1,78 @@
-"""Diversity Penalty Module for Weekly Menu Planning.
+"""Diversity penalty for repeated main dishes across a weekly menu plan.
 
-Penalizes repeated main dishes across consecutive days within a configurable
-lookback window (e.g. 2 days) to ensure meal variety in 7-day meal plans.
+Main dishes are the first lunch (lunch_0) and first dinner (dinner_0) slots.
+When working with a full daily food vector, pass ``meal_order`` describing the
+slot layout so main dishes can be located by slot name. When working with a
+trimmed vector that already contains exactly the two main-dish IDs, ``meal_order``
+may be omitted.
 """
-
 from __future__ import annotations
 
-from typing import List, Sequence, Tuple
+import math
+
+MAIN_SLOTS = ("lunch_0", "dinner_0")
+
+
+def _main_dishes(food_ids: list[str], meal_order: list[str] | None) -> list[str]:
+    if meal_order is None:
+        if len(food_ids) != len(MAIN_SLOTS):
+            raise ValueError("Without meal_order, each day must contain exactly two main dishes")
+        return list(food_ids)
+    if len(food_ids) != len(meal_order):
+        raise ValueError("food_ids and meal_order must have equal lengths")
+    if len(set(meal_order)) != len(meal_order):
+        raise ValueError("meal_order contains duplicate slots")
+    missing = [slot for slot in MAIN_SLOTS if slot not in meal_order]
+    if missing:
+        raise ValueError(f"Missing main-dish slots: {missing}")
+    return [food_ids[meal_order.index(slot)] for slot in MAIN_SLOTS]
 
 
 def diversity_penalty(
-    day_food_ids: Sequence[str],
-    history_food_ids: Sequence[Sequence[str]] | None,
+    day_food_ids: list[str],
+    history_food_ids: list[list[str]],
     penalty_weight: float = 10.0,
     lookback_days: int = 2,
-    main_dish_indices: Tuple[int, ...] = (2, 4),
+    *,
+    meal_order: list[str] | None = None,
 ) -> float:
-    """Compute penalty for duplicate main dishes within lookback days.
+    """Return weight times repeated main-dish occurrences in recent days.
 
-    Args:
-        day_food_ids: List of food_ids assigned for the current day.
-        history_food_ids: List of daily food_ids from previous days.
-        penalty_weight: Multiplier penalty per repeated main dish.
-        lookback_days: Number of recent past days to check for duplicates.
-        main_dish_indices: Indices in day_food_ids representing main dishes
-                           (default: indices 2 and 4 for lunch_0 and dinner_0).
-
-    Returns:
-        float: Non-negative penalty value (0.0 if all main dishes are unique).
+    Each occurrence is counted against each historical day, so a dish present
+    on both previous days contributes twice. The history must use the same
+    slot order as the current day when meal_order is provided.
     """
-    if not history_food_ids or not day_food_ids or penalty_weight <= 0:
+    if not math.isfinite(penalty_weight) or penalty_weight < 0:
+        raise ValueError("penalty_weight must be finite and non-negative")
+    if isinstance(lookback_days, bool) or not isinstance(lookback_days, int) or lookback_days < 0:
+        raise ValueError("lookback_days must be a non-negative integer")
+    current = _main_dishes(day_food_ids, meal_order)
+    if lookback_days == 0:
         return 0.0
-
-    recent_history = history_food_ids[-lookback_days:]
-
-    # Collect past main dishes within the lookback window
-    past_main_dishes: set[str] = set()
-    for past_day in recent_history:
-        for idx in main_dish_indices:
-            if idx < len(past_day):
-                past_main_dishes.add(past_day[idx])
-
-    # Count violations for current day main dishes
-    n_violations = 0
-    for idx in main_dish_indices:
-        if idx < len(day_food_ids):
-            item_id = day_food_ids[idx]
-            if item_id in past_main_dishes:
-                n_violations += 1
-
-    return float(n_violations * penalty_weight)
+    duplicates = 0
+    for previous in history_food_ids[-lookback_days:]:
+        previous_main = set(_main_dishes(previous, meal_order))
+        duplicates += sum(fid in previous_main for fid in current)
+    return float(penalty_weight * duplicates)
 
 
 def calculate_unique_main_dish_pct(
-    weekly_food_ids: Sequence[Sequence[str]],
-    main_dish_indices: Tuple[int, ...] = (2, 4),
+    weekly_food_ids: list[list[str]],
+    meal_order: list[str] | None = None,
 ) -> float:
-    """Calculate the percentage of unique main dishes across a weekly plan.
+    """Return the percentage of unique main dishes across a weekly plan.
 
     Args:
-        weekly_food_ids: 7-day list of daily food_id sequences.
-        main_dish_indices: Indices representing main dishes.
+        weekly_food_ids: One food-id sequence per day in the plan.
+        meal_order: Slot order matching each daily sequence. Required when the
+            daily sequences contain more than the two main dishes.
 
     Returns:
-        float: Percentage of unique main dishes in range [0.0, 100.0].
+        float: Percentage in [0.0, 100.0]; 100.0 for an empty plan.
     """
-    total_slots = 0
-    all_main_dishes: list[str] = []
-
+    main_dishes: list[str] = []
     for day in weekly_food_ids:
-        for idx in main_dish_indices:
-            if idx < len(day):
-                all_main_dishes.append(day[idx])
-                total_slots += 1
-
-    if total_slots == 0:
+        main_dishes.extend(_main_dishes(day, meal_order))
+    if not main_dishes:
         return 100.0
-
-    unique_count = len(set(all_main_dishes))
-    return float((unique_count / total_slots) * 100.0)
+    return float((len(set(main_dishes)) / len(main_dishes)) * 100.0)

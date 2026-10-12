@@ -127,6 +127,7 @@ def plan_7days(
     """
     daily_results = []
     history_food_ids: list[list[str]] = []
+    meal_order = get_meal_order_slots(profile.meal_counts)
     total_fitness = 0.0
     total_cals = 0.0
 
@@ -148,7 +149,9 @@ def plan_7days(
         viols = validate_menu(menu, profile, targets)
         cals = menu.total("calories")
 
-        div_pen = diversity_penalty(res.best_food_ids, history_food_ids, penalty_weight=10.0, lookback_days=2)
+        div_pen = diversity_penalty(
+            res.best_food_ids, history_food_ids, penalty_weight=10.0, lookback_days=2, meal_order=meal_order
+        )
         effective_fitness = float(res.best_fitness) - div_pen
 
         history_food_ids.append(res.best_food_ids)
@@ -168,7 +171,7 @@ def plan_7days(
     target_cal = float(targets["calories"])
     mean_cal = total_cals / days
     cal_dev = mean_cal - target_cal
-    diversity_pct = calculate_unique_main_dish_pct(history_food_ids)
+    diversity_pct = calculate_unique_main_dish_pct(history_food_ids, meal_order)
 
     return {
         "mean_fitness": round(total_fitness / days, 2),

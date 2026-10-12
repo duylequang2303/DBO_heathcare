@@ -1,58 +1,57 @@
-"""Unit tests for Diversity Penalty module."""
-
+"""Cương — Week 9 tests for main-dish diversity."""
 import pytest
-from src.models.diversity_penalty import (
-    calculate_unique_main_dish_pct,
-    diversity_penalty,
-)
+from src.models.diversity_penalty import calculate_unique_main_dish_pct, diversity_penalty
 
+def test_no_repeat():
+    assert diversity_penalty(["L3", "D3"], [["L1", "D1"], ["L2", "D2"]]) == 0
 
-def test_no_history_zero_penalty():
-    """Verify penalty is 0 when history is empty."""
-    day1 = ["f0", "f1", "main_lunch_1", "f3", "main_dinner_1", "f5", "f6", "f7"]
-    assert diversity_penalty(day1, []) == 0.0
-    assert diversity_penalty(day1, None) == 0.0
+def test_one_repeat():
+    assert diversity_penalty(["L1", "D3"], [["L1", "D1"]]) == 10
 
+def test_two_repeats():
+    assert diversity_penalty(["L1", "D1"], [["L1", "D1"]]) == 20
 
-def test_unique_main_dishes_zero_penalty():
-    """Verify penalty is 0 when all main dishes are unique across consecutive days."""
-    day1 = ["f0", "f1", "L1", "f3", "D1", "f5", "f6", "f7"]
-    day2 = ["f0", "f1", "L2", "f3", "D2", "f5", "f6", "f7"]
-    assert diversity_penalty(day2, [day1], penalty_weight=10.0) == 0.0
+def test_lookback_ignores_old_days():
+    assert diversity_penalty(["L1", "D4"], [["L1", "D1"], ["L2", "D2"], ["L3", "D3"]], lookback_days=2) == 0
 
+def test_repeated_on_two_days_counts_twice():
+    assert diversity_penalty(["L1", "D3"], [["L1", "D1"], ["L1", "D2"]]) == 20
 
-def test_duplicate_main_dish_triggers_penalty():
-    """Verify penalty triggers when lunch or dinner main dish repeats."""
-    day1 = ["f0", "f1", "L1", "f3", "D1", "f5", "f6", "f7"]
-    # day2 repeats L1
-    day2 = ["f0", "f1", "L1", "f3", "D2", "f5", "f6", "f7"]
-    assert diversity_penalty(day2, [day1], penalty_weight=15.0) == 15.0
+def test_empty_history_and_zero_lookback():
+    assert diversity_penalty(["L1", "D1"], []) == 0
+    assert diversity_penalty(["L1", "D1"], [["L1", "D1"]], lookback_days=0) == 0
 
-    # day2 repeats both L1 and D1
-    day2_both = ["f0", "f1", "L1", "f3", "D1", "f5", "f6", "f7"]
-    assert diversity_penalty(day2_both, [day1], penalty_weight=15.0) == 30.0
+def test_full_day_only_main_slots_counted():
+    slots = ["breakfast_0", "lunch_0", "lunch_1", "dinner_0", "snack_0"]
+    yesterday = ["B1", "L1", "SIDE", "D1", "S1"]
+    today = ["B1", "L2", "SIDE", "D1", "S1"]
+    assert diversity_penalty(today, [yesterday], meal_order=slots) == 10
 
+@pytest.mark.parametrize("weight", [-1, float("nan"), float("inf")])
+def test_invalid_weight(weight):
+    with pytest.raises(ValueError, match="penalty_weight"):
+        diversity_penalty(["L1", "D1"], [], penalty_weight=weight)
 
-def test_lookback_window():
-    """Verify dishes outside the lookback window are not penalized."""
-    day1 = ["f0", "f1", "L1", "f3", "D1", "f5", "f6", "f7"]
-    day2 = ["f0", "f1", "L2", "f3", "D2", "f5", "f6", "f7"]
-    day3 = ["f0", "f1", "L3", "f3", "D3", "f5", "f6", "f7"]
-    # day4 repeats L1 (3 days ago). With lookback_days=2 (checks day2 and day3), penalty should be 0.
-    day4 = ["f0", "f1", "L1", "f3", "D4", "f5", "f6", "f7"]
+@pytest.mark.parametrize("lookback", [-1, 1.5, True])
+def test_invalid_lookback(lookback):
+    with pytest.raises(ValueError, match="lookback_days"):
+        diversity_penalty(["L1", "D1"], [], lookback_days=lookback)
 
-    assert diversity_penalty(day4, [day1, day2, day3], lookback_days=2) == 0.0
-    # With lookback_days=3, day1 is included -> penalty triggers
-    assert diversity_penalty(day4, [day1, day2, day3], lookback_days=3) == 10.0
+def test_ambiguous_full_day_without_slots_rejected():
+    with pytest.raises(ValueError, match="exactly two"):
+        diversity_penalty(["B1", "L1", "D1"], [])
 
+def test_unique_main_dish_pct_trimmed_vectors():
+    week = [["L1", "D1"], ["L1", "D2"]]
+    assert calculate_unique_main_dish_pct(week) == 75.0
 
-def test_calculate_unique_main_dish_pct():
-    """Verify calculation of percentage of unique main dishes."""
-    # 2 days, 2 main dishes per day -> 4 total main dishes.
-    # 3 unique, 1 duplicate -> 3/4 = 75%
+def test_unique_main_dish_pct_with_meal_order():
+    slots = ["breakfast_0", "lunch_0", "lunch_1", "dinner_0", "snack_0"]
     week = [
-        ["f0", "f1", "L1", "f3", "D1", "f5", "f6", "f7"],
-        ["f0", "f1", "L1", "f3", "D2", "f5", "f6", "f7"],
+        ["B1", "L1", "SIDE", "D1", "S1"],
+        ["B2", "L1", "SIDE", "D2", "S2"],
     ]
-    pct = calculate_unique_main_dish_pct(week)
-    assert pct == 75.0
+    assert calculate_unique_main_dish_pct(week, meal_order=slots) == 75.0
+
+def test_unique_main_dish_pct_empty_plan():
+    assert calculate_unique_main_dish_pct([]) == 100.0

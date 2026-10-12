@@ -37,6 +37,7 @@ from src.algorithms.menu_objective import decode_result
 from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.models.constraints import validate_menu
 from src.models.diversity_penalty import calculate_unique_main_dish_pct, diversity_penalty
+from src.models.food_selector import get_meal_order_slots
 from src.utils.data_loader import build_food_map, load_food_db
 
 
@@ -75,6 +76,7 @@ def run_7day_experiment_single(
     """
     history_food_ids: list[list[str]] = []
     daily_records: list[dict[str, object]] = []
+    meal_order = get_meal_order_slots(profile.meal_counts)
 
     for day in range(1, days + 1):
         day_seed = base_seed + day * 19
@@ -94,7 +96,9 @@ def run_7day_experiment_single(
         viols = validate_menu(menu, profile, targets)
 
         # Apply diversity penalty
-        div_pen = diversity_penalty(res.best_food_ids, history_food_ids, penalty_weight=10.0, lookback_days=2)
+        div_pen = diversity_penalty(
+            res.best_food_ids, history_food_ids, penalty_weight=10.0, lookback_days=2, meal_order=meal_order
+        )
         eff_fitness = float(res.best_fitness) - div_pen
 
         history_food_ids.append(res.best_food_ids)
@@ -124,7 +128,7 @@ def run_7day_experiment_single(
             "sodium_mg": round(float(sodium), 2),
         })
 
-    diversity_pct = calculate_unique_main_dish_pct(history_food_ids)
+    diversity_pct = calculate_unique_main_dish_pct(history_food_ids, meal_order)
     return daily_records, diversity_pct
 
 
