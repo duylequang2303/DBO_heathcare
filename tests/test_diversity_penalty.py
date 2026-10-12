@@ -1,6 +1,6 @@
 """Cương — Week 9 tests for main-dish diversity."""
 import pytest
-from src.models.diversity_penalty import diversity_penalty
+from src.models.diversity_penalty import calculate_unique_main_dish_pct, diversity_penalty
 
 def test_no_repeat():
     assert diversity_penalty(["L3", "D3"], [["L1", "D1"], ["L2", "D2"]]) == 0
@@ -40,3 +40,18 @@ def test_invalid_lookback(lookback):
 def test_ambiguous_full_day_without_slots_rejected():
     with pytest.raises(ValueError, match="exactly two"):
         diversity_penalty(["B1", "L1", "D1"], [])
+
+def test_unique_main_dish_pct_trimmed_vectors():
+    week = [["L1", "D1"], ["L1", "D2"]]
+    assert calculate_unique_main_dish_pct(week) == 75.0
+
+def test_unique_main_dish_pct_with_meal_order():
+    slots = ["breakfast_0", "lunch_0", "lunch_1", "dinner_0", "snack_0"]
+    week = [
+        ["B1", "L1", "SIDE", "D1", "S1"],
+        ["B2", "L1", "SIDE", "D2", "S2"],
+    ]
+    assert calculate_unique_main_dish_pct(week, meal_order=slots) == 75.0
+
+def test_unique_main_dish_pct_empty_plan():
+    assert calculate_unique_main_dish_pct([]) == 100.0
