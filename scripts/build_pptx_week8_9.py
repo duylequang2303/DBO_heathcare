@@ -718,12 +718,12 @@ def slide_10_weekly_summary_table(prs, n, total):
         (1, 3): (GREEN, True), (2, 3): (INDIGO, True), (3, 3): (GREEN, True),
         (1, 6): (GREEN, True), (2, 6): (GREEN, True), (3, 6): (GREEN, True),
     }
-    table(s, rows, Inches(0.55), Inches(1.35), Inches(12.23), Inches(3.20),
-          col_w=[Inches(1.2), Inches(2.2), Inches(1.0), Inches(1.8), Inches(1.6), Inches(1.3), Inches(1.5), Inches(1.63)],
-          header_color=INDIGO, body_size=9.8, row_h=Inches(0.44),
+    table(s, rows, Inches(0.55), Inches(1.30), Inches(12.23), Inches(2.60),
+          col_w=[Inches(0.90), Inches(1.70), Inches(0.85), Inches(1.40), Inches(1.20), Inches(1.10), Inches(1.30), Inches(3.78)],
+          header_color=INDIGO, body_size=8.5, row_h=Inches(0.35),
           highlight=highlight, align_cols=align)
 
-    # 3 Khối nhận xét kết quả bên dưới
+    # 3 Khối nhận xét kết quả bên dưới (đặt tại Y=4.15 để hoàn toàn không bị bảng đè)
     insights = [
         ("Kiểm soát Calo chuẩn xác:",
          "Mức sai lệch calo trung bình so với target: P1 lệch 2.37%, P2 lệch 5.59%, P3 lệch 1.84% (thuật toán chạy tốt, bám sát khuyến nghị)."),
@@ -734,10 +734,10 @@ def slide_10_weekly_summary_table(prs, n, total):
     ]
     for i, (title, body) in enumerate(insights):
         l = Inches(0.55 + i * 4.15)
-        _rect(s, l, Inches(4.75), Inches(3.93), Inches(2.15), LIGHT, rounded=True, line_color=LINE)
-        _text(s, l + Inches(0.20), Inches(4.88), Inches(3.53), Inches(0.28), title, size=11, bold=True, color=INDIGO)
-        _rect(s, l + Inches(0.20), Inches(5.18), Inches(3.53), Pt(1.0), LINE)
-        _text(s, l + Inches(0.20), Inches(5.28), Inches(3.53), Inches(1.50), body, size=9.8, color=INK, line_spacing=1.2)
+        _rect(s, l, Inches(4.15), Inches(3.93), Inches(2.65), LIGHT, rounded=True, line_color=LINE)
+        _text(s, l + Inches(0.20), Inches(4.27), Inches(3.53), Inches(0.28), title, size=11, bold=True, color=INDIGO)
+        _rect(s, l + Inches(0.20), Inches(4.57), Inches(3.53), Pt(1.0), LINE)
+        _text(s, l + Inches(0.20), Inches(4.68), Inches(3.53), Inches(2.00), body, size=9.2, color=INK, line_spacing=1.18)
 
     _footer(s, "Bảng tổng hợp kết quả kỹ thuật 7 ngày trên ba hồ sơ dinh dưỡng mô phỏng", n(), total)
 
