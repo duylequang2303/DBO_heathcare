@@ -38,6 +38,13 @@ class TwoTierConfig:
     inner_max_iter: int = 50
     seed: int = 8000
     min_pool_size: int = 20
+    # IDBO specific parameters
+    diversity_threshold: float = 1e-3
+    stagnation_window: int = 25
+    perturbation_rate: float = 0.2
+    perturbation_scale: float = 0.1
+    restart_rate: float = 0.25
+    n_elite: int = 1
 
 
 @dataclass
@@ -55,6 +62,8 @@ class TwoTierResult:
     outer_restarts: int = 0
     final_inner_perturbations: int = 0
     final_inner_restarts: int = 0
+    inner_perturbations_total: int = 0
+    inner_restarts_total: int = 0
 
 
 def two_tier_optimize(
@@ -77,6 +86,13 @@ def two_tier_optimize(
     if config is None:
         config = TwoTierConfig()
 
+    outer_algo = config.outer_algo.strip().lower()
+    if outer_algo not in ("dbo", "idbo"):
+        raise ValueError(f"Unsupported outer_algo: '{config.outer_algo}'. Must be 'dbo' or 'idbo'.")
+    inner_algo = config.inner_algo.strip().lower()
+    if inner_algo not in ("dbo", "idbo"):
+        raise ValueError(f"Unsupported inner_algo: '{config.inner_algo}'. Must be 'dbo' or 'idbo'.")
+
     t_start = time.perf_counter()
 
     # 1. Build candidate food pools and slot ordering
@@ -90,6 +106,8 @@ def two_tier_optimize(
     dim_k = len(meal_order)
 
     inner_evals_counter = [0]
+    inner_perturbations_counter = [0]
+    inner_restarts_counter = [0]
     eval_call_idx = [0]
 
     # 2. Define outer objective function (minimized by outer optimizer)
@@ -104,7 +122,7 @@ def two_tier_optimize(
         inner_seed = (config.seed + eval_call_idx[0] * 101 + 7) % 2147483647
         eval_call_idx[0] += 1
 
-        if config.inner_algo.lower() == "dbo":
+        if inner_algo == "dbo":
             inner_solver = DBO(
                 n_agents=config.inner_n_agents,
                 max_iter=config.inner_max_iter,
@@ -113,6 +131,12 @@ def two_tier_optimize(
             inner_solver = IDBO(
                 n_agents=config.inner_n_agents,
                 max_iter=config.inner_max_iter,
+                diversity_threshold=config.diversity_threshold,
+                stagnation_window=config.stagnation_window,
+                perturbation_rate=config.perturbation_rate,
+                perturbation_scale=config.perturbation_scale,
+                restart_rate=config.restart_rate,
+                n_elite=config.n_elite,
             )
 
         inner_res = inner_solver.optimize(
@@ -123,12 +147,14 @@ def two_tier_optimize(
             seed=inner_seed,
         )
         inner_evals_counter[0] += inner_res.n_evaluations
+        inner_perturbations_counter[0] += int(getattr(inner_res, "n_perturbations", 0))
+        inner_restarts_counter[0] += int(getattr(inner_res, "n_restarts", 0))
 
         # Return inner best fitness (already negated by make_menu_objective)
         return float(inner_res.best_fitness)
 
     # 3. Configure and execute outer optimizer
-    if config.outer_algo.lower() == "dbo":
+    if outer_algo == "dbo":
         outer_solver = DBO(
             n_agents=config.outer_n_agents,
             max_iter=config.outer_max_iter,
@@ -137,6 +163,12 @@ def two_tier_optimize(
         outer_solver = IDBO(
             n_agents=config.outer_n_agents,
             max_iter=config.outer_max_iter,
+            diversity_threshold=config.diversity_threshold,
+            stagnation_window=config.stagnation_window,
+            perturbation_rate=config.perturbation_rate,
+            perturbation_scale=config.perturbation_scale,
+            restart_rate=config.restart_rate,
+            n_elite=config.n_elite,
         )
 
     outer_res = outer_solver.optimize(
@@ -151,7 +183,7 @@ def two_tier_optimize(
     best_food_ids = decode_food_selection(outer_res.best_x, pools, meal_order)
     final_inner_obj = make_menu_objective(profile, best_food_ids, food_map, targets)
 
-    if config.inner_algo.lower() == "dbo":
+    if inner_algo == "dbo":
         final_inner_solver = DBO(
             n_agents=config.inner_n_agents,
             max_iter=config.inner_max_iter,
@@ -160,6 +192,12 @@ def two_tier_optimize(
         final_inner_solver = IDBO(
             n_agents=config.inner_n_agents,
             max_iter=config.inner_max_iter,
+            diversity_threshold=config.diversity_threshold,
+            stagnation_window=config.stagnation_window,
+            perturbation_rate=config.perturbation_rate,
+            perturbation_scale=config.perturbation_scale,
+            restart_rate=config.restart_rate,
+            n_elite=config.n_elite,
         )
 
     final_res = final_inner_solver.optimize(
@@ -189,4 +227,6 @@ def two_tier_optimize(
         outer_restarts=int(getattr(outer_res, "n_restarts", 0)),
         final_inner_perturbations=int(getattr(final_res, "n_perturbations", 0)),
         final_inner_restarts=int(getattr(final_res, "n_restarts", 0)),
+        inner_perturbations_total=inner_perturbations_counter[0],
+        inner_restarts_total=inner_restarts_counter[0],
     )
