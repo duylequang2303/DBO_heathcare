@@ -156,26 +156,35 @@ def test_idbo_activation_telemetry_under_stagnation():
 
 
 def test_two_tier_config_propagates_idbo_params_and_records_telemetry(food_map_fixture, profile_p1):
-    """8. Test that TwoTierConfig passes IDBO parameters and captures telemetry integers."""
+    """8. Test that TwoTierConfig passes IDBO parameters and actively triggers IDBO mechanisms under controlled activation."""
     targets = daily_all_targets(profile_p1)
     config = TwoTierConfig(
         outer_algo="idbo",
-        outer_n_agents=5,
-        outer_max_iter=2,
+        outer_n_agents=6,
+        outer_max_iter=4,
         inner_algo="idbo",
-        inner_n_agents=5,
-        inner_max_iter=2,
+        inner_n_agents=6,
+        inner_max_iter=4,
         diversity_threshold=0.5,
         stagnation_window=1,
-        perturbation_rate=0.4,
-        restart_rate=0.3,
+        perturbation_rate=1.0,
+        restart_rate=1.0,
         seed=8006,
     )
     result = two_tier_optimize(profile_p1, food_map_fixture, targets, config)
+    # Verify that telemetry fields are populated with valid values
     assert isinstance(result.outer_perturbations, int)
     assert isinstance(result.outer_restarts, int)
     assert isinstance(result.final_inner_perturbations, int)
     assert isinstance(result.final_inner_restarts, int)
-    assert result.outer_perturbations >= 0
-    assert result.outer_restarts >= 0
+    # Strictly prove that IDBO mechanisms actively fire in two-tier optimization
+    assert (
+        result.outer_perturbations > 0
+        or result.outer_restarts > 0
+        or result.inner_perturbations_total > 0
+        or result.inner_restarts_total > 0
+    )
+    assert result.outer_min_diversity > 0.0
+    assert result.outer_collapse_events > 0
+
 

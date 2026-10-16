@@ -497,12 +497,12 @@ def slide_05_benchmark_table_week8(prs, n, total):
     notes_right = [
         "• Baseline 25 vòng: DBO Mean 98.2148 | IDBO Mean 98.2148 | Perturbations: 0 | Restarts: 0",
         "• Chẩn đoán 100 vòng: DBO Mean 97.9821 | IDBO Mean 97.9821 | Perturbations: 0 | Restarts: 0",
-        "• Kết luận thực nghiệm: Chưa ghi nhận IDBO vượt trội hơn DBO trong phạm vi thử nghiệm. Cơ chế cải tiến không kích hoạt do ngưỡng đa dạng (0.001–0.05) thấp hơn độ phân tán thực tế của đàn rời rạc (~0.25).",
-        "  (Chi tiết paired runs & đối chứng 3 cấu hình lưu tại experiments/ablation_dbo_idbo/README.md)",
+        "• Kết luận thực nghiệm: Chưa ghi nhận IDBO vượt trội hơn DBO trong 3 cấu hình thử nghiệm do telemetry đo được min_diversity = 0.246 > threshold (0.001–0.05). Thử nghiệm Controlled Activation (threshold=0.5) chứng minh pipeline IDBO kích hoạt bình thường khi điều kiện thỏa mãn.",
+        "  (Chi tiết paired runs, controlled activation & telemetry lưu tại experiments/ablation_dbo_idbo/README.md)",
     ]
     for i, note in enumerate(notes_right):
         _text(s, l_right + Inches(0.20), Inches(5.02 + i * 0.42), w_right - Inches(0.35), Inches(0.40),
-              note, size=8.8, color=INK, line_spacing=1.10)
+              note, size=8.6, color=INK, line_spacing=1.10)
 
     _footer(s, "Kết quả thực nghiệm 10 runs độc lập Two-Tier DBO vs IDBO trên Profile P1", n(), total)
 

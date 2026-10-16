@@ -107,6 +107,11 @@ class IDBOResult(DBOResult):
     n_perturbations: int = 0
     n_restarts: int = 0
     diversity_history: list[float] = field(default_factory=list)
+    min_diversity: float = 0.0
+    mean_diversity: float = 0.0
+    final_diversity: float = 0.0
+    max_stagnation: int = 0
+    n_collapse_events: int = 0
 
 
 class IDBO(DBO):
@@ -150,8 +155,10 @@ class IDBO(DBO):
         self.restart_rate = float(restart_rate)
         self.n_elite = int(n_elite)
         self._stagnation = 0
+        self._max_stagnation = 0
         self._n_perturbations = 0
         self._n_restarts = 0
+        self._n_collapse_events = 0
         self._diversity_history: list[float] = []
         self._prev_best: Optional[float] = None
 
@@ -159,11 +166,16 @@ class IDBO(DBO):
         self, objective: Objective, dim: int, lb: float, ub: float, seed: int = 42
     ) -> IDBOResult:
         self._stagnation = 0
+        self._max_stagnation = 0
         self._n_perturbations = 0
         self._n_restarts = 0
+        self._n_collapse_events = 0
         self._diversity_history = []
         self._prev_best = None
         base = super().optimize(objective, dim, lb, ub, seed)
+        min_div = float(np.min(self._diversity_history)) if self._diversity_history else 0.0
+        mean_div = float(np.mean(self._diversity_history)) if self._diversity_history else 0.0
+        final_div = float(self._diversity_history[-1]) if self._diversity_history else 0.0
         return IDBOResult(
             best_x=base.best_x,
             best_fitness=base.best_fitness,
@@ -174,6 +186,11 @@ class IDBO(DBO):
             n_perturbations=self._n_perturbations,
             n_restarts=self._n_restarts,
             diversity_history=list(self._diversity_history),
+            min_diversity=min_div,
+            mean_diversity=mean_div,
+            final_diversity=final_div,
+            max_stagnation=self._max_stagnation,
+            n_collapse_events=self._n_collapse_events,
         )
 
     def _after_iteration(
@@ -196,9 +213,13 @@ class IDBO(DBO):
             self._stagnation = 0
         else:
             self._stagnation += 1
+        if self._stagnation > self._max_stagnation:
+            self._max_stagnation = self._stagnation
         self._prev_best = best_fitness
 
         collapsed = diversity < self.diversity_threshold
+        if collapsed:
+            self._n_collapse_events += 1
         do_restart = (
             collapsed
             and self.restart_rate > 0.0

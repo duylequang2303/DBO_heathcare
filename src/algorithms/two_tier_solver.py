@@ -64,6 +64,13 @@ class TwoTierResult:
     final_inner_restarts: int = 0
     inner_perturbations_total: int = 0
     inner_restarts_total: int = 0
+    outer_min_diversity: float = 0.0
+    outer_mean_diversity: float = 0.0
+    outer_final_diversity: float = 0.0
+    outer_max_stagnation: int = 0
+    outer_collapse_events: int = 0
+    final_inner_min_diversity: float = 0.0
+    final_inner_max_stagnation: int = 0
 
 
 def two_tier_optimize(
@@ -229,4 +236,11 @@ def two_tier_optimize(
         final_inner_restarts=int(getattr(final_res, "n_restarts", 0)),
         inner_perturbations_total=inner_perturbations_counter[0],
         inner_restarts_total=inner_restarts_counter[0],
+        outer_min_diversity=float(getattr(outer_res, "min_diversity", 0.0)),
+        outer_mean_diversity=float(getattr(outer_res, "mean_diversity", 0.0)),
+        outer_final_diversity=float(getattr(outer_res, "final_diversity", 0.0)),
+        outer_max_stagnation=int(getattr(outer_res, "max_stagnation", 0)),
+        outer_collapse_events=int(getattr(outer_res, "n_collapse_events", 0)),
+        final_inner_min_diversity=float(getattr(final_res, "min_diversity", 0.0)),
+        final_inner_max_stagnation=int(getattr(final_res, "max_stagnation", 0)),
     )
