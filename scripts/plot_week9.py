@@ -42,7 +42,10 @@ def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
         runs_df: DataFrame containing daily records from weekly_runs.csv.
         out_path: Target path for the output figure.
     """
-    p1_runs = runs_df[runs_df["profile"] == "p1"]
+    # Filter only IDBO on Profile P1 to avoid duplicate days from multiple algorithms
+    p1_runs = runs_df[(runs_df["profile"] == "p1") & (runs_df["algo"] == "idbo")]
+    if p1_runs.empty:
+        p1_runs = runs_df[runs_df["profile"] == "p1"]
     if p1_runs.empty:
         p1_runs = runs_df
 
@@ -74,24 +77,51 @@ def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
 
     matrix_arr = np.array(matrix)
 
-    plt.figure(figsize=(9, 6.5), dpi=300)
-    im = plt.imshow(matrix_arr, cmap="YlGnBu", aspect="auto", vmin=60, vmax=130)
+    plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Arial", "Liberation Sans", "sans-serif"]
+    fig, ax = plt.subplots(figsize=(9.5, 6.0), dpi=300)
 
-    plt.colorbar(im, label="Tỷ lệ đạt mục tiêu khuyến nghị (%)")
+    # Use clean colormap with capped range for clear visualization
+    cmap = plt.cm.YlGnBu
+    im = ax.imshow(matrix_arr, cmap=cmap, aspect="auto", vmin=60, vmax=130)
 
-    plt.xticks(ticks=range(len(col_labels)), labels=col_labels, fontsize=10, fontweight="bold")
-    plt.yticks(ticks=range(len(days)), labels=[f"Ngày {d}" for d in days], fontsize=10, fontweight="bold")
+    cbar = fig.colorbar(im, ax=ax, pad=0.03)
+    cbar.set_label("Tỷ lệ đạt mục tiêu dinh dưỡng khuyến nghị (%)", fontsize=10.5, fontweight="bold")
+    cbar.ax.tick_params(labelsize=9.5)
 
+    ax.set_xticks(range(len(col_labels)))
+    ax.set_xticklabels(col_labels, fontsize=10.5, fontweight="bold")
+    ax.set_yticks(range(len(days)))
+    ax.set_yticklabels([f"Ngày {d}" for d in days], fontsize=10.5, fontweight="bold")
+
+    # Add crisp white grid separation lines between cells
+    ax.set_xticks(np.arange(-0.5, len(col_labels), 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, len(days), 1), minor=True)
+    ax.grid(which="minor", color="white", linestyle="-", linewidth=2.5)
+    ax.tick_params(which="minor", bottom=False, left=False)
+
+    # Contrast rule: Only use white text for deep dark blue cells (pct >= 110%)
+    # For all light yellow/teal/green cells, use crisp dark slate text (#0F172A)
     for i in range(len(days)):
         for j in range(len(nutrients)):
-            color = "white" if matrix_arr[i, j] > 115 or matrix_arr[i, j] < 75 else "black"
-            plt.text(j, i, text_matrix[i][j], ha="center", va="center", color=color, fontsize=8.5, fontweight="bold")
+            cell_val = matrix_arr[i, j]
+            text_color = "#FFFFFF" if cell_val >= 110.0 else "#0F172A"
+            ax.text(
+                j,
+                i,
+                text_matrix[i][j],
+                ha="center",
+                va="center",
+                color=text_color,
+                fontsize=10.0,
+                fontweight="bold",
+                linespacing=1.25,
+            )
 
-    plt.title(
-        f"W9-F1: Heatmap Thành Phần Dinh Dưỡng Thực Đơn 7 Ngày (Profile P1 - Best Run)\n(Giá trị thực tế và % đáp ứng chuẩn dinh dưỡng hàng ngày)",
-        fontsize=11.5,
+    ax.set_title(
+        "W9-F1: Heatmap Thành Phần Dinh Dưỡng Thực Đơn 7 Ngày (Profile P1 - Best Run)\n(Giá trị thực tế và % đáp ứng chuẩn dinh dưỡng hàng ngày)",
+        fontsize=12,
         fontweight="bold",
-        pad=15,
+        pad=16,
     )
     plt.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -170,11 +200,12 @@ def plot_w9_f3_radar(out_path: Path) -> None:
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
     angles += angles[:1]
 
-    # Metrics for Option A (9001), B (9002), C (9003)
+    # Metrics for Option A (9001), B (9002), C (9003) from generate_options_week9
+    # Categories: [Mean Fitness, % Độc nhất, Chuẩn Calo (100 - %lệch), An toàn (100 - vi phạm*10)]
     options = {
-        "Phương án A (seed 9001)": ([78.5, 95.0, 96.5, 100.0], "#2B5C8F", "-"),
-        "Phương án B (seed 9002)": ([82.1, 90.0, 98.2, 98.0], "#D95F02", "--"),
-        "Phương án C (seed 9003)": ([85.4, 92.5, 97.8, 100.0], "#2CA02C", "-."),
+        "Phương án A (seed 9001)": ([90.7, 100.0, 98.3, 100.0], "#2B5C8F", "-"),
+        "Phương án B (seed 9002)": ([86.6, 85.7, 96.9, 100.0], "#D95F02", "--"),
+        "Phương án C (seed 9003)": ([91.4, 100.0, 99.4, 100.0], "#2CA02C", "-."),
     }
 
     fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True), dpi=300)

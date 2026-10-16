@@ -63,3 +63,8 @@ workflow_guidelines.md
 # Week 8 & Week 9 experiment outputs
 experiments/week8/*
 experiments/week9/*
+
+# Archive files
+*.zip
+*.7z*
+
