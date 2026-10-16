@@ -197,7 +197,7 @@ python -m pytest tests/
 
 ### Cách chạy test
 
-Xem mục **Cài đặt và chạy** bên dưới. Toàn bộ **138 test** chạy tự động qua pytest.
+Xem mục **Cài đặt và chạy** bên dưới. Toàn bộ kiểm thử chạy tự động qua pytest (số lượng có thể tăng khi bổ sung regression test).
 
 ## Cấu trúc dự án
 

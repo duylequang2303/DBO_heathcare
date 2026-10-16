@@ -4,6 +4,7 @@ import time
 import numpy as np
 import pytest
 
+from src.algorithms.idbo import IDBO
 from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.models.user_profile import ActivityLevel, DietType, Gender, Goal, UserProfile
 from src.utils.data_loader import build_food_map, load_food_db
@@ -125,3 +126,65 @@ def test_smoke_fast(food_map_fixture, profile_p1):
     assert result.runtime_s > 0
     assert result.outer_evals > 0
     assert result.inner_evals_total > 0
+
+
+def test_two_tier_solver_rejects_invalid_algo(food_map_fixture, profile_p1):
+    """6. Test that invalid outer or inner algorithm names raise ValueError."""
+    targets = daily_all_targets(profile_p1)
+    with pytest.raises(ValueError, match="Unsupported outer_algo"):
+        two_tier_optimize(profile_p1, food_map_fixture, targets, TwoTierConfig(outer_algo="unknown_algo"))
+    with pytest.raises(ValueError, match="Unsupported inner_algo"):
+        two_tier_optimize(profile_p1, food_map_fixture, targets, TwoTierConfig(inner_algo="unknown_algo"))
+
+
+def test_idbo_activation_telemetry_under_stagnation():
+    """7. Test that real IDBO optimizer records perturbations and restarts under forced stagnation."""
+    flat_obj = lambda x: 42.0
+    opt = IDBO(
+        n_agents=8,
+        max_iter=10,
+        diversity_threshold=0.5,
+        stagnation_window=2,
+        perturbation_rate=0.5,
+        restart_rate=0.5,
+    )
+    res = opt.optimize(flat_obj, dim=4, lb=-5.0, ub=5.0, seed=42)
+    assert res.n_perturbations >= 1
+    assert res.n_restarts >= 1
+    assert isinstance(res.n_perturbations, int)
+    assert isinstance(res.n_restarts, int)
+
+
+def test_two_tier_config_propagates_idbo_params_and_records_telemetry(food_map_fixture, profile_p1):
+    """8. Test that TwoTierConfig passes IDBO parameters and actively triggers IDBO mechanisms under controlled activation."""
+    targets = daily_all_targets(profile_p1)
+    config = TwoTierConfig(
+        outer_algo="idbo",
+        outer_n_agents=6,
+        outer_max_iter=4,
+        inner_algo="idbo",
+        inner_n_agents=6,
+        inner_max_iter=4,
+        diversity_threshold=0.5,
+        stagnation_window=1,
+        perturbation_rate=1.0,
+        restart_rate=1.0,
+        seed=8006,
+    )
+    result = two_tier_optimize(profile_p1, food_map_fixture, targets, config)
+    # Verify that telemetry fields are populated with valid values
+    assert isinstance(result.outer_perturbations, int)
+    assert isinstance(result.outer_restarts, int)
+    assert isinstance(result.final_inner_perturbations, int)
+    assert isinstance(result.final_inner_restarts, int)
+    # Strictly prove that IDBO mechanisms actively fire in two-tier optimization
+    assert (
+        result.outer_perturbations > 0
+        or result.outer_restarts > 0
+        or result.inner_perturbations_total > 0
+        or result.inner_restarts_total > 0
+    )
+    assert result.outer_min_diversity > 0.0
+    assert result.outer_collapse_events > 0
+
+

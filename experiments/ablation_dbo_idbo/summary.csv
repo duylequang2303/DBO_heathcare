@@ -1,0 +1,7 @@
+config_name,algorithm,runs,best_fitness,mean_fitness,median_fitness,std_fitness,worst_fitness,mean_runtime_s,total_outer_perturbations,mean_outer_perturbations,total_outer_restarts,mean_outer_restarts,total_final_inner_perturbations,total_final_inner_restarts,mean_min_diversity,mean_diversity,max_stagnation,total_collapse_events,idbo_wins,idbo_ties,idbo_losses,mean_paired_difference
+baseline_short,dbo,10,99.5106,98.2148,98.5367,1.0663,96.3425,16.0,0,0.0,0,0.0,0,0,0.0,0.0,0,0,0,10,0,0.0
+baseline_short,idbo,10,99.5106,98.2148,98.5367,1.0663,96.3425,16.48,0,0.0,0,0.0,0,0,0.2603,0.2834,23,0,0,10,0,0.0
+diagnostic_aggressive_150,dbo,10,99.6157,96.3323,97.7481,4.5525,84.0787,87.43,0,0.0,0,0.0,0,0,0.0,0.0,0,0,0,10,0,0.0
+diagnostic_aggressive_150,idbo,10,99.6157,96.3323,97.7481,4.5525,84.0787,97.46,0,0.0,0,0.0,0,0,0.2554,0.2923,130,0,0,10,0,0.0
+diagnostic_balanced,dbo,10,99.6472,97.9821,97.9463,1.0948,96.351,57.13,0,0.0,0,0.0,0,0,0.0,0.0,0,0,0,10,0,0.0
+diagnostic_balanced,idbo,10,99.6472,97.9821,97.9463,1.0948,96.351,60.58,0,0.0,0,0.0,0,0,0.258,0.2923,80,0,0,10,0,0.0

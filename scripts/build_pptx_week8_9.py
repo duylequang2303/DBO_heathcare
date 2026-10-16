@@ -13,7 +13,7 @@ Cấu trúc trình chiếu 14 slide chuẩn học thuật:
 - Slide 10: Kết quả thực nghiệm Tuần 9 — Bảng tổng hợp 7 ngày trên 3 hồ sơ
 - Slide 11: Heatmap dinh dưỡng 7 ngày & Biểu đồ so sánh 3 hồ sơ (W9-F1 & W9-F2)
 - Slide 12: Đa dạng hóa trải nghiệm người dùng (UX Option A/B/C & Radar W9-F3)
-- Slide 13: Đảm bảo chất lượng mã nguồn (193/193 tests PASS) & Phân công nhóm
+- Slide 13: Đảm bảo chất lượng mã nguồn (205/205 tests PASS) & Phân công nhóm
 - Slide 14: Kế hoạch nghiên cứu Tuần 10 — Tích hợp FastAPI & Web UI
 
 Usage:
@@ -214,8 +214,11 @@ def table(slide, rows, l, t, w, h, col_w, header_color, body_size=11,
 def slide_01_cover(prs, n, total):
     """Slide 1: Trang bìa báo cáo tổng quan Tuần 8 - 9."""
     s = _blank(prs)
-    _rect(s, 0, 0, SLIDE_W, SLIDE_H, INDIGO)
-    _rect(s, 0, 0, SLIDE_W, Inches(0.18), AMBER)
+    background = s.background
+    fill = background.fill
+    fill.solid()
+    fill.fore_color.rgb = INDIGO
+    _rect(s, Inches(0.01), Inches(0.01), SLIDE_W - Inches(0.02), Inches(0.17), AMBER)
 
     _text(s, Inches(0.9), Inches(0.65), Inches(11.5), Inches(0.35),
           "TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TP. HỒ CHÍ MINH — KHOA CÔNG NGHỆ THÔNG TIN",
@@ -235,7 +238,7 @@ def slide_01_cover(prs, n, total):
           size=17.5, color=RGBColor(0xDD, 0xE5, 0xF5))
 
     _text(s, Inches(0.9), Inches(3.05), Inches(11.5), Inches(0.35),
-          "Tự chọn món tự do từ 15.929 thực phẩm · Phạt lặp Diversity Penalty · Kiểm soát Đường & Natri",
+          "Tự chọn món tự do từ 15.929 thực phẩm · Phạt lặp Diversity Penalty · Đánh giá Carbohydrate & Kiểm soát Natri",
           size=13.5, color=RGBColor(0xC9, 0xD5, 0xEA))
 
     _rect(s, Inches(0.9), Inches(3.55), Inches(2.5), Pt(2.5), AMBER)
@@ -253,7 +256,7 @@ def slide_01_cover(prs, n, total):
           info_box, size=14, color=RGBColor(0xC9, 0xD5, 0xEA), line_spacing=1.28)
 
     _text(s, Inches(0.9), Inches(6.65), Inches(11.5), Inches(0.4),
-          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 193/193 Unit Tests PASS · CSDL 15.929 món sạch",
+          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 205/205 Unit Tests PASS · CSDL 15.929 món tích hợp",
           size=12, color=RGBColor(0x9F, 0xB0, 0xCE))
     n()
 
@@ -281,10 +284,10 @@ def slide_02_transition(prs, n, total):
          "• Khẩu phần được làm tròn về bội số 5g thực tế chế biến.",
          INDIGO, LIGHT),
         ("TUẦN 9: CHU KỲ 7 NGÀY & ĐA BỆNH LÝ",
-         "Diversity Penalty & Clinical Constraints",
+         "Diversity Penalty & Profile-Specific Nutrition Constraints",
          "• Cơ chế phạt lặp món Diversity Penalty cửa sổ trượt 2 ngày (>= 80% độc nhất).\n"
-         "• Hỗ trợ 3 hồ sơ bệnh lý: P1 (Chuẩn), P2 (Tiểu đường), P3 (Tăng huyết áp).\n"
-         "• Siết chặt ràng buộc lâm sàng: Đường <= 25g/ngày, Natri <= 1500mg/ngày.\n"
+         "• Hỗ trợ 3 hồ sơ dinh dưỡng mô phỏng: P1 (Chuẩn), P2 (giảm tải Carbs), P3 (kiểm soát Natri).\n"
+         "• Ràng buộc thực nghiệm: Giảm tải Carbs cho P2; Natri <= 1500mg/ngày cho P3.\n"
          "• Bộ sinh đa phương án UX (Option A/B/C với các seed độc lập).",
          GREEN, LIGHT),
     ]
@@ -356,7 +359,7 @@ def slide_03_architecture(prs, n, total):
          "• Quần thể bọ hung tối ưu vector gram x = (x₁, ..., x_k) trong miền [25g, 350g].\n"
          "• Sử dụng giải thuật IDBO với toán tử Sine-Tent hỗn loạn & đột biến Cauchy."),
         ("2. Hàm mục tiêu & Hệ thống hàm phạt đa tầng:",
-         "• Hàm mục tiêu kết hợp phạt vi phạm năng lượng, dinh dưỡng đa lượng và bệnh lý.\n"
+         "• Hàm mục tiêu kết hợp phạt vi phạm năng lượng, dinh dưỡng đa lượng và các giới hạn dinh dưỡng có dữ liệu hỗ trợ.\n"
          "• Thời gian giải nhanh: 0.17–0.30s cho mỗi lần chạy Inner (chạy tốt)."),
         ("3. Làm tròn khẩu phần thực tế (Portion Rounding):",
          "• Áp dụng module portion_utils: round_portions(x, step=5).\n"
@@ -422,8 +425,8 @@ def slide_05_benchmark_table_week8(prs, n, total):
     kpis = [
         ("99.5106", "Best Fitness Đạt Được", "Cả 2 thuật toán đều tìm được nghiệm phù hợp", GREEN),
         ("98.2148", "Mean Fitness (10 Runs)", "Chạy ổn định tốt (Std 1.0663)", INDIGO),
-        ("0.0 / 10", "Vi Phạm Ràng Buộc", "100% các lần chạy đều thỏa mãn chuẩn dinh dưỡng", TEAL),
-        ("7.6s – 8.2s", "Thời Gian Giải TB", "Hoàn toàn khả thi cho tích hợp hệ thống Web/API", AMBER),
+        ("0.0 / 10", "Vi Phạm Ràng Buộc", "100% lượt chạy không ghi nhận vi phạm trong tập ràng buộc kỹ thuật tuần 8", TEAL),
+        ("7.6s – 8.2s", "Thời Gian Giải TB", "Có tiềm năng tích hợp Web/API sau khi tối ưu thêm hiệu năng", AMBER),
     ]
     for i, (val, tit, sub, col) in enumerate(kpis):
         l = Inches(0.55 + i * 3.11)
@@ -469,18 +472,36 @@ def slide_05_benchmark_table_week8(prs, n, total):
           header_color=INDIGO, body_size=11.0, row_h=Inches(0.48),
           highlight=highlight, align_cols=align)
 
-    # Ghi chú phân tích khoa học bên dưới
-    _rect(s, Inches(0.55), Inches(4.55), Inches(12.23), Inches(2.25), LIGHT, rounded=True, line_color=LINE)
-    _text(s, Inches(0.80), Inches(4.68), Inches(11.7), Inches(0.30),
-          "PHÂN TÍCH KẾT QUẢ THỰC NGHIỆM ĐỐI CHUẨN TUẦN 8 (10 RUNS ĐỘC LẬP):", size=11.5, bold=True, color=INDIGO)
-    notes = [
-        "1. Thuật toán chạy tốt trên bài toán 2 tầng: Cả DBO và IDBO đều đạt Best Fitness 99.5106 / 100 tại seed 8003, với mức lệch calo thực đơn 8.1 kcal (0.32% so với mục tiêu 2491.6 kcal của Duy).",
-        "2. Độ hội tụ ổn định: Mean Fitness đạt 98.2148 với độ lệch chuẩn nhỏ (Std = 1.0663). Cả 20 lượt chạy (10 DBO + 10 IDBO) đều hội tụ về vùng nghiệm hợp lệ (0 vi phạm ràng buộc).",
-        "3. Đánh giá chi phí tính toán: Thuật toán cần đánh giá 210 lần tầng Outer và trung bình ~54.800 lần tầng Inner. Thời gian thực thi 7.60s – 8.25s hoàn toàn khả thi trong thực tế ứng dụng hỗ trợ người dùng.",
+    # Khung dưới chia 2 cột: Phân tích đối chuẩn Tuần 8 & Kiểm tra kích hoạt IDBO
+    l_left = Inches(0.55)
+    w_left = Inches(5.95)
+    _rect(s, l_left, Inches(4.55), w_left, Inches(2.25), LIGHT, rounded=True, line_color=LINE)
+    _rect(s, l_left, Inches(4.55), Inches(0.08), Inches(2.25), INDIGO)
+    _text(s, l_left + Inches(0.20), Inches(4.68), w_left - Inches(0.35), Inches(0.28),
+          "PHÂN TÍCH ĐỐI CHUẨN TUẦN 8 (10 RUNS ĐỘC LẬP):", size=10.5, bold=True, color=INDIGO)
+    notes_left = [
+        "• Hiệu năng 2 tầng: Cả DBO và IDBO đạt Best Fitness 99.5106 tại seed 8003; mức lệch calo 8.1 kcal (0.32% so với mục tiêu 2491.6 kcal của Duy).",
+        "• Chi phí tính toán: ~210 lần tầng Outer, ~54.800 lần tầng Inner; thời gian 7.6s–8.2s (cần tối ưu cache/xử lý nền khi tích hợp API thực tế).",
+        "• Tính hợp lệ: 100% lượt chạy đạt 0 vi phạm ràng buộc kỹ thuật; DBO và IDBO cho kết quả đồng nhất trên toàn bộ 10 seed.",
     ]
-    for i, note in enumerate(notes):
-        _text(s, Inches(0.80), Inches(5.05 + i * 0.52), Inches(11.7), Inches(0.48),
-              note, size=10.2, color=INK, line_spacing=1.15)
+    for i, note in enumerate(notes_left):
+        _text(s, l_left + Inches(0.20), Inches(5.02 + i * 0.54), w_left - Inches(0.35), Inches(0.50),
+              note, size=9.2, color=INK, line_spacing=1.12)
+
+    l_right = Inches(6.83)
+    w_right = Inches(5.95)
+    _rect(s, l_right, Inches(4.55), w_right, Inches(2.25), LIGHT, rounded=True, line_color=LINE)
+    _rect(s, l_right, Inches(4.55), Inches(0.08), Inches(2.25), AMBER)
+    _text(s, l_right + Inches(0.20), Inches(4.68), w_right - Inches(0.35), Inches(0.28),
+          "KIỂM TRA KÍCH HOẠT CƠ CHẾ IDBO (ABLATION DIAGNOSTIC):", size=10.5, bold=True, color=AMBER)
+    notes_right = [
+        "• Đối chuẩn 10 seed: Baseline (25 vòng) & Chẩn đoán (100 vòng) đều đạt Mean Fitness 98.21 và 97.98 (0 kích hoạt, hiệu số Δ = 0.00).",
+        "• Bằng chứng Telemetry trực tiếp: Độ đa dạng quần thể thực tế duy trì ở mức cao min_diversity = 0.246 > threshold (0.001–0.05). Quần thể không bị suy biến nên toán tử giải cứu (perturbation/restart) không bị kích hoạt.",
+        "• Thử nghiệm Controlled Activation (ngưỡng 0.50): IDBO kích hoạt mạnh mẽ 30 lần ở Outer và 8.098 lần ở Inner (Seed 8001) → Khẳng định đường dây và giải thuật IDBO được kết nối hoàn toàn chính xác.",
+    ]
+    for i, note in enumerate(notes_right):
+        _text(s, l_right + Inches(0.20), Inches(5.02 + i * 0.54), w_right - Inches(0.35), Inches(0.50),
+              note, size=8.7, color=INK, line_spacing=1.12)
 
     _footer(s, "Kết quả thực nghiệm 10 runs độc lập Two-Tier DBO vs IDBO trên Profile P1", n(), total)
 
@@ -500,8 +521,8 @@ def slide_06_convergence_boxplot_week8(prs, n, total):
     _rect(s, l_left, Inches(5.75), Inches(5.95), Inches(1.05), LIGHT, rounded=True, line_color=LINE)
     _text(s, l_left + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W8-F1: Đường cong hội tụ tầng ngoài (Outer Iterations 1–25)\n"
-          "• IDBO và DBO đều chạy tốt, tăng nhanh từ thế hệ 1 (Fitness ~75) lên trên 97 chỉ sau 8 vòng lặp.\n"
-          "• Quần thể duy trì ổn định quanh mức 98.2 điểm cho đến hết 25 thế hệ.",
+          "• DBO và IDBO cho đường hội tụ gần như trùng nhau trong cấu hình 25 vòng lặp.\n"
+          "• Cơ chế perturbation/restart chưa kích hoạt đáng kể; chưa thể kết luận IDBO tốt hơn DBO.",
           size=9.8, color=INK, line_spacing=1.15)
 
     # Khung phải: W8-F2 Boxplot
@@ -514,7 +535,7 @@ def slide_06_convergence_boxplot_week8(prs, n, total):
     _text(s, l_right + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W8-F2: Biểu đồ hộp (Boxplot) phân phối Best Fitness qua 10 runs\n"
           "• Trung vị (Median) đạt 98.4 điểm, khoảng biến thiên hẹp [96.3, 99.5].\n"
-          "• Không có ngoại lai (Outliers) xấu; cả 2 thuật toán đều không bị rơi vào nghiệm cục bộ kém.",
+          "• Không quan sát thấy outlier thấp trong 10 seed; kết quả chưa đủ để loại trừ nguy cơ nghiệm cục bộ ở cấu hình khác.",
           size=9.8, color=INK, line_spacing=1.15)
 
     _footer(s, "Đồ thị hội tụ và phân phối giá trị thích nghi qua 10 lượt chạy thực nghiệm", n(), total)
@@ -523,7 +544,7 @@ def slide_06_convergence_boxplot_week8(prs, n, total):
 def slide_07_radar_menu_week8(prs, n, total):
     """Slide 7: Cân đối dinh dưỡng & Minh họa thực đơn đề xuất (W8-F3 & Portions 5g)."""
     s = _blank(prs)
-    _header(s, "Cân Đối Dinh Dưỡng & Thực Đơn Đề Xuất Thực Tế (W8-F3 & 5g Portions)",
+    _header(s, "Cân Đối Dinh Dưỡng & Minh Họa Nghiệm Tối Ưu Kỹ Thuật (W8-F3 & 5g Portions)",
             "MINH HỌA CASE STUDY TRÊN PROFILE P1 (DUY — 2491.6 KCAL)", INDIGO)
 
     # Cột trái: W8-F3 Radar Chart
@@ -568,11 +589,11 @@ def slide_07_radar_menu_week8(prs, n, total):
           highlight=highlight, align_cols=align)
 
     _text(s, l_right + Inches(0.20), Inches(6.20), Inches(5.9), Inches(0.50),
-          "• Đạt chuẩn khẩu phần: Hàm round_portions(x, step=5) loại bỏ hoàn toàn số lẻ thập phân.\n"
-          "• Dinh dưỡng chi tiết: Protein 122.8g (chuẩn 124.6g) | Carbs 312.4g (chuẩn 311.5g) | Fat 82.1g (chuẩn 83.1g).",
+          "• Đạt chuẩn khẩu phần: Cơ chế làm tròn về bước 5g loại bỏ hoàn toàn số lẻ thập phân, giúp người dùng dễ dàng cân đong khi chế biến.\n"
+          "• Dinh dưỡng: Protein 122.8g | Carbs 312.4g | Fat 82.1g. Nghiệm chưa áp dụng DishRole và serving bounds theo nhóm; một số tổ hợp chưa phù hợp thực tế ẩm thực.",
           size=9.2, color=MUTED, line_spacing=1.15)
 
-    _footer(s, "Minh họa thực đơn 4 bữa và phân tích radar dinh dưỡng đa lượng thực tế", n(), total)
+    _footer(s, "Minh họa nghiệm tối ưu kỹ thuật và giới hạn về tính thực tế ẩm thực", n(), total)
 
 
 def slide_08_weekly_planner_diversity(prs, n, total):
@@ -613,8 +634,8 @@ def slide_08_weekly_planner_diversity(prs, n, total):
 def slide_09_multi_profile_constraints(prs, n, total):
     """Slide 9: Mở rộng 3 hồ sơ bệnh lý (P1 Khỏe mạnh, P2 Tiểu đường, P3 Huyết áp)."""
     s = _blank(prs)
-    _header(s, "Mở Rộng Ba Hồ Sơ Bệnh Lý Lâm Sàng (Multi-Profile Benchmark)",
-            "ĐÁNH GIÁ TÍNH ỨNG DỤNG Y TẾ TRÊN P1, P2 VÀ P3", INDIGO)
+    _header(s, "Mở Rộng Ba Hồ Sơ Dinh Dưỡng Mô Phỏng (Multi-Profile Benchmark)",
+            "ĐÁNH GIÁ RÀNG BUỘC DINH DƯỠNG THEO BA HỒ SƠ MÔ PHỎNG", INDIGO)
 
     # 3 Thẻ hồ sơ
     profiles = [
@@ -628,24 +649,24 @@ def slide_09_multi_profile_constraints(prs, n, total):
          "• Giới hạn Natri chung: <= 2.300 mg/ngày.\n"
          "• Cơ cấu bữa: Sáng (2), Trưa (2), Tối (2), Phụ (2).",
          INDIGO, LIGHT),
-        ("PROFILE P2: TIỂU ĐƯỜNG (DIABETES)",
-         "Bệnh nhân ĐTĐ Type 2: Nguyễn Thị Lan (45 tuổi)",
+        ("PROFILE P2: ĐỊNH HƯỚNG GIẢM CARBOHYDRATE",
+         "Hồ sơ mô phỏng P2: Nguyễn Thị Lan (45 tuổi)",
          "• Giới tính: Nữ | Chiều cao: 158cm | Nặng: 62kg.\n"
          "• Mức vận động: LIGHT (Vận động nhẹ).\n"
          "• Mục tiêu: Giảm cân nhẹ (LOSE_WEIGHT, TDEE - 500).\n"
          "• Nhu cầu Năng lượng: 1.179,6 kcal/ngày.\n"
-         "• RÀNG BUỘC NGHIÊM NGẶT: Đường (Sugar) <= 25.0g.\n"
-         "• Phạt vi phạm đường: w_sugar = 3.0 × max(0, sugar - 25).\n"
+         "• Định hướng: giảm Carbs và kiểm soát calo chặt chẽ.\n"
+         "• CSDL chưa có total sugar; proxy 15% Carbs chỉ thử nghiệm kỹ thuật, không dùng để kết luận y tế.\n"
          "• Cơ cấu bữa: Sáng (2), Trưa (2), Tối (2), Phụ (1).",
          RED, CREAM),
         ("PROFILE P3: TĂNG HUYẾT ÁP (HYPERTENSION)",
-         "Bệnh nhân Tim mạch: Trần Văn Minh (55 tuổi)",
+         "Hồ sơ mô phỏng P3: Trần Văn Minh (55 tuổi)",
          "• Giới tính: Nam | Chiều cao: 168cm | Nặng: 75kg.\n"
          "• Mức vận động: SEDENTARY (Ít vận động).\n"
          "• Mục tiêu: Duy trì cân nặng (MAINTAIN).\n"
          "• Nhu cầu Năng lượng: 1.836,0 kcal/ngày.\n"
          "• RÀNG BUỘC NGHIÊM NGẶT: Natri <= 1.500 mg/ngày.\n"
-         "• Tiêu chuẩn AHA (Hiệp hội Tim mạch Hoa Kỳ).\n"
+         "• Ngưỡng 1.500 mg/ngày được dùng làm mức tham chiếu thử nghiệm.\n"
          "• Cơ cấu bữa: Sáng (2), Trưa (2), Tối (2), Phụ (1).",
          AMBER, LIGHT),
     ]
@@ -659,14 +680,14 @@ def slide_09_multi_profile_constraints(prs, n, total):
         _rect(s, l + Inches(0.20), Inches(2.18), Inches(3.53), Pt(1.0), LINE)
         _text(s, l + Inches(0.20), Inches(2.30), Inches(3.53), Inches(4.30), body, size=10.2, color=INK, line_spacing=1.25)
 
-    _footer(s, "Thiết lập ba hồ sơ đánh giá và hệ thống ràng buộc bệnh lý lâm sàng", n(), total)
+    _footer(s, "Thiết lập ba hồ sơ mô phỏng và ràng buộc dinh dưỡng theo hồ sơ", n(), total)
 
 
 def slide_10_weekly_summary_table(prs, n, total):
     """Slide 10: Kết quả thực nghiệm Tuần 9 — Bảng tổng hợp 7 ngày trên 3 hồ sơ."""
     s = _blank(prs)
     _header(s, "Kết Quả Thực Nghiệm Tuần 9: Đánh Giá 7 Ngày Trên Ba Hồ Sơ",
-            "ĐỐI CHUẨN THUẬT TOÁN VÀ ĐÁNH GIÁ MỨC ĐỘ THỎA MÃN BỆNH LÝ", INDIGO)
+            "ĐỐI CHUẨN THUẬT TOÁN VÀ ĐÁNH GIÁ RÀNG BUỘC DINH DƯỠNG THEO HỒ SƠ", INDIGO)
 
     # Đọc số liệu thực nghiệm Tuần 9
     sum_path = W9 / "weekly_summary.csv"
@@ -684,17 +705,17 @@ def slide_10_weekly_summary_table(prs, n, total):
             {"algo": "dbo", "profile": "p3", "runs": 5, "mean_fitness_7days": 90.97, "mean_violations": 0.43, "mean_calo_deviation_pct": 0.97},
         ])
 
-    prof_label = {"p1": "P1 (Khỏe mạnh)", "p2": "P2 (Tiểu đường)", "p3": "P3 (Huyết áp)"}
+    prof_label = {"p1": "P1 (Khỏe mạnh)", "p2": "P2 (Giảm Carbs)", "p3": "P3 (Giới hạn Natri)"}
 
     rows = [
-        ["Thuật toán", "Hồ sơ bệnh lý", "Số ngày", "Mean Fitness 7 ngày", "Sai lệch Calo TB (%)", "Vi phạm TB/ngày", "Tỷ lệ món độc nhất", "Đánh giá an toàn y tế"],
+        ["Thuật toán", "Hồ sơ dinh dưỡng", "Số ngày", "Mean Fitness 7 ngày", "Sai lệch Calo TB (%)", "Vi phạm TB/ngày", "Tỷ lệ món độc nhất", "Diễn giải kỹ thuật & giới hạn"],
     ]
 
     div_dict = {"p1": "100.0%", "p2": "92.9%", "p3": "100.0%"}
     safety_dict = {
-        "p1": "Đạt 100% mục tiêu năng lượng & đa lượng",
-        "p2": "Đường <= 25g (thực tế 21.2g) · An toàn",
-        "p3": "Natri <= 1500mg (thực tế 1340mg) · Đạt AHA",
+        "p1": "Đánh giá kỹ thuật theo năng lượng & đa lượng",
+        "p2": "Chưa kết luận đường: dataset không có trường total sugar",
+        "p3": "Cần đánh giá tỷ lệ ngày đạt giới hạn natri 1500mg",
     }
 
     for _, r in df_w9_sum.iterrows():
@@ -715,28 +736,28 @@ def slide_10_weekly_summary_table(prs, n, total):
         (1, 3): (GREEN, True), (2, 3): (INDIGO, True), (3, 3): (GREEN, True),
         (1, 6): (GREEN, True), (2, 6): (GREEN, True), (3, 6): (GREEN, True),
     }
-    table(s, rows, Inches(0.55), Inches(1.35), Inches(12.23), Inches(3.20),
-          col_w=[Inches(1.2), Inches(2.2), Inches(1.0), Inches(1.8), Inches(1.6), Inches(1.3), Inches(1.5), Inches(1.63)],
-          header_color=INDIGO, body_size=9.8, row_h=Inches(0.44),
+    table(s, rows, Inches(0.55), Inches(1.30), Inches(12.23), Inches(2.60),
+          col_w=[Inches(0.90), Inches(1.70), Inches(0.85), Inches(1.40), Inches(1.20), Inches(1.10), Inches(1.30), Inches(3.78)],
+          header_color=INDIGO, body_size=8.5, row_h=Inches(0.35),
           highlight=highlight, align_cols=align)
 
-    # 3 Khối nhận xét kết quả bên dưới
+    # 3 Khối nhận xét kết quả bên dưới (đặt tại Y=4.15 để hoàn toàn không bị bảng đè)
     insights = [
         ("Kiểm soát Calo chuẩn xác:",
          "Mức sai lệch calo trung bình so với target: P1 lệch 2.37%, P2 lệch 5.59%, P3 lệch 1.84% (thuật toán chạy tốt, bám sát khuyến nghị)."),
         ("Hiệu quả của Diversity Penalty:",
          "Tỷ lệ món chính độc nhất đạt từ 92.9% đến 100.0% (đạt yêu cầu trên 80%). Thuật toán hạn chế tốt hiện tượng trùng lặp món ăn trong 2 ngày kế cận."),
-        ("Tuân thủ ràng buộc bệnh lý:",
-         "Trên hồ sơ P2 (Tiểu đường), hàm lượng đường được giữ an toàn dưới 25g. Trên hồ sơ P3 (Tăng HA), mức Natri kiểm soát tốt dưới ngưỡng 1500mg AHA."),
+        ("Giới hạn dữ liệu & diễn giải:",
+         "P2 chưa có dữ liệu total sugar: chỉ đánh giá năng lượng, Carbs và đa lượng; proxy 15% Carbs không dùng để kết luận an toàn. P3 kiểm tra Natri trực tiếp theo ngưỡng cấu hình 1.500mg/ngày và cần báo cáo tỷ lệ ngày đạt ngưỡng."),
     ]
     for i, (title, body) in enumerate(insights):
         l = Inches(0.55 + i * 4.15)
-        _rect(s, l, Inches(4.75), Inches(3.93), Inches(2.15), LIGHT, rounded=True, line_color=LINE)
-        _text(s, l + Inches(0.20), Inches(4.88), Inches(3.53), Inches(0.28), title, size=11, bold=True, color=INDIGO)
-        _rect(s, l + Inches(0.20), Inches(5.18), Inches(3.53), Pt(1.0), LINE)
-        _text(s, l + Inches(0.20), Inches(5.28), Inches(3.53), Inches(1.50), body, size=9.8, color=INK, line_spacing=1.2)
+        _rect(s, l, Inches(4.15), Inches(3.93), Inches(2.65), LIGHT, rounded=True, line_color=LINE)
+        _text(s, l + Inches(0.20), Inches(4.27), Inches(3.53), Inches(0.28), title, size=11, bold=True, color=INDIGO)
+        _rect(s, l + Inches(0.20), Inches(4.57), Inches(3.53), Pt(1.0), LINE)
+        _text(s, l + Inches(0.20), Inches(4.68), Inches(3.53), Inches(2.00), body, size=9.2, color=INK, line_spacing=1.18)
 
-    _footer(s, "Bảng tổng hợp kết quả thực nghiệm 7 ngày trên ba hồ sơ bệnh lý", n(), total)
+    _footer(s, "Bảng tổng hợp kết quả kỹ thuật 7 ngày trên ba hồ sơ dinh dưỡng mô phỏng", n(), total)
 
 
 def slide_11_heatmap_barchart_week9(prs, n, total):
@@ -754,8 +775,8 @@ def slide_11_heatmap_barchart_week9(prs, n, total):
     _rect(s, l_left, Inches(5.75), Inches(5.95), Inches(1.05), LIGHT, rounded=True, line_color=LINE)
     _text(s, l_left + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W9-F1: Heatmap tỷ lệ đáp ứng dinh dưỡng 7 ngày (Profile P1)\n"
-          "• Toàn bộ 7 ngày đều dao động quanh mức chuẩn 95% – 105% nhu cầu khuyến nghị.\n"
-          "• Không có ngày nào bị thiếu hụt năng lượng (<85%) hoặc dư thừa quá mức (>120%).",
+          "• Năng lượng nhìn chung bám mục tiêu, nhưng chất xơ biến động giữa các ngày.\n"
+          "• Natri vượt giới hạn ở một số ngày; đây là hạn chế cần xử lý bằng ràng buộc trực tiếp.",
           size=9.8, color=INK, line_spacing=1.15)
 
     # Khung phải: W9-F2 Bar chart
@@ -767,8 +788,8 @@ def slide_11_heatmap_barchart_week9(prs, n, total):
     _rect(s, l_right, Inches(5.75), Inches(5.95), Inches(1.05), LIGHT, rounded=True, line_color=LINE)
     _text(s, l_right + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W9-F2: Đối chuẩn Mean Fitness & Độ lệch Calo trên 3 hồ sơ\n"
-          "• Mean Fitness duy trì ở mức cao: P1 (90.8), P2 (85.5), P3 (91.0).\n"
-          "• Lệch Calo dưới 4% trên toàn bộ các hồ sơ, khẳng định tính thích ứng phổ quát.",
+          "• Mean Fitness thực nghiệm 7 ngày: P1 (90.68), P2 (79.27), P3 (88.09).\n"
+          "• Sai lệch calo: P1 2.37%, P2 5.59%, P3 1.84%; P2 cần tiếp tục cải thiện.",
           size=9.8, color=INK, line_spacing=1.15)
 
     _footer(s, "Heatmap tỷ lệ dinh dưỡng hàng ngày và đối chuẩn hiệu năng trên 3 hồ sơ", n(), total)
@@ -808,7 +829,7 @@ def slide_12_ux_options_abc(prs, n, total):
         ["Mẫu món Sáng Ngày 1", "Artisan French Baguette", "American Cage Free Egg", "100% Whole Wheat Bread"],
         ["Mẫu món Trưa Ngày 1", "100% Whole Grain Quinoa", "100% Whole Wheat Pasta", "Quaker Instant Oatmeal"],
         ["Mẫu món Tối Ngày 1", "Basmati Long Grain Rice", "Chinese Cabbage (Peking)", "Vegetarian Meatloaf Mix"],
-        ["Đánh giá trải nghiệm", "Cân bằng tối ưu, vị thanh", "Giàu chất xơ, đạm thực vật", "Đậm đà, năng lượng chuẩn"],
+        ["Đặc điểm đo được", "Seed 9001 · Độc nhất 100%", "Seed 9002 · Độc nhất 85.7%", "Seed 9003 · Lệch calo thấp nhất"],
     ]
     align = {0: PP_ALIGN.LEFT, 1: PP_ALIGN.CENTER, 2: PP_ALIGN.CENTER, 3: PP_ALIGN.CENTER}
     highlight = {
@@ -820,16 +841,16 @@ def slide_12_ux_options_abc(prs, n, total):
           highlight=highlight, align_cols=align)
 
     _text(s, l_right + Inches(0.20), Inches(6.25), Inches(5.9), Inches(0.45),
-          "• Ý nghĩa trải nghiệm người dùng: Không áp đặt 1 thực đơn duy nhất. Hệ thống cung cấp 3 lựa chọn với phong cách ẩm thực khác biệt, người dùng có toàn quyền chọn phương án ưa thích.",
+          "• Ba phương án được sinh từ seed độc lập và so sánh bằng fitness, sai lệch calo, độ đa dạng. Hệ thống chưa đánh giá khẩu vị hoặc phong cách ẩm thực.",
           size=9.2, color=INK, line_spacing=1.15)
 
     _footer(s, "Đa dạng hóa trải nghiệm người dùng qua 3 phương án thực đơn A/B/C", n(), total)
 
 
 def slide_13_qa_unit_tests(prs, n, total):
-    """Slide 13: Đảm bảo chất lượng mã nguồn (193/193 tests PASS) & Phân công nhóm."""
+    """Slide 13: Đảm bảo chất lượng mã nguồn (205/205 tests PASS) & Phân công nhóm."""
     s = _blank(prs)
-    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (193/193 Tests PASS) & Phân Công",
+    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (205/205 Tests PASS) & Phân Công",
             "KIỂM THỬ TỰ ĐỘNG & QUẢN TRỊ DỰ ÁN", INDIGO)
 
     # Khung trái: Thống kê Test Suite
@@ -837,24 +858,25 @@ def slide_13_qa_unit_tests(prs, n, total):
     _rect(s, l_left, Inches(1.35), Inches(5.95), Inches(5.45), LIGHT, rounded=True, line_color=LINE)
     _rect(s, l_left, Inches(1.35), Inches(5.95), Inches(0.08), GREEN)
     _text(s, l_left + Inches(0.25), Inches(1.50), Inches(5.45), Inches(0.35),
-          "HỆ THỐNG KIỂM THỬ TỰ ĐỘNG: 193/193 TESTS PASS (100%)", size=13.0, bold=True, color=GREEN)
+          "HỆ THỐNG KIỂM THỬ TỰ ĐỘNG: 205/205 TESTS PASS (100%)", size=13.0, bold=True, color=GREEN)
     _rect(s, l_left + Inches(0.25), Inches(1.88), Inches(5.45), Pt(1.0), LINE)
 
     test_modules = [
-        ["Module kiểm thử", "Số test cases", "Nội dung xác thực chính", "Kết quả"],
-        ["test_two_tier_solver.py", "12 tests", "Tối ưu 2 tầng Outer/Inner, cấu hình seed, bounds", "PASS 100%"],
-        ["test_food_selector.py", "16 tests", "Lọc Pool theo bữa, loại trừ dị ứng, giải mã z", "PASS 100%"],
-        ["test_diversity_penalty.py", "14 tests", "Phạt lặp lookback 2 ngày, % món chính độc nhất", "PASS 100%"],
-        ["test_portion_utils.py", "10 tests", "Làm tròn bội số 5g, giữ cận biên [25, 350]", "PASS 100%"],
-        ["test_experiment_week8.py", "8 tests", "Pipeline chạy benchmark 10 runs, CSV/PNG Tuần 8", "PASS 100%"],
-        ["test_experiment_week9.py", "12 tests", "Pipeline 7 ngày, kiểm soát Đường & Natri P1/P2/P3", "PASS 100%"],
-        ["Module kế thừa Tuần 1–7", "121 tests", "BMR/TDEE, DBO, IDBO, Objective, Constraints", "PASS 100%"],
+        ["Phân hệ chức năng", "Số test cases", "Nội dung xác thực chính", "Kết quả"],
+        ["Tối ưu 2 tầng (Two-Tier Solver)", "15 tests", "Tối ưu 2 tầng Outer/Inner, IDBO telemetry, bounds", "PASS 100%"],
+        ["Lọc & Chọn món (Food Selector)", "16 tests", "Lọc Pool theo bữa, loại trừ dị ứng, giải mã z", "PASS 100%"],
+        ["Chống lặp món (Diversity Penalty)", "14 tests", "Phạt lặp lookback 2 ngày, % món chính độc nhất", "PASS 100%"],
+        ["Làm tròn khẩu phần 5g (Portions)", "10 tests", "Làm tròn bội số 5g, giữ cận biên [25, 350]", "PASS 100%"],
+        ["Đối chuẩn giải thuật (Tuần 8)", "8 tests", "Quy trình đối chuẩn 10 runs, trích xuất biểu đồ", "PASS 100%"],
+        ["Kế hoạch 7 ngày đa bệnh lý (Tuần 9)", "12 tests", "Pipeline 7 ngày, kiểm soát Carbs & Natri theo hồ sơ", "PASS 100%"],
+        ["Dữ liệu & Ràng buộc lâm sàng", "14 tests", "Schema dữ liệu, ẩm thực Slot & Natri huyết áp", "PASS 100%"],
+        ["Module nền tảng (Tuần 1–7)", "116 tests", "BMR/TDEE, DBO, IDBO, Objective, Benchmarks CEC", "PASS 100%"],
     ]
     align_t = {0: PP_ALIGN.LEFT, 1: PP_ALIGN.CENTER, 2: PP_ALIGN.LEFT, 3: PP_ALIGN.CENTER}
     highlight_t = {(i, 3): (GREEN, True) for i in range(1, len(test_modules))}
-    table(s, test_modules, l_left + Inches(0.15), Inches(2.00), Inches(5.65), Inches(4.60),
+    table(s, test_modules, l_left + Inches(0.15), Inches(2.00), Inches(5.65), Inches(4.00),
           col_w=[Inches(1.8), Inches(0.9), Inches(2.05), Inches(0.9)],
-          header_color=INDIGO, body_size=9.0, row_h=Inches(0.52),
+          header_color=INDIGO, body_size=7.6, row_h=Inches(0.39),
           highlight=highlight_t, align_cols=align_t)
 
     # Khung phải: Phân công trách nhiệm 3 SV
@@ -867,20 +889,20 @@ def slide_13_qa_unit_tests(prs, n, total):
 
     members = [
         ("Lê Quang Duy (Nhóm trưởng):",
-         "• Thiết kế & cài đặt Two-Tier Solver (two_tier_solver.py) và Candidate Pools.\n"
-         "• Cài đặt module làm tròn khẩu phần 5g (portion_utils.py).\n"
-         "• Viết kịch bản demo_week8.py, demo_week9.py và tổng hợp slide báo cáo.\n"
-         "• Đóng góp phần Báo cáo Word Mục 1, 3, 5 Tuần 8."),
+         "• Thiết kế & cài đặt bộ giải Two-Tier Solver và các bể ứng viên (Candidate Pools).\n"
+         "• Cài đặt module làm tròn khẩu phần theo bước 5g thực tế chế biến.\n"
+         "• Xây dựng kịch bản demo trực quan hóa Tuần 8–9 và tổng hợp slide báo cáo.\n"
+         "• Phụ trách hoàn thiện Báo cáo tiến độ Tuần 8 (Mục 1, 3, 5)."),
         ("Hồ Trung Cương:",
-         "• Thiết kế cơ chế phạt lặp món (diversity_penalty.py) cửa sổ trượt 2 ngày.\n"
-         "• Cài đặt bộ đo lường tỷ lệ món chính độc nhất calculate_unique_main_dish_pct.\n"
-         "• Đóng góp phần Báo cáo Word Mục 2, 4 Tuần 8 và Mục 2 Tuần 9.\n"
-         "• Thiết kế thuật toán ánh xạ chỉ mục bọ hung rời rạc."),
+         "• Thiết kế cơ chế phạt lặp món (Diversity Penalty) cửa sổ trượt 2 ngày.\n"
+         "• Xây dựng chỉ số đo lường tỷ lệ món chính độc nhất theo chu kỳ tuần.\n"
+         "• Thiết kế thuật toán ánh xạ chỉ mục bọ hung rời rạc từ vector liên tục.\n"
+         "• Phụ trách hoàn thiện Báo cáo tiến độ Tuần 8 (Mục 2, 4) và Tuần 9 (Mục 2)."),
         ("Đặng Nguyễn Minh Đăng:",
-         "• Xây dựng kịch bản thực nghiệm Tuần 9 (experiment_week9.py, 3 profiles).\n"
-         "• Cài đặt bộ vẽ đồ thị plot_week8.py & plot_week9.py (Heatmap, Radar, Bar chart).\n"
-         "• Triển khai bộ sinh đa phương án UX generate_options_week9.py (Option A/B/C).\n"
-         "• Phân tích số liệu và hoàn thiện báo cáo Word Mục 3, 4, 5 Tuần 9."),
+         "• Xây dựng kịch bản thực nghiệm Tuần 9 trên 3 hồ sơ bệnh lý mô phỏng.\n"
+         "• Thiết kế & cài đặt hệ thống biểu đồ trực quan (Heatmap, Radar, Bar chart).\n"
+         "• Triển khai bộ sinh đa phương án thực đơn tùy biến người dùng (Option A/B/C).\n"
+         "• Phụ trách phân tích số liệu và hoàn thiện Báo cáo tiến độ Tuần 9 (Mục 3, 4, 5)."),
     ]
     y_m = Inches(2.05)
     for name, desc in members:
@@ -889,7 +911,7 @@ def slide_13_qa_unit_tests(prs, n, total):
         _text(s, l_right + Inches(0.25), y_m, Inches(5.45), Inches(1.20), desc, size=9.8, color=INK, line_spacing=1.18)
         y_m += Inches(1.25)
 
-    _footer(s, "Kết quả kiểm thử tự động 193/193 tests PASS và phân công trách nhiệm thành viên", n(), total)
+    _footer(s, "Kết quả kiểm thử tự động 205/205 tests PASS và phân công trách nhiệm thành viên", n(), total)
 
 
 def slide_14_week10_plan(prs, n, total):
@@ -905,7 +927,7 @@ def slide_14_week10_plan(prs, n, total):
          "• Đóng gói Two-Tier Solver & 7-Day Planner thành dịch vụ API chuẩn hóa.\n"
          "• Endpoint /api/menu/generate: Tiếp nhận UserProfile, sinh 3 options A/B/C.\n"
          "• Endpoint /api/menu/swap: Cho phép đổi 1 món ăn cụ thể và tự động cân chỉnh lại gram các món còn lại.\n"
-         "• Phản hồi nhanh dưới 1.5 giây/ngày.",
+         "• Mục tiêu sau tối ưu: hướng tới dưới 1.5 giây/ngày bằng cache, warm start, thu gọn candidate pool và xử lý song song.",
          INDIGO),
         ("2. GIAO DIỆN WEB HIỆN ĐẠI",
          "Frontend tương tác trực quan",
@@ -914,11 +936,11 @@ def slide_14_week10_plan(prs, n, total):
          "• Hiển thị lịch thực đơn 7 ngày dạng lưới (Weekly Grid) theo 4 bữa.\n"
          "• Biểu đồ Radar và Heatmap dinh dưỡng tương tác thời gian thực.",
          TEAL),
-        ("3. TÍNH NĂNG ĐỔI MÓN THÔNG MINH",
-         "Smart Meal Swap Mechanism",
-         "• Khi người dùng không thích 1 món, hệ thống gợi ý món thay thế cùng nhóm dinh dưỡng.\n"
-         "• Chạy lại Tầng 2 (Inner Solver) trong 0.2s để tái cân bằng năng lượng mà không phá vỡ cấu trúc thực đơn tuần.\n"
-         "• Kiểm tra tính hợp lệ tức thì trước khi lưu.",
+        ("3. ĐỔI MÓN & VAI TRÒ ẨM THỰC",
+         "Smart Meal Swap & Culinary Slots",
+         "• Bổ sung DishRole: tinh bột, đạm, rau, canh, món phụ và nguyên liệu.\n"
+         "• Chặn nguyên liệu thô hoặc khẩu phần phi thực tế khỏi vị trí món ăn trực tiếp.\n"
+         "• Khi đổi món, chỉ chọn ứng viên cùng vai trò rồi chạy lại Inner Solver và kiểm tra ràng buộc.",
          GREEN),
         ("4. KIỂM THỬ & ĐÓNG GÓI HOÀN CHỈNH",
          "System Validation & Deployment",
