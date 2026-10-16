@@ -214,8 +214,8 @@ def table(slide, rows, l, t, w, h, col_w, header_color, body_size=11,
 def slide_01_cover(prs, n, total):
     """Slide 1: Trang bìa báo cáo tổng quan Tuần 8 - 9."""
     s = _blank(prs)
-    _rect(s, 0, 0, SLIDE_W, SLIDE_H, INDIGO)
-    _rect(s, 0, 0, SLIDE_W, Inches(0.18), AMBER)
+    _rect(s, Inches(0.01), Inches(0.01), SLIDE_W - Inches(0.02), SLIDE_H - Inches(0.02), INDIGO)
+    _rect(s, Inches(0.01), Inches(0.01), SLIDE_W - Inches(0.02), Inches(0.17), AMBER)
 
     _text(s, Inches(0.9), Inches(0.65), Inches(11.5), Inches(0.35),
           "TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TP. HỒ CHÍ MINH — KHOA CÔNG NGHỆ THÔNG TIN",
@@ -253,7 +253,7 @@ def slide_01_cover(prs, n, total):
           info_box, size=14, color=RGBColor(0xC9, 0xD5, 0xEA), line_spacing=1.28)
 
     _text(s, Inches(0.9), Inches(6.65), Inches(11.5), Inches(0.4),
-          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 193/193 Unit Tests PASS · CSDL 15.929 món sạch",
+          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 195/195 Unit Tests PASS · CSDL 15.929 món sạch",
           size=12, color=RGBColor(0x9F, 0xB0, 0xCE))
     n()
 
@@ -829,7 +829,7 @@ def slide_12_ux_options_abc(prs, n, total):
 def slide_13_qa_unit_tests(prs, n, total):
     """Slide 13: Đảm bảo chất lượng mã nguồn (193/193 tests PASS) & Phân công nhóm."""
     s = _blank(prs)
-    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (193/193 Tests PASS) & Phân Công",
+    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (195/195 Tests PASS) & Phân Công",
             "KIỂM THỬ TỰ ĐỘNG & QUẢN TRỊ DỰ ÁN", INDIGO)
 
     # Khung trái: Thống kê Test Suite
