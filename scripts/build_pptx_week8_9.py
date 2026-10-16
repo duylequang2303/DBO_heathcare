@@ -214,7 +214,10 @@ def table(slide, rows, l, t, w, h, col_w, header_color, body_size=11,
 def slide_01_cover(prs, n, total):
     """Slide 1: Trang bìa báo cáo tổng quan Tuần 8 - 9."""
     s = _blank(prs)
-    _rect(s, Inches(0.01), Inches(0.01), SLIDE_W - Inches(0.02), SLIDE_H - Inches(0.02), INDIGO)
+    background = s.background
+    fill = background.fill
+    fill.solid()
+    fill.fore_color.rgb = INDIGO
     _rect(s, Inches(0.01), Inches(0.01), SLIDE_W - Inches(0.02), Inches(0.17), AMBER)
 
     _text(s, Inches(0.9), Inches(0.65), Inches(11.5), Inches(0.35),
@@ -356,7 +359,7 @@ def slide_03_architecture(prs, n, total):
          "• Quần thể bọ hung tối ưu vector gram x = (x₁, ..., x_k) trong miền [25g, 350g].\n"
          "• Sử dụng giải thuật IDBO với toán tử Sine-Tent hỗn loạn & đột biến Cauchy."),
         ("2. Hàm mục tiêu & Hệ thống hàm phạt đa tầng:",
-         "• Hàm mục tiêu kết hợp phạt vi phạm năng lượng, dinh dưỡng đa lượng và bệnh lý.\n"
+         "• Hàm mục tiêu kết hợp phạt vi phạm năng lượng, dinh dưỡng đa lượng và các giới hạn dinh dưỡng có dữ liệu hỗ trợ.\n"
          "• Thời gian giải nhanh: 0.17–0.30s cho mỗi lần chạy Inner (chạy tốt)."),
         ("3. Làm tròn khẩu phần thực tế (Portion Rounding):",
          "• Áp dụng module portion_utils: round_portions(x, step=5).\n"
@@ -666,7 +669,7 @@ def slide_10_weekly_summary_table(prs, n, total):
     """Slide 10: Kết quả thực nghiệm Tuần 9 — Bảng tổng hợp 7 ngày trên 3 hồ sơ."""
     s = _blank(prs)
     _header(s, "Kết Quả Thực Nghiệm Tuần 9: Đánh Giá 7 Ngày Trên Ba Hồ Sơ",
-            "ĐỐI CHUẨN THUẬT TOÁN VÀ ĐÁNH GIÁ MỨC ĐỘ THỎA MÃN BỆNH LÝ", INDIGO)
+            "ĐỐI CHUẨN THUẬT TOÁN VÀ ĐÁNH GIÁ RÀNG BUỘC DINH DƯỠNG THEO HỒ SƠ", INDIGO)
 
     # Đọc số liệu thực nghiệm Tuần 9
     sum_path = W9 / "weekly_summary.csv"
@@ -684,10 +687,10 @@ def slide_10_weekly_summary_table(prs, n, total):
             {"algo": "dbo", "profile": "p3", "runs": 5, "mean_fitness_7days": 90.97, "mean_violations": 0.43, "mean_calo_deviation_pct": 0.97},
         ])
 
-    prof_label = {"p1": "P1 (Khỏe mạnh)", "p2": "P2 (Tiểu đường)", "p3": "P3 (Huyết áp)"}
+    prof_label = {"p1": "P1 (Khỏe mạnh)", "p2": "P2 (Giảm Carbs)", "p3": "P3 (Giới hạn Natri)"}
 
     rows = [
-        ["Thuật toán", "Hồ sơ bệnh lý", "Số ngày", "Mean Fitness 7 ngày", "Sai lệch Calo TB (%)", "Vi phạm TB/ngày", "Tỷ lệ món độc nhất", "Diễn giải kỹ thuật & giới hạn"],
+        ["Thuật toán", "Hồ sơ dinh dưỡng", "Số ngày", "Mean Fitness 7 ngày", "Sai lệch Calo TB (%)", "Vi phạm TB/ngày", "Tỷ lệ món độc nhất", "Diễn giải kỹ thuật & giới hạn"],
     ]
 
     div_dict = {"p1": "100.0%", "p2": "92.9%", "p3": "100.0%"}
@@ -848,16 +851,14 @@ def slide_13_qa_unit_tests(prs, n, total):
         ["test_portion_utils.py", "10 tests", "Làm tròn bội số 5g, giữ cận biên [25, 350]", "PASS 100%"],
         ["test_experiment_week8.py", "8 tests", "Pipeline chạy benchmark 10 runs, CSV/PNG Tuần 8", "PASS 100%"],
         ["test_experiment_week9.py", "12 tests", "Pipeline 7 ngày, Carbs proxy minh bạch & Natri P1/P2/P3", "PASS 100%"],
-        ["test_data_integrity.py", "5 tests", "Schema dữ liệu; chặn nguyên liệu thô không phù hợp", "PASS 100%"],
-        ["test_culinary_realism.py", "2 tests", "Kiểm tra cơ cấu món theo Culinary Slots", "PASS 100%"],
-        ["test_constraints.py", "7 tests", "Bổ sung ràng buộc Natri cho profile tăng huyết áp", "PASS 100%"],
+        ["Data, Culinary & Constraints", "14 tests", "Schema dữ liệu, ẩm thực Slot & Natri huyết áp", "PASS 100%"],
         ["Module kế thừa Tuần 1–7", "116 tests", "BMR/TDEE, DBO, IDBO, Objective, Benchmarks CEC", "PASS 100%"],
     ]
     align_t = {0: PP_ALIGN.LEFT, 1: PP_ALIGN.CENTER, 2: PP_ALIGN.LEFT, 3: PP_ALIGN.CENTER}
     highlight_t = {(i, 3): (GREEN, True) for i in range(1, len(test_modules))}
-    table(s, test_modules, l_left + Inches(0.15), Inches(2.00), Inches(5.65), Inches(4.60),
+    table(s, test_modules, l_left + Inches(0.15), Inches(2.00), Inches(5.65), Inches(4.00),
           col_w=[Inches(1.8), Inches(0.9), Inches(2.05), Inches(0.9)],
-          header_color=INDIGO, body_size=9.0, row_h=Inches(0.52),
+          header_color=INDIGO, body_size=8.5, row_h=Inches(0.44),
           highlight=highlight_t, align_cols=align_t)
 
     # Khung phải: Phân công trách nhiệm 3 SV
