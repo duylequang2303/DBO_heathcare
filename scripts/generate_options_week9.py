@@ -145,7 +145,8 @@ def plan_7days(
         )
 
         res = two_tier_optimize(profile, food_map, targets, config)
-        menu = decode_result(res.best_food_ids, res.best_portions_g, food_map, profile.meal_counts)
+        rounded_portions = round_portions(res.best_portions_g, step=5)
+        menu = decode_result(res.best_food_ids, rounded_portions, food_map, profile.meal_counts)
         viols = validate_menu(menu, profile, targets)
         cals = menu.total("calories")
 
@@ -164,7 +165,7 @@ def plan_7days(
             "calories": cals,
             "violations": len(viols),
             "food_ids": res.best_food_ids,
-            "portions_g": res.best_portions_g,
+            "portions_g": rounded_portions,
             "menu": menu,
         })
 

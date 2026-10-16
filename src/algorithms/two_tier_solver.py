@@ -51,6 +51,10 @@ class TwoTierResult:
     outer_evals: int
     inner_evals_total: int
     runtime_s: float
+    outer_perturbations: int = 0
+    outer_restarts: int = 0
+    final_inner_perturbations: int = 0
+    final_inner_restarts: int = 0
 
 
 def two_tier_optimize(
@@ -181,4 +185,8 @@ def two_tier_optimize(
         outer_evals=outer_res.n_evaluations,
         inner_evals_total=inner_evals_counter[0],
         runtime_s=runtime_s,
+        outer_perturbations=int(getattr(outer_res, "n_perturbations", 0)),
+        outer_restarts=int(getattr(outer_res, "n_restarts", 0)),
+        final_inner_perturbations=int(getattr(final_res, "n_perturbations", 0)),
+        final_inner_restarts=int(getattr(final_res, "n_restarts", 0)),
     )

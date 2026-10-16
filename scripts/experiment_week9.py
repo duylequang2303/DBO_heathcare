@@ -39,6 +39,7 @@ from src.models.constraints import validate_menu
 from src.models.diversity_penalty import calculate_unique_main_dish_pct, diversity_penalty
 from src.models.food_selector import get_meal_order_slots
 from src.utils.data_loader import build_food_map, load_food_db
+from src.utils.portion_utils import round_portions
 
 
 def run_7day_experiment_single(
@@ -92,7 +93,8 @@ def run_7day_experiment_single(
         )
 
         res = two_tier_optimize(profile, food_map, targets, config)
-        menu = decode_result(res.best_food_ids, res.best_portions_g, food_map, profile.meal_counts)
+        rounded_portions = round_portions(res.best_portions_g, step=5)
+        menu = decode_result(res.best_food_ids, rounded_portions, food_map, profile.meal_counts)
         viols = validate_menu(menu, profile, targets)
 
         # Apply diversity penalty
@@ -119,6 +121,10 @@ def run_7day_experiment_single(
             "day": day,
             "fitness": round(eff_fitness, 4),
             "n_violations": len(viols),
+        "outer_perturbations": res.outer_perturbations,
+        "outer_restarts": res.outer_restarts,
+        "final_inner_perturbations": res.final_inner_perturbations,
+        "final_inner_restarts": res.final_inner_restarts,
             "calories": round(float(cals), 2),
             "protein_g": round(float(prot), 2),
             "carbs_g": round(float(carbs), 2),

@@ -104,8 +104,8 @@ def main():
         )
         adjusted_fit = float(res.best_fitness) - div_loss
 
-        menu = decode_result(res.best_food_ids, res.best_portions_g, food_map, profile.meal_counts)
         rounded = round_portions(res.best_portions_g, step=5)
+        menu = decode_result(res.best_food_ids, rounded, food_map, profile.meal_counts)
         violations = validate_menu(menu, profile, targets)
 
         cals = float(menu.total("calories"))
