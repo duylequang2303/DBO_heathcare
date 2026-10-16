@@ -7,7 +7,7 @@
 - Project: `DBO_heathcare`
 - Main language: Python 3.12
 - Current branch: `experiment/dbo-idbo-ablation`
-- Last verified commit: `bd1c3bd` (và các cập nhật bổ sung telemetry)
+- Last verified commit: `651f674` (hoàn thiện loại bỏ đường dẫn codebase trên slide và trình bày số liệu thực nghiệm trực tiếp)
 - Last verified date: `2026-10-16`
 - Current milestone: Hoàn thành chẩn đoán Ablation DBO/IDBO và đồng bộ Slide Tuần 8–9
 
