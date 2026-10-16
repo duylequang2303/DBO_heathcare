@@ -74,7 +74,7 @@ def main():
     print(f"   Tinh bột (Carbs):    {targets['carbs_g']:.1f} g")
     print(f"   Chất béo (Fat):      {targets['fat_g']:.1f} g")
     if "sugar_g" in targets:
-        print(f"   Giới hạn Đường:      <= {targets['sugar_g']:.1f} g/ngày (Ràng buộc ĐTĐ)")
+        print(f"   Ngưỡng proxy Đường (ước tính):      <= {targets['sugar_g']:.1f} g/ngày (Ràng buộc ĐTĐ)")
     if "sodium_mg" in targets:
         print(f"   Giới hạn Natri:      <= {targets['sodium_mg']:.1f} mg/ngày (Ràng buộc Tăng HA)")
 
@@ -113,7 +113,7 @@ def main():
         carbs = float(menu.total("carbs_g"))
         fat = float(menu.total("fat_g"))
         sodium = float(menu.total("sodium_mg"))
-        sugar = carbs * 0.15
+        sugar = carbs * 0.15  # proxy only: source dataset has no total-sugar field
 
         daily_results.append({
             "day": d,
@@ -138,13 +138,13 @@ def main():
     unique_main_pct = calculate_unique_main_dish_pct(history_food_ids, meal_order)
 
     print("\n2. ĐỘ ĐA DẠNG THỰC ĐƠN (DIVERSITY METRIC)")
-    print(f"   Tỷ lệ món chính độc nhất trong 7 ngày: {unique_main_pct:.1f}% (Chuẩn yêu cầu: >= 80.0%)")
+    print(f"   Tỷ lệ món chính độc nhất trong chu kỳ: {unique_main_pct:.1f}% (Chuẩn yêu cầu: >= 80.0%)")
     if unique_main_pct >= 80.0:
-        print("   -> ĐẠT YÊU CẦU ĐA DẠNG: Người dùng không bị trùng lặp món chính trong chu kỳ 2 ngày liên tiếp!")
+        print("   -> ĐẠT YÊU CẦU ĐA DẠNG: Người dùng không bị trùng lặp món chính trong chu kỳ đang chạy!")
     else:
         print("   -> Cảnh báo: Tỷ lệ đa dạng dưới 80%, cần tăng trọng số diversity penalty.")
 
-    print("\n3. CHI TIẾT THỰC ĐƠN MINH HỌA (NGÀY 1 & NGÀY 7 - KHẨU PHẦN ĐÃ LÀM TRÒN 5G)")
+    print("\n3. CHI TIẾT THỰC ĐƠN MINH HỌA (NGÀY ĐẦU & NGÀY CUỐI - KHẨU PHẦN ĐÃ LÀM TRÒN 5G)")
     meal_names = {"breakfast": "Sáng", "lunch": "Trưa", "dinner": "Tối", "snack": "Phụ"}
 
     for d_idx in [0, len(daily_results) - 1]:
@@ -158,19 +158,21 @@ def main():
                 print(f"     * [{m_label}] {it.food_name[:38]:<38} : {p_rnd:>3d} g (ID: {it.food_id})")
                 m_idx += 1
 
-    print("\n4. BẢNG TỔNG HỢP DINH DƯỠNG & ĐỘ AN TOÀN TRONG 7 NGÀY")
-    print(f"   {'Ngày':<6} | {'Calo (kcal)':<12} | {'Đạm (g)':<9} | {'Béo (g)':<9} | {'Đường (g)':<10} | {'Natri (mg)':<11} | {'Vi phạm'}")
+    print("\n4. BẢNG TỔNG HỢP DINH DƯỠNG TRONG CHU KỲ")
+    print(f"   {'Ngày':<6} | {'Calo (kcal)':<12} | {'Đạm (g)':<9} | {'Béo (g)':<9} | {'Proxy đường*':<10} | {'Natri (mg)':<11} | {'Vi phạm'}")
     print("   " + "-" * 75)
     for r in daily_results:
         print(f"   Ngày {r['day']:<2} | {r['calories']:>10.1f}  | {r['protein']:>7.1f}  | {r['fat']:>7.1f}  | {r['sugar']:>8.1f}   | {r['sodium']:>9.1f}   | {r['violations']}")
     print("   " + "-" * 75)
+    print("   * Proxy đường = 15% carbohydrate; không phải số đường đo từ dataset và không dùng để kết luận an toàn y tế.")
     mean_cal = np.mean([r["calories"] for r in daily_results])
     mean_fit = np.mean([r["fitness"] for r in daily_results])
     total_viols = sum([r["violations"] for r in daily_results])
     print(f"   TB     | {mean_cal:>10.1f}  | -         | -         | -          | -           | Tổng: {total_viols}")
-    print(f"\n   * Mean Fitness 7 ngày: {mean_fit:.2f}")
-    print(f"   * Tổng số vi phạm dinh dưỡng: {total_viols} (100% hợp lệ)")
-    print(f"   * Tổng thời gian giải 7 ngày: {total_time:.2f} giây ({total_time/args.days:.2f}s/ngày)")
+    print(f"\n   * Mean Fitness chu kỳ: {mean_fit:.2f}")
+    status = "hợp lệ theo tập ràng buộc hiện tại" if total_viols == 0 else "còn vi phạm cần xử lý"
+    print(f"   * Tổng số vi phạm dinh dưỡng: {total_viols} ({status})")
+    print(f"   * Tổng thời gian giải {args.days} ngày: {total_time:.2f} giây ({total_time/args.days:.2f}s/ngày)")
     print("=" * 85)
 
 

@@ -109,7 +109,7 @@ def run_7day_experiment_single(
         fat = menu.total("fat_g")
         fiber = menu.total("fiber_g")
         sodium = menu.total("sodium_mg")
-        sugar = round(float(carbs * 0.15), 2)
+        sugar = round(float(carbs * 0.15), 2)  # proxy; source dataset has no sugar field
 
         daily_records.append({
             "algo": algo,
@@ -124,7 +124,8 @@ def run_7day_experiment_single(
             "carbs_g": round(float(carbs), 2),
             "fat_g": round(float(fat), 2),
             "fiber_g": round(float(fiber), 2),
-            "sugar_g": round(float(sugar), 2),
+            "sugar_g_estimated": round(float(sugar), 2),
+            "sugar_is_estimated": True,
             "sodium_mg": round(float(sodium), 2),
         })
 

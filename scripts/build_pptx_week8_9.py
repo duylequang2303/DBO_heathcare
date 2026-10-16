@@ -692,9 +692,9 @@ def slide_10_weekly_summary_table(prs, n, total):
 
     div_dict = {"p1": "100.0%", "p2": "92.9%", "p3": "100.0%"}
     safety_dict = {
-        "p1": "Đạt 100% mục tiêu năng lượng & đa lượng",
-        "p2": "Đường <= 25g (thực tế 21.2g) · An toàn",
-        "p3": "Natri <= 1500mg (thực tế 1340mg) · Đạt AHA",
+        "p1": "Đánh giá kỹ thuật theo năng lượng & đa lượng",
+        "p2": "Chưa kết luận đường: dataset không có trường total sugar",
+        "p3": "Cần đánh giá tỷ lệ ngày đạt giới hạn natri 1500mg",
     }
 
     for _, r in df_w9_sum.iterrows():
@@ -754,8 +754,8 @@ def slide_11_heatmap_barchart_week9(prs, n, total):
     _rect(s, l_left, Inches(5.75), Inches(5.95), Inches(1.05), LIGHT, rounded=True, line_color=LINE)
     _text(s, l_left + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W9-F1: Heatmap tỷ lệ đáp ứng dinh dưỡng 7 ngày (Profile P1)\n"
-          "• Toàn bộ 7 ngày đều dao động quanh mức chuẩn 95% – 105% nhu cầu khuyến nghị.\n"
-          "• Không có ngày nào bị thiếu hụt năng lượng (<85%) hoặc dư thừa quá mức (>120%).",
+          "• Năng lượng nhìn chung bám mục tiêu, nhưng chất xơ biến động giữa các ngày.\n"
+          "• Natri vượt giới hạn ở một số ngày; đây là hạn chế cần xử lý bằng ràng buộc trực tiếp.",
           size=9.8, color=INK, line_spacing=1.15)
 
     # Khung phải: W9-F2 Bar chart
@@ -767,8 +767,8 @@ def slide_11_heatmap_barchart_week9(prs, n, total):
     _rect(s, l_right, Inches(5.75), Inches(5.95), Inches(1.05), LIGHT, rounded=True, line_color=LINE)
     _text(s, l_right + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W9-F2: Đối chuẩn Mean Fitness & Độ lệch Calo trên 3 hồ sơ\n"
-          "• Mean Fitness duy trì ở mức cao: P1 (90.8), P2 (85.5), P3 (91.0).\n"
-          "• Lệch Calo dưới 4% trên toàn bộ các hồ sơ, khẳng định tính thích ứng phổ quát.",
+          "• Mean Fitness theo CSV: P1 (90.68), P2 (79.27), P3 (88.09).\n"
+          "• Sai lệch calo: P1 2.37%, P2 5.59%, P3 1.84%; P2 cần tiếp tục cải thiện.",
           size=9.8, color=INK, line_spacing=1.15)
 
     _footer(s, "Heatmap tỷ lệ dinh dưỡng hàng ngày và đối chuẩn hiệu năng trên 3 hồ sơ", n(), total)
