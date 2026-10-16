@@ -13,7 +13,7 @@ Cấu trúc trình chiếu 14 slide chuẩn học thuật:
 - Slide 10: Kết quả thực nghiệm Tuần 9 — Bảng tổng hợp 7 ngày trên 3 hồ sơ
 - Slide 11: Heatmap dinh dưỡng 7 ngày & Biểu đồ so sánh 3 hồ sơ (W9-F1 & W9-F2)
 - Slide 12: Đa dạng hóa trải nghiệm người dùng (UX Option A/B/C & Radar W9-F3)
-- Slide 13: Đảm bảo chất lượng mã nguồn (202/202 tests PASS) & Phân công nhóm
+- Slide 13: Đảm bảo chất lượng mã nguồn (205/205 tests PASS) & Phân công nhóm
 - Slide 14: Kế hoạch nghiên cứu Tuần 10 — Tích hợp FastAPI & Web UI
 
 Usage:
@@ -256,7 +256,7 @@ def slide_01_cover(prs, n, total):
           info_box, size=14, color=RGBColor(0xC9, 0xD5, 0xEA), line_spacing=1.28)
 
     _text(s, Inches(0.9), Inches(6.65), Inches(11.5), Inches(0.4),
-          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 202/202 Unit Tests PASS · CSDL 15.929 món tích hợp",
+          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 205/205 Unit Tests PASS · CSDL 15.929 món tích hợp",
           size=12, color=RGBColor(0x9F, 0xB0, 0xCE))
     n()
 
@@ -472,18 +472,37 @@ def slide_05_benchmark_table_week8(prs, n, total):
           header_color=INDIGO, body_size=11.0, row_h=Inches(0.48),
           highlight=highlight, align_cols=align)
 
-    # Ghi chú phân tích khoa học bên dưới
-    _rect(s, Inches(0.55), Inches(4.55), Inches(12.23), Inches(2.25), LIGHT, rounded=True, line_color=LINE)
-    _text(s, Inches(0.80), Inches(4.68), Inches(11.7), Inches(0.30),
-          "PHÂN TÍCH KẾT QUẢ THỰC NGHIỆM ĐỐI CHUẨN TUẦN 8 (10 RUNS ĐỘC LẬP):", size=11.5, bold=True, color=INDIGO)
-    notes = [
-        "1. Thuật toán chạy tốt trên bài toán 2 tầng: Cả DBO và IDBO đều đạt Best Fitness 99.5106 / 100 tại seed 8003, với mức lệch calo thực đơn 8.1 kcal (0.32% so với mục tiêu 2491.6 kcal của Duy).",
-        "2. Kết quả so sánh: DBO và IDBO cho cùng Best/Mean Fitness trên 10 seed. Trong cấu hình 25 vòng lặp, telemetry cho thấy perturbation/restart chưa kích hoạt đáng kể; vì vậy chưa có bằng chứng IDBO vượt trội hơn DBO trong phạm vi thử nghiệm này.",
-        "3. Đánh giá chi phí tính toán: Thuật toán cần đánh giá 210 lần tầng Outer và trung bình ~54.800 lần tầng Inner. Thời gian 7.60s – 8.25s cho thấy cần tiếp tục tối ưu, cache hoặc xử lý nền trước khi tích hợp Web/API thời gian thực.",
+    # Khung dưới chia 2 cột: Phân tích đối chuẩn Tuần 8 & Kiểm tra kích hoạt IDBO
+    l_left = Inches(0.55)
+    w_left = Inches(5.95)
+    _rect(s, l_left, Inches(4.55), w_left, Inches(2.25), LIGHT, rounded=True, line_color=LINE)
+    _rect(s, l_left, Inches(4.55), Inches(0.08), Inches(2.25), INDIGO)
+    _text(s, l_left + Inches(0.20), Inches(4.68), w_left - Inches(0.35), Inches(0.28),
+          "PHÂN TÍCH ĐỐI CHUẨN TUẦN 8 (10 RUNS ĐỘC LẬP):", size=10.5, bold=True, color=INDIGO)
+    notes_left = [
+        "• Hiệu năng 2 tầng: Cả DBO và IDBO đạt Best Fitness 99.5106 tại seed 8003; mức lệch calo 8.1 kcal (0.32% so với mục tiêu 2491.6 kcal của Duy).",
+        "• Chi phí tính toán: ~210 lần tầng Outer, ~54.800 lần tầng Inner; thời gian 7.6s–8.2s (cần tối ưu cache/xử lý nền khi tích hợp API thực tế).",
+        "• Tính hợp lệ: 100% lượt chạy đạt 0 vi phạm ràng buộc kỹ thuật; DBO và IDBO cho kết quả đồng nhất trên toàn bộ 10 seed.",
     ]
-    for i, note in enumerate(notes):
-        _text(s, Inches(0.80), Inches(5.05 + i * 0.52), Inches(11.7), Inches(0.48),
-              note, size=10.2, color=INK, line_spacing=1.15)
+    for i, note in enumerate(notes_left):
+        _text(s, l_left + Inches(0.20), Inches(5.02 + i * 0.54), w_left - Inches(0.35), Inches(0.50),
+              note, size=9.2, color=INK, line_spacing=1.12)
+
+    l_right = Inches(6.83)
+    w_right = Inches(5.95)
+    _rect(s, l_right, Inches(4.55), w_right, Inches(2.25), LIGHT, rounded=True, line_color=LINE)
+    _rect(s, l_right, Inches(4.55), Inches(0.08), Inches(2.25), AMBER)
+    _text(s, l_right + Inches(0.20), Inches(4.68), w_right - Inches(0.35), Inches(0.28),
+          "KIỂM TRA KÍCH HOẠT CƠ CHẾ IDBO (ABLATION DIAGNOSTIC):", size=10.5, bold=True, color=AMBER)
+    notes_right = [
+        "• Baseline 25 vòng: DBO Mean 98.2148 | IDBO Mean 98.2148 | Perturbations: 0 | Restarts: 0",
+        "• Chẩn đoán 100 vòng: DBO Mean 97.9821 | IDBO Mean 97.9821 | Perturbations: 0 | Restarts: 0",
+        "• Kết luận thực nghiệm: Chưa ghi nhận IDBO vượt trội hơn DBO trong phạm vi thử nghiệm. Cơ chế cải tiến không kích hoạt do ngưỡng đa dạng (0.001–0.05) thấp hơn độ phân tán thực tế của đàn rời rạc (~0.25).",
+        "  (Chi tiết paired runs & đối chứng 3 cấu hình lưu tại experiments/ablation_dbo_idbo/README.md)",
+    ]
+    for i, note in enumerate(notes_right):
+        _text(s, l_right + Inches(0.20), Inches(5.02 + i * 0.42), w_right - Inches(0.35), Inches(0.40),
+              note, size=8.8, color=INK, line_spacing=1.10)
 
     _footer(s, "Kết quả thực nghiệm 10 runs độc lập Two-Tier DBO vs IDBO trên Profile P1", n(), total)
 
@@ -830,9 +849,9 @@ def slide_12_ux_options_abc(prs, n, total):
 
 
 def slide_13_qa_unit_tests(prs, n, total):
-    """Slide 13: Đảm bảo chất lượng mã nguồn (202/202 tests PASS) & Phân công nhóm."""
+    """Slide 13: Đảm bảo chất lượng mã nguồn (205/205 tests PASS) & Phân công nhóm."""
     s = _blank(prs)
-    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (202/202 Tests PASS) & Phân Công",
+    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (205/205 Tests PASS) & Phân Công",
             "KIỂM THỬ TỰ ĐỘNG & QUẢN TRỊ DỰ ÁN", INDIGO)
 
     # Khung trái: Thống kê Test Suite
@@ -840,12 +859,12 @@ def slide_13_qa_unit_tests(prs, n, total):
     _rect(s, l_left, Inches(1.35), Inches(5.95), Inches(5.45), LIGHT, rounded=True, line_color=LINE)
     _rect(s, l_left, Inches(1.35), Inches(5.95), Inches(0.08), GREEN)
     _text(s, l_left + Inches(0.25), Inches(1.50), Inches(5.45), Inches(0.35),
-          "HỆ THỐNG KIỂM THỬ TỰ ĐỘNG: 202/202 TESTS PASS (100%)", size=13.0, bold=True, color=GREEN)
+          "HỆ THỐNG KIỂM THỬ TỰ ĐỘNG: 205/205 TESTS PASS (100%)", size=13.0, bold=True, color=GREEN)
     _rect(s, l_left + Inches(0.25), Inches(1.88), Inches(5.45), Pt(1.0), LINE)
 
     test_modules = [
         ["Module kiểm thử", "Số test cases", "Nội dung xác thực chính", "Kết quả"],
-        ["test_two_tier_solver.py", "12 tests", "Tối ưu 2 tầng Outer/Inner, cấu hình seed, bounds", "PASS 100%"],
+        ["test_two_tier_solver.py", "15 tests", "Tối ưu 2 tầng Outer/Inner, IDBO telemetry, bounds", "PASS 100%"],
         ["test_food_selector.py", "16 tests", "Lọc Pool theo bữa, loại trừ dị ứng, giải mã z", "PASS 100%"],
         ["test_diversity_penalty.py", "14 tests", "Phạt lặp lookback 2 ngày, % món chính độc nhất", "PASS 100%"],
         ["test_portion_utils.py", "10 tests", "Làm tròn bội số 5g, giữ cận biên [25, 350]", "PASS 100%"],
@@ -893,7 +912,7 @@ def slide_13_qa_unit_tests(prs, n, total):
         _text(s, l_right + Inches(0.25), y_m, Inches(5.45), Inches(1.20), desc, size=9.8, color=INK, line_spacing=1.18)
         y_m += Inches(1.25)
 
-    _footer(s, "Kết quả kiểm thử tự động 202/202 tests PASS và phân công trách nhiệm thành viên", n(), total)
+    _footer(s, "Kết quả kiểm thử tự động 205/205 tests PASS và phân công trách nhiệm thành viên", n(), total)
 
 
 def slide_14_week10_plan(prs, n, total):
