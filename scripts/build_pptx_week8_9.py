@@ -478,7 +478,7 @@ def slide_05_benchmark_table_week8(prs, n, total):
           "PHÂN TÍCH KẾT QUẢ THỰC NGHIỆM ĐỐI CHUẨN TUẦN 8 (10 RUNS ĐỘC LẬP):", size=11.5, bold=True, color=INDIGO)
     notes = [
         "1. Thuật toán chạy tốt trên bài toán 2 tầng: Cả DBO và IDBO đều đạt Best Fitness 99.5106 / 100 tại seed 8003, với mức lệch calo thực đơn 8.1 kcal (0.32% so với mục tiêu 2491.6 kcal của Duy).",
-        "2. Độ hội tụ ổn định: Mean Fitness đạt 98.2148 với độ lệch chuẩn nhỏ (Std = 1.0663). Cả 20 lượt chạy không ghi nhận vi phạm trong tập ràng buộc kỹ thuật của benchmark tuần 8.",
+        "2. Kết quả so sánh: DBO và IDBO cho cùng Best/Mean Fitness trên 10 seed. Trong cấu hình 25 vòng lặp, telemetry cho thấy perturbation/restart chưa kích hoạt đáng kể; vì vậy chưa có bằng chứng IDBO vượt trội hơn DBO trong phạm vi thử nghiệm này.",
         "3. Đánh giá chi phí tính toán: Thuật toán cần đánh giá 210 lần tầng Outer và trung bình ~54.800 lần tầng Inner. Thời gian 7.60s – 8.25s cho thấy cần tiếp tục tối ưu, cache hoặc xử lý nền trước khi tích hợp Web/API thời gian thực.",
     ]
     for i, note in enumerate(notes):
@@ -503,8 +503,8 @@ def slide_06_convergence_boxplot_week8(prs, n, total):
     _rect(s, l_left, Inches(5.75), Inches(5.95), Inches(1.05), LIGHT, rounded=True, line_color=LINE)
     _text(s, l_left + Inches(0.15), Inches(5.82), Inches(5.65), Inches(0.90),
           "W8-F1: Đường cong hội tụ tầng ngoài (Outer Iterations 1–25)\n"
-          "• Trong cấu hình 25 vòng lặp, DBO và IDBO cho đường hội tụ và chất lượng nghiệm gần như giống nhau.\n"
-          "• Cần đối chiếu telemetry perturbation/restart và thử nghiệm dài hơn để đánh giá đóng góp riêng của IDBO.",
+          "• DBO và IDBO cho đường hội tụ gần như trùng nhau trong cấu hình 25 vòng lặp.\n"
+          "• Cơ chế perturbation/restart chưa kích hoạt đáng kể; chưa thể kết luận IDBO tốt hơn DBO.",
           size=9.8, color=INK, line_spacing=1.15)
 
     # Khung phải: W8-F2 Boxplot
@@ -858,7 +858,7 @@ def slide_13_qa_unit_tests(prs, n, total):
     highlight_t = {(i, 3): (GREEN, True) for i in range(1, len(test_modules))}
     table(s, test_modules, l_left + Inches(0.15), Inches(2.00), Inches(5.65), Inches(4.00),
           col_w=[Inches(1.8), Inches(0.9), Inches(2.05), Inches(0.9)],
-          header_color=INDIGO, body_size=8.5, row_h=Inches(0.44),
+          header_color=INDIGO, body_size=7.6, row_h=Inches(0.39),
           highlight=highlight_t, align_cols=align_t)
 
     # Khung phải: Phân công trách nhiệm 3 SV
@@ -909,7 +909,7 @@ def slide_14_week10_plan(prs, n, total):
          "• Đóng gói Two-Tier Solver & 7-Day Planner thành dịch vụ API chuẩn hóa.\n"
          "• Endpoint /api/menu/generate: Tiếp nhận UserProfile, sinh 3 options A/B/C.\n"
          "• Endpoint /api/menu/swap: Cho phép đổi 1 món ăn cụ thể và tự động cân chỉnh lại gram các món còn lại.\n"
-         "• Mục tiêu sau tối ưu: hướng tới dưới 1.5 giây/ngày bằng cache, warm start, thu gọn pool và xử lý song song.",
+         "• Mục tiêu sau tối ưu: hướng tới dưới 1.5 giây/ngày bằng cache, warm start, thu gọn candidate pool và xử lý song song.",
          INDIGO),
         ("2. GIAO DIỆN WEB HIỆN ĐẠI",
          "Frontend tương tác trực quan",
