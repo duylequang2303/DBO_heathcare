@@ -253,7 +253,7 @@ def slide_01_cover(prs, n, total):
           info_box, size=14, color=RGBColor(0xC9, 0xD5, 0xEA), line_spacing=1.28)
 
     _text(s, Inches(0.9), Inches(6.65), Inches(11.5), Inches(0.4),
-          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 195/195 Unit Tests PASS · CSDL 15.929 món sạch",
+          "Thời gian báo cáo: Tuần 8–9 (Tháng 10/2026) · 202/202 Unit Tests PASS · CSDL 15.929 món tích hợp",
           size=12, color=RGBColor(0x9F, 0xB0, 0xCE))
     n()
 
@@ -283,8 +283,8 @@ def slide_02_transition(prs, n, total):
         ("TUẦN 9: CHU KỲ 7 NGÀY & ĐA BỆNH LÝ",
          "Diversity Penalty & Clinical Constraints",
          "• Cơ chế phạt lặp món Diversity Penalty cửa sổ trượt 2 ngày (>= 80% độc nhất).\n"
-         "• Hỗ trợ 3 hồ sơ bệnh lý: P1 (Chuẩn), P2 (Tiểu đường), P3 (Tăng huyết áp).\n"
-         "• Siết chặt ràng buộc lâm sàng: Đường <= 25g/ngày, Natri <= 1500mg/ngày.\n"
+         "• Hỗ trợ 3 hồ sơ bệnh lý: P1 (Chuẩn), P2 (Kiểm soát Carbs - ĐTĐ), P3 (Tăng huyết áp).\n"
+         "• Ràng buộc thực nghiệm: Giảm tải Carbs P2, kiểm soát Natri <= 1500mg/ngày P3.\n"
          "• Bộ sinh đa phương án UX (Option A/B/C với các seed độc lập).",
          GREEN, LIGHT),
     ]
@@ -634,8 +634,9 @@ def slide_09_multi_profile_constraints(prs, n, total):
          "• Mức vận động: LIGHT (Vận động nhẹ).\n"
          "• Mục tiêu: Giảm cân nhẹ (LOSE_WEIGHT, TDEE - 500).\n"
          "• Nhu cầu Năng lượng: 1.179,6 kcal/ngày.\n"
-         "• RÀNG BUỘC NGHIÊM NGẶT: Đường (Sugar) <= 25.0g.\n"
-         "• Phạt vi phạm đường: w_sugar = 3.0 × max(0, sugar - 25).\n"
+         "• ĐỊNH HƯỚNG DINH DƯỠNG: Giảm Carbs & kiểm soát calo chặt chẽ.\n"
+         "• Minh bạch học thuật: CSDL chưa có cột đường tổng (sugar_g);\n"
+         "  hệ thống dùng proxy carbs 15% để thử nghiệm kỹ thuật, chưa tuyên bố y tế.\n"
          "• Cơ cấu bữa: Sáng (2), Trưa (2), Tối (2), Phụ (1).",
          RED, CREAM),
         ("PROFILE P3: TĂNG HUYẾT ÁP (HYPERTENSION)",
@@ -829,7 +830,7 @@ def slide_12_ux_options_abc(prs, n, total):
 def slide_13_qa_unit_tests(prs, n, total):
     """Slide 13: Đảm bảo chất lượng mã nguồn (193/193 tests PASS) & Phân công nhóm."""
     s = _blank(prs)
-    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (195/195 Tests PASS) & Phân Công",
+    _header(s, "Đảm Bảo Chất Lượng Phần Mềm (202/202 Tests PASS) & Phân Công",
             "KIỂM THỬ TỰ ĐỘNG & QUẢN TRỊ DỰ ÁN", INDIGO)
 
     # Khung trái: Thống kê Test Suite
@@ -837,24 +838,25 @@ def slide_13_qa_unit_tests(prs, n, total):
     _rect(s, l_left, Inches(1.35), Inches(5.95), Inches(5.45), LIGHT, rounded=True, line_color=LINE)
     _rect(s, l_left, Inches(1.35), Inches(5.95), Inches(0.08), GREEN)
     _text(s, l_left + Inches(0.25), Inches(1.50), Inches(5.45), Inches(0.35),
-          "HỆ THỐNG KIỂM THỬ TỰ ĐỘNG: 193/193 TESTS PASS (100%)", size=13.0, bold=True, color=GREEN)
+          "HỆ THỐNG KIỂM THỬ TỰ ĐỘNG: 202/202 TESTS PASS (100%)", size=13.0, bold=True, color=GREEN)
     _rect(s, l_left + Inches(0.25), Inches(1.88), Inches(5.45), Pt(1.0), LINE)
 
     test_modules = [
-        ["Module kiểm thử", "Số test cases", "Nội dung xác thực chính", "Kết quả"],
-        ["test_two_tier_solver.py", "12 tests", "Tối ưu 2 tầng Outer/Inner, cấu hình seed, bounds", "PASS 100%"],
-        ["test_food_selector.py", "16 tests", "Lọc Pool theo bữa, loại trừ dị ứng, giải mã z", "PASS 100%"],
-        ["test_diversity_penalty.py", "14 tests", "Phạt lặp lookback 2 ngày, % món chính độc nhất", "PASS 100%"],
+        ["Module kiểm thử", "Số test", "Nội dung xác thực chính", "Kết quả"],
+        ["test_two_tier_solver.py", "5 tests", "Tối ưu 2 tầng Outer/Inner, cấu hình seed, bounds", "PASS 100%"],
+        ["test_food_selector.py", "13 tests", "Lọc Pool theo bữa, loại trừ dị ứng, linear probing z", "PASS 100%"],
+        ["test_diversity_penalty.py", "17 tests", "Phạt lặp lookback 2 ngày, % món chính độc nhất", "PASS 100%"],
         ["test_portion_utils.py", "10 tests", "Làm tròn bội số 5g, giữ cận biên [25, 350]", "PASS 100%"],
-        ["test_experiment_week8.py", "8 tests", "Pipeline chạy benchmark 10 runs, CSV/PNG Tuần 8", "PASS 100%"],
-        ["test_experiment_week9.py", "12 tests", "Pipeline 7 ngày, kiểm soát Đường & Natri P1/P2/P3", "PASS 100%"],
-        ["Module kế thừa Tuần 1–7", "121 tests", "BMR/TDEE, DBO, IDBO, Objective, Constraints", "PASS 100%"],
+        ["test_constraints.py", "7 tests", "Ràng buộc năng lượng, macro, natri tăng huyết áp", "PASS 100%"],
+        ["test_data_integrity.py", "5 tests", "Schema dữ liệu chuẩn, chặn bột trứng/nguyên liệu thô", "PASS 100%"],
+        ["test_culinary_realism.py", "2 tests", "Cơ cấu mâm cơm theo Slot (Tinh bột + Đạm + Rau)", "PASS 100%"],
+        ["Module thuật toán & W1–7", "143 tests", "BMR/TDEE, DBO, IDBO, Benchmark CEC, Objective", "PASS 100%"],
     ]
     align_t = {0: PP_ALIGN.LEFT, 1: PP_ALIGN.CENTER, 2: PP_ALIGN.LEFT, 3: PP_ALIGN.CENTER}
     highlight_t = {(i, 3): (GREEN, True) for i in range(1, len(test_modules))}
     table(s, test_modules, l_left + Inches(0.15), Inches(2.00), Inches(5.65), Inches(4.60),
           col_w=[Inches(1.8), Inches(0.9), Inches(2.05), Inches(0.9)],
-          header_color=INDIGO, body_size=9.0, row_h=Inches(0.52),
+          header_color=INDIGO, body_size=9.0, row_h=Inches(0.50),
           highlight=highlight_t, align_cols=align_t)
 
     # Khung phải: Phân công trách nhiệm 3 SV
@@ -914,11 +916,11 @@ def slide_14_week10_plan(prs, n, total):
          "• Hiển thị lịch thực đơn 7 ngày dạng lưới (Weekly Grid) theo 4 bữa.\n"
          "• Biểu đồ Radar và Heatmap dinh dưỡng tương tác thời gian thực.",
          TEAL),
-        ("3. TÍNH NĂNG ĐỔI MÓN THÔNG MINH",
-         "Smart Meal Swap Mechanism",
-         "• Khi người dùng không thích 1 món, hệ thống gợi ý món thay thế cùng nhóm dinh dưỡng.\n"
+        ("3. TÍNH NĂNG ĐỔI MÓN & VAI TRÒ ẨM THỰC",
+         "Smart Meal Swap & Culinary Slots",
+         "• Gợi ý món thay thế theo đúng vai trò món (Cơm/Bún, Món đạm, Rau/Canh), loại bỏ nguyên liệu thô.\n"
          "• Chạy lại Tầng 2 (Inner Solver) trong 0.2s để tái cân bằng năng lượng mà không phá vỡ cấu trúc thực đơn tuần.\n"
-         "• Kiểm tra tính hợp lệ tức thì trước khi lưu.",
+         "• Đảm bảo thực đơn sinh ra vừa khít calo vừa hợp khẩu vị thực tế.",
          GREEN),
         ("4. KIỂM THỬ & ĐÓNG GÓI HOÀN CHỈNH",
          "System Validation & Deployment",
