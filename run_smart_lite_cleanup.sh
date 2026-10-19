@@ -100,7 +100,7 @@ pip install -r requirements.txt
 
 # 3. Test
 python -m pytest tests/ -v
-# Expected: 214 tests passed
+# Expected: all tests passed (check count: pytest --co -q)
 ```
 
 ## Data
@@ -151,10 +151,10 @@ echo "Git tracked files:"
 git ls-files | xargs du -ch 2>/dev/null | tail -1
 echo ""
 echo "=========================================="
-echo "✅ DONE!"
+echo "🧪 Verifying tests still pass after cleanup..."
+python3 -m pytest tests/ -q --tb=short
 echo ""
-echo "To verify code still works:"
-echo "  python -m pytest tests/ -q"
+echo "✅ DONE! All tests passed."
 echo ""
 echo "To rollback: git checkout $BACKUP"
 echo "=========================================="
