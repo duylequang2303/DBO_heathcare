@@ -84,3 +84,19 @@ patches/
 *.7z*
 .ai_base_commit
 latest_*
+
+# === Smart Lite Cleanup ===
+data/raw/comprehensive_foods_usda.csv
+experiments/week*/
+experiments/ablation_dbo_idbo/*.csv
+experiments/ablation_dbo_idbo/*.png
+experiments/ablation_dbo_idbo/*.json
+docs/reports/*.docx
+docs/slides/*.pptx
+docs/slides/*.pdf
+docs/slides/archive/
+patches/
+*.zip
+*.7z*
+.ai_base_commit
+latest_*

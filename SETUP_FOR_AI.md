@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 # 3. Test
 python -m pytest tests/ -v
-# Expected: 214 tests passed
+# Expected: all tests passed (check count: pytest --co -q)
 ```
 
 ## Data
