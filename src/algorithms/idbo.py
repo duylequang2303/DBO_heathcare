@@ -112,6 +112,8 @@ class IDBOResult(DBOResult):
     final_diversity: float = 0.0
     max_stagnation: int = 0
     n_collapse_events: int = 0
+    n_diversity_collapse_events: int = 0
+    n_stagnation_events: int = 0
 
 
 class IDBO(DBO):
@@ -159,6 +161,7 @@ class IDBO(DBO):
         self._n_perturbations = 0
         self._n_restarts = 0
         self._n_collapse_events = 0
+        self._n_stagnation_events = 0
         self._diversity_history: list[float] = []
         self._prev_best: Optional[float] = None
 
@@ -170,6 +173,7 @@ class IDBO(DBO):
         self._n_perturbations = 0
         self._n_restarts = 0
         self._n_collapse_events = 0
+        self._n_stagnation_events = 0
         self._diversity_history = []
         self._prev_best = None
         base = super().optimize(objective, dim, lb, ub, seed)
@@ -191,6 +195,8 @@ class IDBO(DBO):
             final_diversity=final_div,
             max_stagnation=self._max_stagnation,
             n_collapse_events=self._n_collapse_events,
+            n_diversity_collapse_events=self._n_collapse_events,
+            n_stagnation_events=self._n_stagnation_events,
         )
 
     def _after_iteration(
@@ -213,6 +219,8 @@ class IDBO(DBO):
             self._stagnation = 0
         else:
             self._stagnation += 1
+        if self._stagnation == self.stagnation_window:
+            self._n_stagnation_events += 1
         if self._stagnation > self._max_stagnation:
             self._max_stagnation = self._stagnation
         self._prev_best = best_fitness

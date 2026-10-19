@@ -71,6 +71,18 @@ class TwoTierResult:
     outer_collapse_events: int = 0
     final_inner_min_diversity: float = 0.0
     final_inner_max_stagnation: int = 0
+    outer_n_diversity_collapse_events: int = 0
+    outer_n_stagnation_events: int = 0
+    final_inner_mean_diversity: float = 0.0
+    final_inner_final_diversity: float = 0.0
+    final_inner_n_diversity_collapse_events: int = 0
+    final_inner_n_stagnation_events: int = 0
+    inner_n_diversity_collapse_events_total: int = 0
+    inner_n_stagnation_events_total: int = 0
+    inner_min_diversity: float = 0.0
+    inner_mean_diversity: float = 0.0
+    inner_final_diversity: float = 0.0
+    inner_max_stagnation: int = 0
 
 
 def two_tier_optimize(
@@ -115,6 +127,10 @@ def two_tier_optimize(
     inner_evals_counter = [0]
     inner_perturbations_counter = [0]
     inner_restarts_counter = [0]
+    inner_collapse_counter = [0]
+    inner_stagnation_counter = [0]
+    inner_diversity_values = []
+    inner_max_stagnation_counter = [0]
     eval_call_idx = [0]
 
     # 2. Define outer objective function (minimized by outer optimizer)
@@ -156,6 +172,10 @@ def two_tier_optimize(
         inner_evals_counter[0] += inner_res.n_evaluations
         inner_perturbations_counter[0] += int(getattr(inner_res, "n_perturbations", 0))
         inner_restarts_counter[0] += int(getattr(inner_res, "n_restarts", 0))
+        inner_collapse_counter[0] += int(getattr(inner_res, "n_diversity_collapse_events", 0))
+        inner_stagnation_counter[0] += int(getattr(inner_res, "n_stagnation_events", 0))
+        inner_diversity_values.extend(getattr(inner_res, "diversity_history", []))
+        inner_max_stagnation_counter[0] = max(inner_max_stagnation_counter[0], int(getattr(inner_res, "max_stagnation", 0)))
 
         # Return inner best fitness (already negated by make_menu_objective)
         return float(inner_res.best_fitness)
@@ -243,4 +263,16 @@ def two_tier_optimize(
         outer_collapse_events=int(getattr(outer_res, "n_collapse_events", 0)),
         final_inner_min_diversity=float(getattr(final_res, "min_diversity", 0.0)),
         final_inner_max_stagnation=int(getattr(final_res, "max_stagnation", 0)),
+        outer_n_diversity_collapse_events=int(getattr(outer_res, "n_diversity_collapse_events", 0)),
+        outer_n_stagnation_events=int(getattr(outer_res, "n_stagnation_events", 0)),
+        final_inner_mean_diversity=float(getattr(final_res, "mean_diversity", 0.0)),
+        final_inner_final_diversity=float(getattr(final_res, "final_diversity", 0.0)),
+        final_inner_n_diversity_collapse_events=int(getattr(final_res, "n_diversity_collapse_events", 0)),
+        final_inner_n_stagnation_events=int(getattr(final_res, "n_stagnation_events", 0)),
+        inner_n_diversity_collapse_events_total=inner_collapse_counter[0],
+        inner_n_stagnation_events_total=inner_stagnation_counter[0],
+        inner_min_diversity=float(min(inner_diversity_values)) if inner_diversity_values else 0.0,
+        inner_mean_diversity=float(np.mean(inner_diversity_values)) if inner_diversity_values else 0.0,
+        inner_final_diversity=float(inner_diversity_values[-1]) if inner_diversity_values else 0.0,
+        inner_max_stagnation=inner_max_stagnation_counter[0],
     )
