@@ -1,4 +1,0 @@
-config_name,algorithm,seed,best_fitness,final_fitness,runtime_s,n_evaluations,outer_perturbations,outer_restarts,final_inner_perturbations,final_inner_restarts,inner_perturbations_total,inner_restarts_total,outer_min_diversity,outer_mean_diversity,outer_final_diversity,outer_max_stagnation,outer_collapse_events,calories,n_violations,wiring_verified
-controlled_activation,idbo,8001,99.0062,99.4073,36.97,282365,16,14,16,9,10074,4426,0.2517,0.294,0.2942,2,30,2491.77,0,True
-controlled_activation,idbo,8002,97.6149,99.658,37.4,282365,16,14,15,10,10146,4354,0.2471,0.2771,0.2816,2,30,2485.39,0,True
-controlled_activation,idbo,8003,99.333,99.537,36.55,282365,18,12,19,6,10074,4426,0.2317,0.2778,0.2687,2,30,2488.83,0,True
