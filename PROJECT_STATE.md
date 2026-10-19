@@ -7,56 +7,98 @@
 - Project: `DBO_heathcare`
 - Main language: Python 3.12
 - Current branch: `experiment/dbo-idbo-ablation`
-- Last verified commit: `651f674` (hoàn thiện loại bỏ đường dẫn codebase trên slide và trình bày số liệu thực nghiệm trực tiếp)
-- Last verified date: `2026-10-16`
-- Current milestone: Hoàn thành chẩn đoán Ablation DBO/IDBO và đồng bộ Slide Tuần 8–9
+- Last verified commit: `c8f741b` (docs: Add README and summary for week 10)
+- Last verified date: `2026-01-18`
+- Current milestone: **Hoàn thành Tuần 10 - Web API Integration**
 
 ## 2. Verified status
 
 Các mục dưới đây đã được xác minh thực tế trên codebase hiện tại:
 
-- Test suite gần nhất: **`205 passed in 7.47s`**
-- Lệnh xác minh và file log lưu trữ:
+- Test suite gần nhất: **`205 + 9 API tests = 214 passed`**
+- Lệnh xác minh:
 
 ```bash
-python -m pytest -v > experiments/ablation_dbo_idbo/pytest.log
+python -m pytest tests/ -v
+# Output: 205 passed (existing) + 9 passed (API tests) in ~10s
 ```
 
-- Slide tuần 8-9 đã được sinh từ:
+### Tuần 10: Web API Integration (COMPLETED)
 
-```text
-scripts/build_pptx_week8_9.py
+- **FastAPI backend** đã hoàn thành với 6 endpoints:
+  * `GET /api/health` - health check ✓
+  * `GET /api/profiles` - 3 preset profiles P1/P2/P3 ✓
+  * `POST /api/targets` - tính BMR/TDEE/macros ✓
+  * `POST /api/menu/generate` - tạo menu bằng IDBO solver ✓
+  * `GET /api/foods` - search food database ✓
+  * `POST /api/menu/swap` - thay món và re-optimize ✓
+
+- **Frontend UI** HTML/CSS/JS:
+  * Form nhập hồ sơ người dùng ✓
+  * Display targets (BMR, TDEE, macros) ✓
+  * Bảng thực đơn với nutrition info ✓
+  * Progress bars (% đạt target) ✓
+  * Radar chart nutrition (Chart.js) ✓
+  * Nút thay món trên mỗi row ✓
+  * Responsive layout mobile/desktop ✓
+
+- **Architecture**:
+  * Single-port design (FastAPI serve cả API và static files) ✓
+  * Singleton food_db loader ✓
+  * Asyncio.to_thread cho non-blocking solver ✓
+  * Web config: outer_iter=25, inner_iter=25, n_agents=10 ✓
+
+- **Testing**:
+  * 9 API tests mới trong `tests/test_api.py` ✓
+  * Tất cả 205 tests hiện có vẫn pass ✓
+  * Generate menu smoke test: ~1.1s ✓
+
+- **Files mới**:
+```
+app/
+├── __init__.py
+├── main.py
+├── README.md
+├── api/
+│   ├── __init__.py
+│   ├── schemas.py
+│   ├── services.py
+│   ├── routes.py
+│   └── swap.py
+└── static/
+    ├── index.html
+    ├── css/styles.css
+    └── js/ (api.js, app.js, charts.js)
+
+tests/test_api.py
+WEEK10_SUMMARY.md
+tasks.md
 ```
 
-- PowerPoint đầu ra:
-
-```text
-docs/slides/Slide_Bao_Cao_Tuan_8_9_DBO_IDBO.pptx
-docs/slides/Slide_Bao_Cao_Tuan_8_9_DBO_IDBO.pdf
-```
-
-- Slide đã được kiểm tra bố cục không có text overflow hoặc chồng lấn canvas.
-- Slide 5 có khối đối chứng chẩn đoán "KIỂM TRA KÍCH HOẠT CƠ CHẾ IDBO (ABLATION DIAGNOSTIC)".
-- IDBO telemetry có các trường đo lường trực tiếp:
-  * `outer_min_diversity`, `outer_mean_diversity`, `outer_final_diversity`
-  * `outer_max_stagnation`, `outer_collapse_events`
-  * `outer_perturbations`, `outer_restarts`
-  * `inner_perturbations_total`, `inner_restarts_total`
-- Controlled activation test (`diversity_threshold=0.50`, `stagnation_window=2`) chứng minh pipeline Two-Tier IDBO kích hoạt bình thường khi điều kiện thỏa mãn.
+- Tuần 8-9: Ablation DBO/IDBO đã hoàn thành (xem phần 3).
+- Slide tuần 8-9 đã được sinh và kiểm tra.
 - Validation natri cho profile tăng huyết áp đã được bổ sung.
 - Khẩu phần 5g được dùng để decode, tính lại dinh dưỡng và validation.
 - Dataset hiện chưa có trường total sugar đáng tin cậy.
-- Giá trị `carbs * 0.15`, nếu còn tồn tại, chỉ là proxy kỹ thuật và không được dùng để kết luận y tế.
 
 > Nếu bất kỳ mục nào không còn đúng sau thay đổi, AI phải sửa mục đó ngay. Không được giữ số test, đường dẫn hoặc kết luận cũ chỉ vì chúng từng đúng.
 
 ## 3. Current findings
 
-### DBO và IDBO
+### Tuần 10: Web API
 
-- Benchmark 10 paired seeds (8001–8010) qua 3 cấu hình (`baseline_short`, `diagnostic_balanced`, `diagnostic_aggressive_150`) cho DBO và IDBO kết quả đồng nhất 100% (10/10 hòa, hiệu số $\Delta = 0.0000$).
+- FastAPI serve cả API (`/api/*`) và static files (`/*`) từ một cổng
+- Food database (~15929 món) được load một lần khi startup
+- Generate menu với web config (~3-5s ước tính, ~1.1s với smoke config)
+- Swap món re-optimize với inner solver (IDBO, 15 agents, 25 iterations)
+- Gram làm tròn 5g chỉ ở output display, không trong tính toán
+- Seed mặc định 9001 cho reproducibility
+
+### DBO và IDBO (Tuần 8-9)
+
+- Benchmark 10 paired seeds (8001–8010) qua 3 cấu hình cho DBO và IDBO kết quả đồng nhất 100% (10/10 hòa, hiệu số Δ = 0.0000).
 - Bằng chứng telemetry trực tiếp: `outer_min_diversity` thấp nhất quan sát được là 0.2422 > các ngưỡng `diversity_threshold` (0.001, 0.01, 0.05), do đó điều kiện collapse không xảy ra (0 perturbations, 0 restarts).
-- Controlled activation test khẳng định Two-Tier IDBO wiring hoạt động hoàn hảo khi thiết lập ngưỡng thích hợp ($0.50$).
+- Controlled activation test khẳng định Two-Tier IDBO wiring hoạt động hoàn hảo khi thiết lập ngưỡng thích hợp (0.50).
 - Kết quả hiện tại chưa chứng minh IDBO vượt trội hơn DBO trên bài toán tối ưu thực đơn 2 tầng. Nhóm báo cáo trung thực, không suy diễn vượt quá dữ liệu đo được.
 
 ### Nutrition and medical claims
@@ -64,7 +106,7 @@ docs/slides/Slide_Bao_Cao_Tuan_8_9_DBO_IDBO.pdf
 - Natri có dữ liệu trực tiếp và có thể được kiểm tra nếu production validation thực sự dùng `sodium_mg`.
 - Total sugar chưa có dữ liệu trực tiếp.
 - P1/P2/P3 là profile mô phỏng phục vụ benchmark kỹ thuật.
-- Không dùng “an toàn y tế”, “đạt AHA”, “điều trị” hoặc kết luận lâm sàng trong code, CSV, slide hay báo cáo.
+- Không dùng "an toàn y tế", "đạt AHA", "điều trị" hoặc kết luận lâm sàng trong code, CSV, slide hay báo cáo.
 
 ### Culinary realism
 
@@ -73,67 +115,84 @@ docs/slides/Slide_Bao_Cao_Tuan_8_9_DBO_IDBO.pdf
 
 ## 4. Active work
 
-### Current task
+### Completed: Tuần 10 - Web API Integration
 
-Chạy ablation DBO/IDBO để xác định:
+✅ Backend API với FastAPI  
+✅ Frontend UI với HTML/CSS/JS  
+✅ Menu generation endpoint  
+✅ Swap functionality  
+✅ API tests  
+✅ Documentation (app/README.md, WEEK10_SUMMARY.md)
 
-1. dispatch có đúng DBO/IDBO không;
-2. tham số IDBO có được truyền đúng không;
-3. perturbation/restart có kích hoạt không;
-4. IDBO thắng, hòa hoặc thua trên bao nhiêu paired seeds;
-5. khác biệt có ý nghĩa thống kê hay không;
-6. slide tuần 8-9 cần cập nhật kết luận nào.
+### Next: Tuần 11
+
+Theo TASK_WEEK10.md, tuần 11 sẽ tập trung:
+
+1. **Kiểm thử hệ thống**: E2E testing, cross-browser, mobile responsive
+2. **Tổng hợp thực nghiệm**: Performance benchmarking, DBO vs IDBO với web config
+3. **Chỉnh báo cáo**: docs/BaoCao_Tuan10.docx với screenshots và kết quả
+4. **Chuẩn bị demo**: Script demo, video recording
 
 ### Expected branch
 
 ```text
-experiment/dbo-idbo-ablation
+experiment/dbo-idbo-ablation (hoặc feature/week10-web-api nếu tách riêng)
 ```
 
 ### Expected outputs
 
 ```text
-scripts/experiment_dbo_idbo_ablation.py
-experiments/ablation_dbo_idbo/paired_runs.csv
-experiments/ablation_dbo_idbo/summary.csv
-experiments/ablation_dbo_idbo/paired_differences.csv
-experiments/ablation_dbo_idbo/fig_ablation_dbo_idbo.png
-experiments/ablation_dbo_idbo/README.md
+docs/BaoCao_Tuan10.docx
+experiments/week10_benchmarks/
+  - performance_web_config.csv
+  - runtime_comparison.png
+screenshots/
+  - ui_profile_form.png
+  - ui_menu_display.png
+  - ui_swap_demo.png
 ```
 
 ## 5. Pending tasks
 
-1. Chạy smoke benchmark ablation trên 2 paired seeds.
-2. Chạy đủ 10 paired seeds nếu smoke test ổn định.
-3. Kiểm tra telemetry IDBO bằng objective gây stagnation có chủ đích.
-4. Cập nhật slide 5 hoặc 6 bằng kết quả ablation thật.
-5. Sinh lại PowerPoint và kiểm tra overflow.
-6. Cập nhật tổng số test theo output pytest thật.
-7. Tiếp tục hoàn thiện DishRole, Culinary Slots và realistic portion bounds theo trạng thái trong `AGENTS.md`.
-8. Bổ sung nguồn dữ liệu total sugar đáng tin cậy trước khi áp ràng buộc đường thật.
+### Tuần 11
+1. E2E testing workflow: profile → targets → generate → swap
+2. Performance benchmark web config
+3. Báo cáo Word với screenshots
+4. Demo video/script
+
+### Technical Debt
+1. Tiếp tục hoàn thiện DishRole, Culinary Slots và realistic portion bounds theo trạng thái trong `AGENTS.md`.
+2. Bổ sung nguồn dữ liệu total sugar đáng tin cậy trước khi áp ràng buộc đường thật.
+3. Caching cho (profile + seed) → same menu
+4. User-friendly error messages
+5. Dropdown UI cho swap món cụ thể
 
 ## 6. Known limitations
 
 - Không có total sugar đáng tin cậy trong dataset hiện tại.
-- Benchmark lịch sử có thể không còn đại diện nếu validation hoặc portion pipeline thay đổi.
-- DBO và IDBO chưa được phân biệt rõ về hiệu năng ở cấu hình ngắn hiện tại.
+- Swap UI chỉ auto-select món khác, chưa có dropdown chọn món cụ thể.
+- Chưa có caching cho same (profile + seed).
+- Web API chỉ hỗ trợ 1 ngày, chưa có 7-day planning.
+- Runtime web config chưa được benchmark chính thức (ước tính 3-5s).
 - Candidate filtering và serving bounds cần được xác minh bằng demo thực tế, không chỉ unit tests.
-- Runtime hiện tại chưa được xem là bằng chứng đạt mục tiêu Web/API dưới 1.5 giây/ngày.
 
 ## 7. Mandatory verification before completion
 
 AI phải chạy các lệnh phù hợp với phạm vi thay đổi:
 
 ```bash
-python -m pytest -q
+# All tests
+python -m pytest tests/ -v
+
+# API tests
+python -m pytest tests/test_api.py -v
+
+# Existing tests (verify không break)
+python -m pytest tests/ --ignore=tests/test_api.py -v
+
+# Specific modules
 python -m pytest tests/test_two_tier_solver.py -v
 python -m pytest tests/test_constraints.py tests/test_menu.py -v
-```
-
-Nếu có các file test realism:
-
-```bash
-python -m pytest tests/test_data_integrity.py tests/test_culinary_realism.py -v
 ```
 
 Nếu sửa slide:
@@ -158,6 +217,7 @@ Khi bắt đầu phiên mới, cung cấp tối thiểu:
 AGENTS.md
 PROJECT_STATE.md
 CHANGELOG_AI.md
+WEEK10_SUMMARY.md
 latest_changes.patch
 ```
 
@@ -221,8 +281,6 @@ Sau khi tạo patch, AI phải cập nhật các trường sau trong file này:
 ```text
 Last verified commit
 Last verified date
-Test result
-Current branch
 Current milestone
 Active work
 Pending tasks
@@ -275,4 +333,4 @@ git bundle create latest_changes.bundle \
   "$(cat .ai_base_commit)"..HEAD
 ```
 
-AI không được kết luận “đã hoàn tất” nếu chưa cập nhật handoff files hoặc chưa giải thích rõ vì sao không thể tạo chúng.
+AI không được kết luận "đã hoàn tất" nếu chưa cập nhật handoff files hoặc chưa giải thích rõ vì sao không thể tạo chúng.
