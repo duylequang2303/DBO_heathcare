@@ -24,6 +24,7 @@ from src.models.food_selector import (
     get_meal_order_slots,
 )
 from src.models.user_profile import UserProfile
+from src.models.dish_category import classify_dish_role, get_role_portion_bounds
 
 
 @dataclass
@@ -117,6 +118,19 @@ def two_tier_optimize(
     inner_restarts_counter = [0]
     eval_call_idx = [0]
 
+    def portion_bounds(food_ids: list[str]) -> tuple[np.ndarray, np.ndarray]:
+        bounds = []
+        for food_id in food_ids:
+            food = food_map[food_id]
+            role = classify_dish_role(
+                str(food.get("food_name", "")), str(food.get("category", "")), str(food.get("source", ""))
+            )
+            bounds.append(get_role_portion_bounds(role))
+        return (
+            np.asarray([low for low, _ in bounds], dtype=float),
+            np.asarray([high for _, high in bounds], dtype=float),
+        )
+
     # 2. Define outer objective function (minimized by outer optimizer)
     def outer_objective(z: np.ndarray) -> float:
         # Decode continuous vector z into valid food_ids
@@ -146,11 +160,12 @@ def two_tier_optimize(
                 n_elite=config.n_elite,
             )
 
+        inner_lb, inner_ub = portion_bounds(food_ids)
         inner_res = inner_solver.optimize(
             inner_obj,
             dim=dim_k,
-            lb=25.0,
-            ub=350.0,
+            lb=inner_lb,
+            ub=inner_ub,
             seed=inner_seed,
         )
         inner_evals_counter[0] += inner_res.n_evaluations
@@ -207,11 +222,12 @@ def two_tier_optimize(
             n_elite=config.n_elite,
         )
 
+    final_lb, final_ub = portion_bounds(best_food_ids)
     final_res = final_inner_solver.optimize(
         final_inner_obj,
         dim=dim_k,
-        lb=25.0,
-        ub=350.0,
+        lb=final_lb,
+        ub=final_ub,
         seed=config.seed,
     )
     inner_evals_counter[0] += final_res.n_evaluations

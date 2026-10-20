@@ -94,8 +94,8 @@ SNACK_PATTERNS = re.compile(
 
 def classify_dish_role(food_name: str, category: str = "", source: str = "vietnamese") -> DishRole:
     """Classify a food item into its primary culinary DishRole."""
-    name_clean = food_name.strip().lower()
-    cat_clean = category.strip().lower()
+    name_clean = str(food_name or "").strip().lower()
+    cat_clean = "" if category is None or str(category).lower() == "nan" else str(category).strip().lower()
 
     if is_raw_or_industrial_junk(name_clean, cat_clean):
         return DishRole.RAW_INGREDIENT
@@ -120,10 +120,9 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
     if SNACK_PATTERNS.search(name_clean) or any(k in cat_clean for k in ["fruit", "dairy", "yogurt", "nuts"]):
         return DishRole.FRUIT_SNACK
 
-    # Fallback heuristic: default to STAPLE or MAIN_PROTEIN based on source
-    if source == "vietnamese":
-        return DishRole.MAIN_PROTEIN
-    return DishRole.STAPLE
+    # Unknown records are unsafe for a user-facing structured menu.
+    # Keep them in the source database, but do not guess a culinary role.
+    return DishRole.RAW_INGREDIENT
 
 
 def get_role_portion_bounds(role: DishRole) -> Tuple[float, float]:

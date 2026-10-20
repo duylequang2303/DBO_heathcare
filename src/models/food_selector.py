@@ -9,7 +9,33 @@ from __future__ import annotations
 import numpy as np
 
 from src.models.food_sampler import MEAL_ORDER, candidates_for_meal
+from src.models.dish_category import DishRole, classify_dish_role, is_raw_or_industrial_junk
 from src.models.user_profile import UserProfile
+
+
+def _is_user_facing_food(food: dict) -> bool:
+    """Return whether a record is suitable as a standalone menu item.
+
+    Source nutrition rows are preserved. The filter only controls the
+    user-facing search space and rejects records already classified as raw or
+    industrial ingredients.
+    """
+    name = str(food.get("food_name", ""))
+    category = str(food.get("category", ""))
+    return bool(name.strip()) and not is_raw_or_industrial_junk(name, category)
+
+
+def _roles_for_slot(meal_name: str, slot_idx: int, count: int) -> set[DishRole]:
+    """Practical role choices for the small 2+2+2+1 web menu layout."""
+    if meal_name == "snack":
+        return {DishRole.FRUIT_SNACK, DishRole.BEVERAGE}
+    if meal_name == "breakfast":
+        if slot_idx == 0:
+            return {DishRole.STAPLE}
+        return {DishRole.MAIN_PROTEIN, DishRole.FRUIT_SNACK}
+    if slot_idx == 0:
+        return {DishRole.STAPLE}
+    return {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE, DishRole.SOUP}
 
 
 def build_meal_pools(
@@ -18,41 +44,40 @@ def build_meal_pools(
     profile: UserProfile,
     min_pool_size: int = 20,
 ) -> dict[str, list[str]]:
-    """Build candidate food pools for each meal slot, filtered by meal_type and allergies.
+    """Build deterministic, user-facing and role-aware candidate pools.
 
-    Args:
-        food_map: Dictionary of available food items keyed by food_id.
-        meal_counts: Mapping from meal name ('breakfast', 'lunch', etc.) to item count.
-        profile: User profile containing allergies and dislikes.
-        min_pool_size: Minimum required size for each candidate pool.
-
-    Returns:
-        Dictionary mapping each meal slot (e.g. 'breakfast_0', 'lunch_0') to its list of candidate food_ids.
-
-    Raises:
-        ValueError: If candidate pool size for any requested meal is less than min_pool_size.
+    The original CSV is not modified. Allergy/dislike and meal-type filtering
+    happens first, then raw ingredients are removed, and finally each slot is
+    assigned realistic culinary roles. If role classification is too sparse,
+    the function safely falls back to the cleaned meal pool, never to raw
+    ingredients.
     """
     pools: dict[str, list[str]] = {}
-
     for meal_name in MEAL_ORDER:
         count = meal_counts.get(meal_name, 0)
         if count <= 0:
             continue
-
-        cands = candidates_for_meal(food_map, meal_name, profile)
-        # Ensure deterministic ordering across runs
-        cands = sorted(set(cands))
-
-        if len(cands) < min_pool_size:
+        meal_candidates = sorted(set(candidates_for_meal(food_map, meal_name, profile)))
+        cleaned = [fid for fid in meal_candidates if _is_user_facing_food(food_map[fid])]
+        if len(cleaned) < min_pool_size:
             raise ValueError(
-                f"Candidate pool for '{meal_name}' has size {len(cands)}, "
-                f"which is less than min_pool_size={min_pool_size}."
+                f"User-facing pool for '{meal_name}' has size {len(cleaned)}, "
+                f"less than min_pool_size={min_pool_size}."
             )
-
         for slot_idx in range(count):
-            slot_name = f"{meal_name}_{slot_idx}"
-            pools[slot_name] = list(cands)
-
+            allowed_roles = _roles_for_slot(meal_name, slot_idx, count)
+            role_candidates = []
+            for fid in cleaned:
+                food = food_map[fid]
+                role = classify_dish_role(
+                    str(food.get("food_name", "")),
+                    str(food.get("category", "")),
+                    str(food.get("source", "vietnamese")),
+                )
+                if role in allowed_roles:
+                    role_candidates.append(fid)
+            selected = role_candidates if len(role_candidates) >= min_pool_size else cleaned
+            pools[f"{meal_name}_{slot_idx}"] = selected
     return pools
 
 
