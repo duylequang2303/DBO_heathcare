@@ -126,12 +126,13 @@ tasks.md
 
 ### Next: Tuần 11
 
-Theo TASK_WEEK10.md, tuần 11 sẽ tập trung:
+Kế hoạch chi tiết được quy định tại `docs/project_notes/KE_HOACH_TUAN_11.md`:
 
-1. **Kiểm thử hệ thống**: E2E testing, cross-browser, mobile responsive
-2. **Tổng hợp thực nghiệm**: Performance benchmarking, DBO vs IDBO với web config
-3. **Chỉnh báo cáo**: docs/BaoCao_Tuan10.docx với screenshots và kết quả
-4. **Chuẩn bị demo**: Script demo, video recording
+1. **Chuẩn hóa kết quả DBO và IDBO:** Báo cáo riêng tập hiệu chỉnh (8001–8002) và tập độc lập (8003–8010).
+2. **Kiểm tra tính công bằng theo ngân sách tính toán:** Bổ sung giới hạn số lần tính hàm mục tiêu (budget-matched benchmark).
+3. **Tách ngưỡng hai tầng:** Thiết lập `outer_diversity_threshold = 0.28` và `inner_diversity_threshold`.
+4. **Phân tích hoạt động tầng trong:** Làm rõ đóng góp của tầng trong vào sự khác biệt giữa hai thuật toán.
+5. **Cập nhật Web/API:** Hiển thị thuật toán đã chọn, số lần tính hàm mục tiêu, và telemetry mà không dùng từ ngữ suy diễn quá đà.
 
 ### Expected branch
 
