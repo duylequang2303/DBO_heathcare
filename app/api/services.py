@@ -210,7 +210,7 @@ def generate_menu(profile: UserProfile, seed: int, config_mode: str = "web") -> 
         
         items.append(MenuItem(
             food_id=food_id,
-            name=food.get("name", "Unknown"),
+            name=food.get("food_name", "Unknown"),
             slot=meal_type,
             meal_type=food.get("meal_type", "all"),
             portion_g=portion_orig,

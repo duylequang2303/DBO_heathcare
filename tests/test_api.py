@@ -109,6 +109,8 @@ def test_generate_menu_smoke():
     
     # Check portion rounding
     for item in data["items"]:
+        assert item["name"]
+        assert item["name"] != "Unknown"
         assert item["portion_g_rounded"] % 5 == 0
         assert 25 <= item["portion_g_rounded"] <= 350
 
@@ -121,6 +123,8 @@ def test_search_foods():
     assert "foods" in data
     assert "count" in data
     assert data["count"] <= 5
+    assert data["count"] > 0
+    assert all(food["name"] != "Unknown" for food in data["foods"])
 
 @pytest.mark.slow
 def test_menu_swap():

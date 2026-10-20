@@ -28,12 +28,12 @@ async def search_foods(q: Optional[str] = Query(None), limit: int = Query(20, le
     results = []
     count = 0
     for food_id, food in food_map.items():
-        if q and q.lower() not in food.get("name", "").lower():
+        if q and q.lower() not in food.get("food_name", "").lower():
             continue
         
         results.append(FoodItem(
             food_id=food_id,
-            name=food.get("name", "Unknown"),
+            name=food.get("food_name", "Unknown"),
             meal_type=food.get("meal_type", "all"),
             macros_per_100g=MacroNutrition(
                 calories=food.get("calories", 0),
@@ -135,7 +135,7 @@ async def swap_menu_item(request: SwapIn):
             
             items.append(MenuItem(
                 food_id=food_id,
-                name=food.get("name", "Unknown"),
+                name=food.get("food_name", "Unknown"),
                 slot=meal_type,
                 meal_type=food.get("meal_type", "all"),
                 portion_g=inner_result.best_x[i],
