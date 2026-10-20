@@ -6,7 +6,7 @@
 
 - Project: `DBO_heathcare`
 - Main language: Python 3.12
-- Current branch: `fix/integrated-menu-realism`
+- Current branch: `main`
 - Last verified commit: `339051c`
 - Last verified date: `2026-10-20`
 - Current milestone: **Hoàn thành Tích hợp Menu Realism & Đánh giá Ngưỡng Ứng Viên IDBO (0.28)**
