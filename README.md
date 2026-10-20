@@ -277,3 +277,24 @@ python scripts/build_report_week7.py
 2. M. Amiri, J. Li, and W. Hasan, "Personalized Flexible Meal Planning for Individuals With Diet-Related Health Concerns," JMIR Formative Research, vol. 7, e46434, 2023.
 3. National Academies of Sciences, Engineering, and Medicine, Dietary Reference Intakes for Energy, 2023.
 4. FastAPI Documentation, https://fastapi.tiangolo.com.
+
+## Logic thực đơn thực tế
+
+Candidate pool dùng cho web không lấy trực tiếp toàn bộ cơ sở dữ liệu dinh dưỡng.
+Pipeline hiện tại: lọc dị ứng/sở thích → loại nguyên liệu thô/công nghiệp → phân vai
+trò món theo từng vị trí bữa ăn → tối ưu khẩu phần theo giới hạn tự nhiên của vai
+trò. Dữ liệu CSV nguồn được giữ nguyên để truy vết và tái lập thí nghiệm.
+
+Cấu trúc mặc định 2+2+2+1:
+- Bữa sáng: tinh bột + đạm/trái cây.
+- Bữa trưa, tối: tinh bột + đạm/rau/canh.
+- Bữa phụ: trái cây/sữa/hạt/đồ uống phù hợp.
+
+Chạy kiểm toán đầu ra:
+
+```bash
+python scripts/audit_menu_realism.py --config smoke --output menu_realism_audit.csv
+```
+
+Lưu ý: bộ phân loại dựa trên tên và category của dữ liệu nguồn, nên đầu ra vẫn cần
+được rà soát nghiệp vụ trước khi sử dụng như tư vấn dinh dưỡng thực tế.
