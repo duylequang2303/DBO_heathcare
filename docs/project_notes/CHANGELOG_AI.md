@@ -48,6 +48,58 @@ Không ghi "tests pass" nếu không có số lượng và lệnh thực tế. K
 
 # Entries
 
+## 2026-10-20 — Tích hợp bản vá Menu Realism & Đánh giá ngưỡng ứng viên IDBO (0.28)
+
+### Scope
+- Áp dụng bản vá từ `DBO_heathcare_INTEGRATED_FIXED.zip` (dynamic role bounds, culinary role filtering, sửa trường `food_name` cho API).
+- Chạy lại toàn bộ kế hoạch thực nghiệm chẩn đoán DBO vs IDBO theo `KE_HOACH_CHAY_LAI_DBO_IDBO.md`.
+- Hiệu chuẩn ngưỡng độ đa dạng ứng viên `diversity_threshold = 0.28` trên tập hiệu chỉnh (8001–8002).
+- Đánh giá độc lập trên tập 8 hạt giống (8003–8010) với đối chuẩn paired DBO vs IDBO.
+
+### Base
+- Branch bắt đầu: `main` (commit `8890e23`)
+- Nhánh làm việc: `fix/integrated-menu-realism`
+- Commit tích hợp: `e022ccf`, `bc80473`, `4c88958`, `a50baed`, `11e4443`, `339051c`
+
+### Changed
+- `src/algorithms/two_tier_solver.py`: Dynamic role portion bounds theo từng vai trò ẩm thực (`STAPLE: 100-250g`, `MAIN_PROTEIN: 60-180g`, v.v.).
+- `src/models/dish_category.py`: Xử lý an toàn `None`/`nan`, fallback món không rõ về `RAW_INGREDIENT` để loại khỏi menu người dùng.
+- `src/models/food_selector.py`: Bổ sung `_is_user_facing_food` và `_roles_for_slot` cho layout 2+2+2+1.
+- `app/api/services.py` & `app/api/swap.py`: Sửa `name` thành `food_name`.
+- `scripts/audit_menu_realism.py`: Thêm công cụ chẩn đoán kiểm toán thực đơn người dùng.
+- `scripts/calibrate_diversity_threshold.py`: Thêm script hiệu chuẩn ngưỡng độ đa dạng (th=0.25, 0.28, 0.32).
+- `scripts/evaluate_candidate_threshold.py`: Thêm script đánh giá độc lập ngưỡng ứng viên 0.28.
+- `tests/test_api.py`, `tests/test_food_selector.py`, `tests/test_menu_realism_audit.py`: Bổ sung tests bảo vệ.
+
+### Experiments
+- **Ablation Full Benchmark (10 seeds, 3 configs, 60 runs):**
+  - Cấu hình cũ (th <= 0.05): DBO và IDBO hòa 100% (min_diversity ~0.25 > 0.05 nên 0 collapse events).
+- **Candidate Threshold 0.28 Evaluation (10 seeds, outer_iter=100, stag=10):**
+  - Tập hiệu chỉnh (8001–8002): 1 Thắng / 1 Thua (+0.7838 điểm).
+  - Tập đánh giá độc lập (8003–8010): 5 Thắng / 0 Hòa / 3 Thua.
+  - Chênh lệch điểm trung bình: +0.1659 điểm (trung vị: +0.1115 điểm).
+  - Runtime tăng: +7.22 giây (+14.6%).
+  - Kiểm định: Wilcoxon p = 0.6406, Sign test p = 0.7266 (chưa đạt mức ý nghĩa thống kê ở alpha=0.05).
+  - Ràng buộc: 0 vi phạm kỹ thuật trên 100% các seed.
+
+### Verification
+```bash
+./venv/bin/pytest -q
+# 217 passed, 4 warnings in 21s
+```
+
+### Artifacts
+- `experiments/ablation_dbo_idbo/candidate_threshold_028_eval.csv`
+- `experiments/ablation_dbo_idbo/candidate_threshold_028_diffs.csv`
+- `experiments/ablation_dbo_idbo/threshold_calibration_2seeds.csv`
+- `experiments/ablation_dbo_idbo/CANDIDATE_THRESHOLD_028_REPORT.md`
+
+### Remaining limitations
+- Chưa thực hiện benchmark kiểm soát cùng ngân sách số lần gọi hàm mục tiêu (budget-matched).
+- Cỡ mẫu đánh giá độc lập hiện tại (N=8) còn nhỏ để đạt ý nghĩa thống kê cho mức chênh lệch nhỏ (+0.1659 điểm).
+
+---
+
 ## 2026-01-18 — Tuần 10: Web API Integration
 
 ### Scope

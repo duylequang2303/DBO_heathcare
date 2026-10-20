@@ -6,21 +6,21 @@
 
 - Project: `DBO_heathcare`
 - Main language: Python 3.12
-- Current branch: `experiment/dbo-idbo-ablation`
-- Last verified commit: `c8f741b` (docs: Add README and summary for week 10)
-- Last verified date: `2026-01-18`
-- Current milestone: **Hoàn thành Tuần 10 - Web API Integration**
+- Current branch: `fix/integrated-menu-realism`
+- Last verified commit: `339051c`
+- Last verified date: `2026-10-20`
+- Current milestone: **Hoàn thành Tích hợp Menu Realism & Đánh giá Ngưỡng Ứng Viên IDBO (0.28)**
 
 ## 2. Verified status
 
 Các mục dưới đây đã được xác minh thực tế trên codebase hiện tại:
 
-- Test suite gần nhất: **`205 + 9 API tests = 214 passed`**
+- Test suite gần nhất: **`217 passed, 4 warnings in 21s`**
 - Lệnh xác minh:
 
 ```bash
-python -m pytest tests/ -v
-# Output: 205 passed (existing) + 9 passed (API tests) in ~10s
+./venv/bin/pytest -q
+# Output: 217 passed, 4 warnings in ~21s
 ```
 
 ### Tuần 10: Web API Integration (COMPLETED)
