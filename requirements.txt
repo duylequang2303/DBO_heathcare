@@ -4,3 +4,7 @@ pytest
 matplotlib>=3.9.0
 python-docx
 python-pptx
+fastapi
+uvicorn[standard]
+pydantic
+httpx
