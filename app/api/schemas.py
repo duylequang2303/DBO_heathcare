@@ -44,8 +44,6 @@ class ProfileIn(BaseModel):
             max_c = allowed_meals[meal]
             if count < 0 or count > max_c:
                 raise ValueError(f"Số món cho '{meal}' phải từ 0 đến {max_c}")
-        if sum(v.values()) <= 0:
-            raise ValueError("Tổng số món ăn trong ngày phải lớn hơn 0")
         return v
 
 

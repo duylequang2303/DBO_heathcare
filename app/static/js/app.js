@@ -1,13 +1,12 @@
 /**
- * app.js — Form hồ sơ + render bảng món + swap UI (Đăng - Tuần 10)
+ * app.js — Form hồ sơ + render bảng món (Đăng - Tuần 10)
  *
  * Luồng chính (theo TASK_WEEK10.md):
  *   (1) Nhập hồ sơ → POST /api/targets → hiển thị BMR/TDEE/macro
  *   (2) Tạo thực đơn → POST /api/menu/generate → bảng món + radar
- *   (3) Thay món → POST /api/menu/swap → cập nhật 1 dòng + delta + radar
  */
 
-import { apiTargets, apiGenerateMenu, apiSwapMenu, apiProfiles, apiSearchFoods } from './api.js';
+import { apiTargets, apiGenerateMenu, apiProfiles } from './api.js';
 import { initCharts, updateRadar, updateProgressBars } from './charts.js';
 
 // ---------------------------------------------------------------------------
@@ -73,17 +72,6 @@ const violationsEl  = $('violationsList');
 const diversityEl   = $('diversityPct');
 const runtimeEl     = $('runtimeSec');
 
-// Swap modal
-const swapModal     = $('swapModal');
-const swapSlotLabel = $('swapSlotLabel');
-const swapFoodSearch= $('swapFoodSearch');
-const swapDropdown  = $('swapDropdown');
-const btnSwapConfirm= $('btnSwapConfirm');
-const btnSwapCancel = $('btnSwapCancel');
-
-let _swapSlot       = null;
-let _swapSelectedId = null;
-
 // ---------------------------------------------------------------------------
 // Toast
 // ---------------------------------------------------------------------------
@@ -114,6 +102,7 @@ function createTagsInput(container) {
     val = val.trim().toLowerCase();
     if (!val || items.has(val)) return;
     items.add(val);
+    invalidateTargets();
 
     const tag = document.createElement('span');
     tag.className = 'tag-item';
@@ -126,6 +115,7 @@ function createTagsInput(container) {
     removeBtn.addEventListener('click', () => {
       items.delete(val);
       tag.remove();
+      invalidateTargets();
       input.focus();
     });
 
@@ -138,9 +128,9 @@ function createTagsInput(container) {
     if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(input.value); }
     if (e.key === 'Backspace' && !input.value && items.size) {
       const last = [...items].at(-1);
-      items.delete(last);
-      const tagEls = container.querySelectorAll('.tag-item');
-      if (tagEls.length) tagEls[tagEls.length - 1].remove();
+      const removeBtn = [...container.querySelectorAll('.tag-remove')]
+        .find(button => button.dataset.val === last);
+      removeBtn?.click();
     }
   });
 
@@ -148,6 +138,7 @@ function createTagsInput(container) {
     getValues: () => [...items],
     setValues: (vals) => {
       items.clear();
+      invalidateTargets();
       container.querySelectorAll('.tag-item').forEach(t => t.remove());
       vals.forEach(v => addTag(v));
     },
@@ -158,9 +149,9 @@ function createTagsInput(container) {
 // Build ProfileIn từ form
 // ---------------------------------------------------------------------------
 
-function parseCount(input, fallback = 0) {
+function parseCount(input) {
   const v = parseInt(input.value, 10);
-  return Number.isNaN(v) ? fallback : Math.max(0, v);
+  return Number.isNaN(v) ? 1 : v;
 }
 
 function readProfile() {
@@ -173,10 +164,10 @@ function readProfile() {
     activity_level: selActivity.value,
     goal:        selGoal.value,
     meal_counts: {
-      breakfast: parseCount(mcBreakfast, 2),
-      lunch:     parseCount(mcLunch, 2),
-      dinner:    parseCount(mcDinner, 2),
-      snack:     parseCount(mcSnack, 1),
+      breakfast: parseCount(mcBreakfast),
+      lunch:     parseCount(mcLunch),
+      dinner:    parseCount(mcDinner),
+      snack:     parseCount(mcSnack),
     },
     medical_conditions: condCtrl.getValues(),
     allergies:          allergyCtrl.getValues(),
@@ -185,6 +176,7 @@ function readProfile() {
 }
 
 function fillForm(preset) {
+  invalidateTargets();
   inpName.value    = preset.name || '';
   inpAge.value     = preset.age || '';
   selGender.value  = preset.gender || 'male';
@@ -221,15 +213,32 @@ setConfig('web');
 // Targets
 // ---------------------------------------------------------------------------
 
+let targetsVersion = 0;
+
+function invalidateTargets() {
+  targetsVersion += 1;
+  state.targets = null;
+  targetsBar.style.display = 'none';
+  targetsBar.innerHTML = '';
+}
+
+async function refreshTargets(profile) {
+  invalidateTargets();
+  const version = targetsVersion;
+  const res = await apiTargets(profile);
+  // Ignore responses for a profile that was edited while the request ran.
+  if (version !== targetsVersion) return;
+  state.targets = res;
+  renderTargetsBar(res);
+}
+
 async function computeTargets() {
   const profile = readProfile();
   state.profile = profile;
 
   setLoading(btnTargets, true);
   try {
-    const res = await apiTargets(profile);
-    state.targets = res;
-    renderTargetsBar(res);
+    await refreshTargets(profile);
     toast('Đã tính mục tiêu dinh dưỡng', 'success');
   } catch (err) {
     toast(`Lỗi: ${err.message}`, 'error');
@@ -290,31 +299,25 @@ function renderTargetsBar(res) {
 // ---------------------------------------------------------------------------
 
 async function generateMenu() {
-  state.profile = readProfile();
+  const profile = readProfile();
+  state.profile = profile;
   state.seed    = parseInt(inpSeed.value, 10) || 9001;
+  const { seed, config } = state;
 
   setLoading(btnGenerate, true, 'Đang tính toán...');
   try {
-    const res = await apiGenerateMenu(state.profile, state.seed, state.config);
+    try {
+      await refreshTargets(profile);
+    } catch (_) {
+      toast('Không thể làm mới mục tiêu dinh dưỡng', 'info');
+    }
+    const res = await apiGenerateMenu(profile, seed, config);
     state.menu = res;
     state.foodIds = res.items.map(i => i.food_id);
     renderMenu(res);
 
-    // Luôn làm mới targets tương ứng với profile hiện tại
-    try {
-      const tr = await apiTargets(state.profile);
-      state.targets = tr;
-      renderTargetsBar(tr);
-    } catch (_) {
-      // fallback dùng targets từ solver nếu apiTargets lỗi
-      if (!state.targets) {
-        state.targets = { bmr: 0, tdee: 0, targets: res.targets };
-      }
-    }
-
-    const currentTargets = state.targets?.targets || res.targets;
-    updateRadar(res.totals, currentTargets);
-    updateProgressBars(res.totals, currentTargets, 'progressBars');
+    updateRadar(res.totals, res.targets);
+    updateProgressBars(res.totals, res.targets, 'progressBars');
 
     menuSection.style.display = 'block';
     menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -374,12 +377,6 @@ function renderMenu(menuData) {
       <td class="num-cell">${item.macros.fat_g.toFixed(1)}</td>
       <td class="num-cell">${item.macros.fiber_g.toFixed(1)}</td>
       <td class="num-cell">${item.macros.sodium_mg.toFixed(0)}</td>
-      <td>
-        <button class="btn-swap" onclick="openSwap('${item.slot}', ${idx})"
-                title="Thay món tại slot ${item.slot}">
-          ↔ Thay
-        </button>
-      </td>
     `;
     menuTableBody.appendChild(tr);
   });
@@ -395,7 +392,6 @@ function renderMenu(menuData) {
     <td class="num-cell">${t.fat_g.toFixed(1)}</td>
     <td class="num-cell">${t.fiber_g.toFixed(1)}</td>
     <td class="num-cell">${t.sodium_mg.toFixed(0)}</td>
-    <td></td>
   `;
 
   // Violations
@@ -414,89 +410,6 @@ function renderViolations(violations) {
       <span>${escHtml(v)}</span>
     </div>`).join('');
 }
-
-// ---------------------------------------------------------------------------
-// Swap
-// ---------------------------------------------------------------------------
-
-window.openSwap = function(slot, _idx) {
-  _swapSlot = slot;
-  _swapSelectedId = null;
-  swapSlotLabel.textContent = slot;
-  swapFoodSearch.value = '';
-  swapDropdown.innerHTML = '';
-  swapDropdown.style.display = 'none';
-  btnSwapConfirm.disabled = true;
-  swapModal.style.display = 'flex';
-};
-
-btnSwapCancel.addEventListener('click', () => { swapModal.style.display = 'none'; });
-swapModal.addEventListener('click', e => { if (e.target === swapModal) swapModal.style.display = 'none'; });
-
-// Food search trong modal
-let _searchTimer = null;
-swapFoodSearch.addEventListener('input', () => {
-  clearTimeout(_searchTimer);
-  _searchTimer = setTimeout(async () => {
-    const q = swapFoodSearch.value.trim();
-    if (!q) { swapDropdown.style.display = 'none'; return; }
-    try {
-      const foods = await apiSearchFoods(q, 15);
-      renderFoodDropdown(foods);
-    } catch (_) { /* ignore */ }
-  }, 280);
-});
-
-function renderFoodDropdown(foods) {
-  swapDropdown.innerHTML = '';
-  if (!foods.length) { swapDropdown.style.display = 'none'; return; }
-  foods.forEach(f => {
-    const div = document.createElement('div');
-    div.className = 'food-option';
-    div.innerHTML = `
-      <span>${escHtml(f.food_name)}</span>
-      <span class="food-option-kcal">${f.calories.toFixed(0)} kcal</span>`;
-    div.addEventListener('click', () => {
-      _swapSelectedId = f.food_id;
-      swapFoodSearch.value = f.food_name;
-      swapDropdown.style.display = 'none';
-      btnSwapConfirm.disabled = false;
-    });
-    swapDropdown.appendChild(div);
-  });
-  swapDropdown.style.display = 'block';
-}
-
-btnSwapConfirm.addEventListener('click', async () => {
-  if (!_swapSlot || !state.profile || !state.foodIds.length) return;
-  swapModal.style.display = 'none';
-  setLoading(btnGenerate, true, 'Đang thay món...');
-  try {
-    const res = await apiSwapMenu(
-      state.profile, state.foodIds, _swapSlot,
-      _swapSelectedId, state.seed
-    );
-    // Patch state
-    state.menu = { ...state.menu, ...res };
-    state.foodIds = res.items.map(i => i.food_id);
-    renderMenu(state.menu);
-    updateRadar(res.totals, state.targets?.targets || res.targets);
-    updateProgressBars(res.totals, state.targets?.targets || res.targets, 'progressBars');
-
-    // Show delta
-    const d = res.delta;
-    const dCal = d.calories?.toFixed(0);
-    toast(`Thay thành công! Δ Calo: ${dCal > 0 ? '+' : ''}${dCal} kcal`, 'success');
-  } catch (err) {
-    if (err.status === 501) {
-      toast('Tính năng đổi món đang được hoàn thiện (Cương phụ trách)', 'info', 5000);
-    } else {
-      toast(`Lỗi thay món: ${err.message}`, 'error');
-    }
-  } finally {
-    setLoading(btnGenerate, false, '⚡ Tạo thực đơn');
-  }
-});
 
 // ---------------------------------------------------------------------------
 // Preset profiles
@@ -548,6 +461,8 @@ function escHtml(str) {
 
 btnTargets.addEventListener('click', computeTargets);
 btnGenerate.addEventListener('click', generateMenu);
+formProfile.addEventListener('input', invalidateTargets);
+formProfile.addEventListener('change', invalidateTargets);
 inpSeed.addEventListener('change', () => { state.seed = parseInt(inpSeed.value, 10) || 9001; });
 
 // ---------------------------------------------------------------------------
