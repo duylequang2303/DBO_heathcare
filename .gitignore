@@ -56,4 +56,50 @@ experiments/week7/*.png
 experiments/week7/*.json
 experiments/week7/*.txt
 
+# Internal workflow files (private - never push)
+.agents/
+workflow_guidelines.md
+
+# Week 8 & Week 9 experiment outputs
+experiments/week8/*
+experiments/week9/*
+
+# Archive files
+*.zip
+*.7z*
+
+
+# === Smart Lite Cleanup ===
+data/raw/comprehensive_foods_usda.csv
+experiments/week*/
+experiments/ablation_dbo_idbo/*.csv
+experiments/ablation_dbo_idbo/*.png
+experiments/ablation_dbo_idbo/*.json
+docs/reports/*.docx
+docs/slides/*.pptx
+docs/slides/*.pdf
+docs/slides/archive/
+patches/
+*.zip
+*.7z*
+.ai_base_commit
+latest_*
+
+# === Smart Lite Cleanup ===
+data/raw/comprehensive_foods_usda.csv
+experiments/week*/
+experiments/ablation_dbo_idbo/*.csv
+experiments/ablation_dbo_idbo/*.png
+experiments/ablation_dbo_idbo/*.json
+docs/reports/*.docx
+docs/slides/*.pptx
+docs/slides/*.pdf
+docs/slides/archive/
+patches/
+*.zip
+*.7z*
+.ai_base_commit
+latest_*
+
+# Week 11 benchmark outputs
 results/

@@ -1,0 +1,160 @@
+Bạn đang làm việc trực tiếp trong repository DBO_heathcare hiện tại. Hãy thực hiện toàn bộ nhiệm vụ dưới đây, không chỉ phân tích hoặc đề xuất. Không hỏi lại giữa các bước trừ khi repository thiếu file bắt buộc.
+
+MỤC TIÊU
+Xác định một cách thực nghiệm vì sao DBO và IDBO đang cho kết quả giống nhau; kiểm tra cơ chế perturbation/restart của IDBO có thực sự kích hoạt hay không; sau đó cập nhật kết quả trung thực vào slide tuần 8-9.
+
+NGUYÊN TẮC
+1. Không chỉnh tham số chỉ để ép IDBO thắng.
+2. Không sửa thuật toán trước khi hoàn thành benchmark chẩn đoán baseline.
+3. DBO và IDBO phải dùng cùng seed, population, objective, bounds, dữ liệu và ngân sách function evaluations trong từng cấu hình.
+4. Báo cả trường hợp IDBO tốt hơn, tương đương hoặc kém hơn. Không che kết quả.
+5. Không dùng từ “vượt trội”, “chứng minh” hoặc “tốt hơn” nếu không có bằng chứng thống kê.
+6. Trước khi sửa code, đọc kỹ:
+   - src/algorithms/dbo.py
+   - src/algorithms/idbo.py
+   - src/algorithms/two_tier_solver.py
+   - scripts/experiment_week8.py
+   - scripts/build_pptx_week8_9.py
+   - các test liên quan
+7. Giữ toàn bộ 202 tests hiện có. Nếu thêm test, tổng mới phải được lấy động từ pytest, không hard-code tùy ý.
+
+GIAI ĐOẠN 1 - KIỂM TRA IMPLEMENTATION
+1. Xác nhận two_tier_solver dispatch đúng hai class DBO và IDBO cho cả outer và inner solver.
+2. Xác nhận các tham số stagnation_window, diversity_threshold, perturbation/restart probability hoặc tham số tương đương có thực sự được truyền vào IDBO.
+3. Kiểm tra cách tăng/reset stagnation counter và điều kiện kích hoạt diversity collapse.
+4. Kiểm tra telemetry hiện có:
+   - outer_perturbations
+   - outer_restarts
+   - final_inner_perturbations
+   - final_inner_restarts
+5. Nếu telemetry chưa đầy đủ, bổ sung theo cách không làm thay đổi hành vi thuật toán.
+6. Thêm unit test tối thiểu để chứng minh telemetry tăng khi tạo một objective cố ý gây stagnation. Test phải gọi implementation thật, không mock toàn bộ optimizer.
+
+GIAI ĐOẠN 2 - BENCHMARK CHẨN ĐOÁN
+Tạo script mới:
+  scripts/experiment_dbo_idbo_ablation.py
+
+Chạy paired benchmark trên cùng seed 8001-8010 với ít nhất ba cấu hình:
+
+A. baseline_short
+- max_iter = 25
+- giữ stagnation_window và diversity_threshold đúng như cấu hình hiện tại
+
+B. diagnostic_balanced
+- max_iter = 100
+- stagnation_window = 10
+- diversity_threshold = 0.01
+
+C. diagnostic_activation
+- max_iter = 150
+- stagnation_window = 5
+- diversity_threshold = 0.05
+
+Nếu tên hoặc constructor tham số trong implementation khác, tự ánh xạ sang tham số tương đương. Không sửa API một cách tùy tiện.
+
+Để thời gian chạy khả thi:
+- Trước tiên chạy smoke test 2 seed cho cả ba cấu hình.
+- Sau đó chạy đủ 10 seed nếu smoke test thành công.
+- Nếu two-tier full benchmark vượt quá thời gian hợp lý, ưu tiên chạy benchmark outer/inner optimizer độc lập trên objective đại diện, đồng thời ghi rõ phạm vi. Không giả vờ đã chạy full benchmark.
+
+Mỗi dòng kết quả phải lưu:
+- config_name
+- algorithm
+- seed
+- best_fitness
+- final_fitness
+- runtime_s
+- n_evaluations
+- outer_perturbations
+- outer_restarts
+- final_inner_perturbations
+- final_inner_restarts
+- calories và n_violations nếu chạy two-tier menu
+
+Xuất file:
+- experiments/ablation_dbo_idbo/paired_runs.csv
+- experiments/ablation_dbo_idbo/summary.csv
+- experiments/ablation_dbo_idbo/paired_differences.csv
+- experiments/ablation_dbo_idbo/fig_ablation_dbo_idbo.png
+- experiments/ablation_dbo_idbo/README.md
+
+Summary theo config và algorithm phải có:
+- mean, median, std, best, worst fitness
+- mean runtime
+- tổng/mean perturbations và restarts
+- số seed IDBO thắng, hòa, thua DBO
+- mean paired difference: IDBO - DBO
+
+Dùng kiểm định paired phù hợp nếu scipy có sẵn:
+- ưu tiên Wilcoxon signed-rank cho 10 cặp seed
+- báo p-value và effect size nếu có thể
+- nếu tất cả paired differences bằng 0, ghi rõ “không thể hiện khác biệt; mọi cặp bằng nhau”, không ép chạy kiểm định vô nghĩa
+
+GIAI ĐOẠN 3 - DIỄN GIẢI KẾT QUẢ
+Tự chọn đúng một trong ba kết luận dựa trên dữ liệu thật:
+
+A. IDBO kích hoạt và tốt hơn có ý nghĩa:
+“Ở cấu hình ngắn, DBO và IDBO tương đương. Khi tăng ngân sách và cho phép phát hiện trì trệ sớm hơn, perturbation/restart của IDBO được kích hoạt và cải thiện fitness trên .../10 seed; paired difference ..., p-value ...”
+
+B. IDBO kích hoạt nhưng chưa cải thiện có ý nghĩa:
+“IDBO có hành vi tìm kiếm khác, thể hiện qua ... perturbations và ... restarts, nhưng chất lượng nghiệm cuối chưa khác biệt có ý nghĩa so với DBO trên bộ instance hiện tại.”
+
+C. IDBO vẫn không kích hoạt hoặc implementation có vấn đề:
+“Các cơ chế cải tiến vẫn không kích hoạt ngay cả trong cấu hình chẩn đoán. Kết quả chỉ ra vấn đề ở điều kiện kích hoạt/truyền tham số; chưa thể dùng benchmark hiện tại để đánh giá lợi thế IDBO.”
+
+Không được kết luận IDBO tốt hơn chỉ vì một seed tốt hơn hoặc mean nhỉnh rất nhỏ nhưng variance lớn.
+
+GIAI ĐOẠN 4 - CẬP NHẬT SLIDE
+Sửa scripts/build_pptx_week8_9.py và sinh lại:
+  docs/slides/Slide_Bao_Cao_Tuan_8_9_DBO_IDBO.pptx
+
+Yêu cầu slide:
+1. Giữ bảng benchmark baseline tuần 8 hiện tại.
+2. Thêm một khối nhỏ vào Slide 5 hoặc Slide 6 tên:
+   “KIỂM TRA KÍCH HOẠT CƠ CHẾ IDBO”
+3. Khối này chỉ hiển thị:
+   - Baseline 25 vòng: DBO Mean, IDBO Mean, perturbations, restarts
+   - Cấu hình chẩn đoán hợp lý nhất: DBO Mean, IDBO Mean, perturbations, restarts
+   - một câu kết luận tương ứng A/B/C ở trên
+4. Không nhét bảng ba cấu hình quá dày. Chi tiết đầy đủ để trong experiments/ablation_dbo_idbo/README.md.
+5. Nếu IDBO không tốt hơn, ghi thẳng:
+   “Chưa ghi nhận IDBO vượt trội hơn DBO trong phạm vi thử nghiệm.”
+6. Nếu IDBO chỉ khác khi dùng cấu hình C quá mạnh, gọi đó là “kiểm tra kích hoạt”, không dùng làm bằng chứng hiệu năng chính.
+7. Đồng bộ số tests trên slide theo kết quả pytest thật sau cùng.
+8. Không làm phát sinh text overflow hoặc chồng lấn.
+
+GIAI ĐOẠN 5 - XÁC MINH CUỐI
+Chạy:
+- python -m pytest -q
+- script benchmark mới
+- python scripts/build_pptx_week8_9.py
+
+Sau đó kiểm tra:
+- CSV không rỗng và có đủ paired seeds
+- DBO/IDBO dùng cùng seed trong từng pair
+- số telemetry đúng kiểu số nguyên không âm
+- biểu đồ đọc được
+- PowerPoint mở được và không tràn nội dung
+
+GIT
+Tạo một nhánh mới từ trạng thái hiện tại:
+  experiment/dbo-idbo-ablation
+
+Tách commit hợp lý:
+1. test: verify IDBO activation telemetry
+2. experiment: add paired DBO IDBO ablation benchmark
+3. docs: update week 8-9 slides with ablation findings
+
+Không merge vào main. Không force push.
+
+ĐẦU RA CUỐI CÙNG CHO TÔI
+Trả lời ngắn gọn nhưng đầy đủ:
+1. DBO và IDBO giống nhau là do cấu hình, bài toán hay bug code?
+2. Cơ chế IDBO có kích hoạt không? Bao nhiêu lần?
+3. IDBO thắng/hòa/thua bao nhiêu seed?
+4. Có khác biệt thống kê hay không?
+5. Pytest cuối cùng bao nhiêu passed?
+6. Các file đã tạo/sửa.
+7. Commit hash của ba commit.
+8. Đường dẫn PowerPoint mới.
+9. Câu trả lời 3-4 câu để sinh viên dùng khi giáo viên hỏi “Vì sao IDBO không khác DBO?”.

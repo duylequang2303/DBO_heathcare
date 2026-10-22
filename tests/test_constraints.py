@@ -48,3 +48,17 @@ def test_lunch_rejects_breakfast_item(food_map, profile, targets):
     )
     issues = validate_menu(menu, profile, targets)
     assert any("not allowed in lunch" in msg for msg in issues)
+
+
+def test_hypertension_rejects_sodium_above_profile_limit(valid_menu, profile, targets):
+    profile.medical_conditions = ["hypertension"]
+    targets["sodium_mg"] = 1.0
+    issues = validate_menu(valid_menu, profile, targets)
+    assert any("sodium_mg" in msg and "exceeds" in msg for msg in issues)
+
+
+def test_healthy_profile_does_not_apply_hypertension_limit(valid_menu, profile, targets):
+    profile.medical_conditions = ["healthy"]
+    targets["sodium_mg"] = 1.0
+    issues = validate_menu(valid_menu, profile, targets)
+    assert not any("sodium_mg" in msg for msg in issues)
