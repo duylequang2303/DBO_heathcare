@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # ---------------------------------------------------------------------------
@@ -33,6 +33,20 @@ class ProfileIn(BaseModel):
     medical_conditions: list[str] = []
     allergies: list[str] = []
     dislikes: list[str] = []
+
+    @field_validator("meal_counts")
+    @classmethod
+    def validate_meal_counts(cls, v: dict[str, int]) -> dict[str, int]:
+        allowed_meals = {"breakfast": 5, "lunch": 5, "dinner": 5, "snack": 3}
+        for meal, count in v.items():
+            if meal not in allowed_meals:
+                raise ValueError(f"Bữa ăn '{meal}' không hợp lệ. Chỉ chấp nhận {list(allowed_meals.keys())}")
+            max_c = allowed_meals[meal]
+            if count < 0 or count > max_c:
+                raise ValueError(f"Số món cho '{meal}' phải từ 0 đến {max_c}")
+        if sum(v.values()) <= 0:
+            raise ValueError("Tổng số món ăn trong ngày phải lớn hơn 0")
+        return v
 
 
 class GenerateIn(BaseModel):

@@ -22,9 +22,19 @@ async function apiFetch(url, options = {}) {
     let detail = `HTTP ${res.status}`;
     try {
       const body = await res.json();
-      detail = body.detail || JSON.stringify(body);
+      if (Array.isArray(body.detail)) {
+        detail = body.detail
+          .map(d => `${d.loc?.slice(-1)[0] || 'trường'}: ${d.msg}`)
+          .join('; ');
+      } else if (typeof body.detail === 'string') {
+        detail = body.detail;
+      } else if (body.detail) {
+        detail = JSON.stringify(body.detail);
+      }
     } catch (_) { /* ignore */ }
-    throw new Error(detail);
+    const err = new Error(detail);
+    err.status = res.status;
+    throw err;
   }
   return res.json();
 }

@@ -289,7 +289,7 @@ def search_foods(q: str, limit: int = 20) -> list[FoodItem]:
         return []
     q_lower = q.lower().strip()
     if q_lower:
-        mask = df["food_name"].str.lower().str.contains(q_lower, na=False)
+        mask = df["food_name"].str.lower().str.contains(q_lower, na=False, regex=False)
         matched = df[mask].head(limit)
     else:
         matched = df.head(limit)

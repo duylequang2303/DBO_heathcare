@@ -114,9 +114,22 @@ function createTagsInput(container) {
     val = val.trim().toLowerCase();
     if (!val || items.has(val)) return;
     items.add(val);
+
     const tag = document.createElement('span');
     tag.className = 'tag-item';
-    tag.innerHTML = `${val}<span class="tag-remove" data-val="${val}">✕</span>`;
+    tag.textContent = val;
+
+    const removeBtn = document.createElement('span');
+    removeBtn.className = 'tag-remove';
+    removeBtn.textContent = '✕';
+    removeBtn.dataset.val = val;
+    removeBtn.addEventListener('click', () => {
+      items.delete(val);
+      tag.remove();
+      input.focus();
+    });
+
+    tag.appendChild(removeBtn);
     container.insertBefore(tag, input);
     input.value = '';
   }
@@ -126,16 +139,9 @@ function createTagsInput(container) {
     if (e.key === 'Backspace' && !input.value && items.size) {
       const last = [...items].at(-1);
       items.delete(last);
-      container.querySelector(`.tag-remove[data-val="${last}"]`)?.parentElement?.remove();
+      const tagEls = container.querySelectorAll('.tag-item');
+      if (tagEls.length) tagEls[tagEls.length - 1].remove();
     }
-  });
-  container.addEventListener('click', e => {
-    if (e.target.classList.contains('tag-remove')) {
-      const val = e.target.dataset.val;
-      items.delete(val);
-      e.target.parentElement.remove();
-    }
-    input.focus();
   });
 
   return {
@@ -152,6 +158,11 @@ function createTagsInput(container) {
 // Build ProfileIn từ form
 // ---------------------------------------------------------------------------
 
+function parseCount(input, fallback = 0) {
+  const v = parseInt(input.value, 10);
+  return Number.isNaN(v) ? fallback : Math.max(0, v);
+}
+
 function readProfile() {
   return {
     name:        inpName.value.trim() || 'Người dùng',
@@ -162,10 +173,10 @@ function readProfile() {
     activity_level: selActivity.value,
     goal:        selGoal.value,
     meal_counts: {
-      breakfast: parseInt(mcBreakfast.value, 10) || 1,
-      lunch:     parseInt(mcLunch.value, 10) || 1,
-      dinner:    parseInt(mcDinner.value, 10) || 1,
-      snack:     parseInt(mcSnack.value, 10) || 1,
+      breakfast: parseCount(mcBreakfast, 2),
+      lunch:     parseCount(mcLunch, 2),
+      dinner:    parseCount(mcDinner, 2),
+      snack:     parseCount(mcSnack, 1),
     },
     medical_conditions: condCtrl.getValues(),
     allergies:          allergyCtrl.getValues(),
@@ -289,15 +300,21 @@ async function generateMenu() {
     state.foodIds = res.items.map(i => i.food_id);
     renderMenu(res);
 
-    // Cập nhật targets nếu chưa có
-    if (!state.targets) {
+    // Luôn làm mới targets tương ứng với profile hiện tại
+    try {
       const tr = await apiTargets(state.profile);
       state.targets = tr;
       renderTargetsBar(tr);
+    } catch (_) {
+      // fallback dùng targets từ solver nếu apiTargets lỗi
+      if (!state.targets) {
+        state.targets = { bmr: 0, tdee: 0, targets: res.targets };
+      }
     }
 
-    updateRadar(res.totals, state.targets?.targets || res.targets);
-    updateProgressBars(res.totals, state.targets?.targets || res.targets, 'progressBars');
+    const currentTargets = state.targets?.targets || res.targets;
+    updateRadar(res.totals, currentTargets);
+    updateProgressBars(res.totals, currentTargets, 'progressBars');
 
     menuSection.style.display = 'block';
     menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -462,7 +479,7 @@ btnSwapConfirm.addEventListener('click', async () => {
     // Patch state
     state.menu = { ...state.menu, ...res };
     state.foodIds = res.items.map(i => i.food_id);
-    renderMenu(res);
+    renderMenu(state.menu);
     updateRadar(res.totals, state.targets?.targets || res.targets);
     updateProgressBars(res.totals, state.targets?.targets || res.targets, 'progressBars');
 
@@ -471,7 +488,11 @@ btnSwapConfirm.addEventListener('click', async () => {
     const dCal = d.calories?.toFixed(0);
     toast(`Thay thành công! Δ Calo: ${dCal > 0 ? '+' : ''}${dCal} kcal`, 'success');
   } catch (err) {
-    toast(`Lỗi thay món: ${err.message}`, 'error');
+    if (err.status === 501) {
+      toast('Tính năng đổi món đang được hoàn thiện (Cương phụ trách)', 'info', 5000);
+    } else {
+      toast(`Lỗi thay món: ${err.message}`, 'error');
+    }
   } finally {
     setLoading(btnGenerate, false, '⚡ Tạo thực đơn');
   }
