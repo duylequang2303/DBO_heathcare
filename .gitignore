@@ -55,3 +55,5 @@ experiments/week7/*.csv
 experiments/week7/*.png
 experiments/week7/*.json
 experiments/week7/*.txt
+
+results/
