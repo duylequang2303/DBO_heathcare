@@ -21,6 +21,7 @@ def validate_menu(menu: Menu, profile: UserProfile, targets: dict[str, float]) -
     violations: list[str] = []
     violations += _check_energy(menu, targets["calories"])
     violations += _check_macros(menu, targets)
+    violations += _check_medical_constraints(menu, profile, targets)
     violations += _check_meal_count(menu, profile.meal_counts)
     violations += _check_portion(menu)
     violations += _check_dislikes(menu, profile.dislikes)
@@ -54,6 +55,25 @@ def _check_macros(menu: Menu, targets: dict[str, float]) -> list[str]:
             issues.append(f"{key}: {actual:.1f} outside [{low:.1f}, {high:.1f}]")
     return issues
 
+
+
+def _check_medical_constraints(
+    menu: Menu, profile: UserProfile, targets: dict[str, float]
+) -> list[str]:
+    """Validate only condition constraints backed by nutrients in the dataset.
+
+    Sodium is available in the merged database and can be enforced for
+    hypertension. The current dataset has no total-sugar column, so diabetes
+    must not be declared safe from a carbohydrate-derived sugar estimate.
+    """
+    conditions = {str(value).strip().lower() for value in profile.medical_conditions}
+    issues: list[str] = []
+    if "hypertension" in conditions and "sodium_mg" in targets:
+        actual = menu.total("sodium_mg")
+        limit = float(targets["sodium_mg"])
+        if actual > limit:
+            issues.append(f"sodium_mg: {actual:.1f} exceeds {limit:.1f}")
+    return issues
 
 def _check_meal_count(menu: Menu, meal_counts: dict[str, int]) -> list[str]:
     issues = []

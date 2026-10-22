@@ -55,11 +55,15 @@ class DBO:
         ratios: Optional[dict[str, float]] = None,
         cfg: Optional[dict[str, float]] = None,
         behaviors: Optional[dict[str, Callable]] = None,
+        max_evaluations: Optional[int] = None,
     ) -> None:
         if n_agents < 4:
             raise ValueError("n_agents must be at least 4 (one per behaviour group)")
         if max_iter < 1:
             raise ValueError("max_iter must be >= 1")
+        if max_evaluations is not None and max_evaluations < n_agents:
+            raise ValueError("max_evaluations must be >= n_agents")
+        self.max_evaluations = max_evaluations
         self.n_agents = n_agents
         self.max_iter = max_iter
         self.ratios = dict(DEFAULT_RATIOS if ratios is None else ratios)
@@ -99,6 +103,8 @@ class DBO:
         # positions are used as a fallback; X_prev becomes meaningful from t = 2.
         prev_positions = positions.copy()
         for t in range(1, self.max_iter + 1):
+            if self.max_evaluations is not None and n_evaluations >= self.max_evaluations:
+                break
             start_positions = positions.copy()
             # Worst individual (argmax fitness) is the reference point of the
             # ball-rolling update (paper Eq. 1), so compute it once per iteration.
@@ -109,6 +115,11 @@ class DBO:
             for name, idx in zip(BEHAVIOR_NAMES, groups):
                 if len(idx) == 0:
                     continue
+                if self.max_evaluations is not None:
+                    remaining = self.max_evaluations - n_evaluations
+                    if remaining <= 0:
+                        break
+                    idx = idx[:remaining]
                 fn = behaviors[name]
                 group_x = positions[idx]
                 group_f = fitness[idx]
@@ -142,6 +153,7 @@ class DBO:
                         best_x = new_x[k].copy()
             history.append(best_fitness)
             prev_positions = start_positions
+            self._budget_remaining = None if self.max_evaluations is None else self.max_evaluations - n_evaluations
             positions, fitness, best_x, best_fitness, extra_evals = self._after_iteration(
                 t, positions, fitness, best_x, best_fitness, rng, lbv, ubv, objective
             )
