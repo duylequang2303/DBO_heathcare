@@ -191,39 +191,40 @@ def build_slide_2(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     _header(slide, "Nghiệm Thu Hệ Thống Web API & Trực Quan Hóa Dinh Dưỡng", "Hệ Thống Thực Nghiệm")
 
-    # Cột trái: Hình Radar Chart thực tế sinh từ API
-    f5_path = FIG_DIR / "fig_web_radar_nutrition_p1.png"
-    if f5_path.exists():
-        w, h = _fit_image(f5_path, Inches(5.6), Inches(5.4))
-        slide.shapes.add_picture(str(f5_path), Inches(0.6), Inches(1.5), w, h)
+    # Cột trái: Ảnh chụp màn hình Web UI thực tế sau khi tạo thực đơn
+    ui_screenshot = FIG_DIR / "fig_web_ui_actual_screenshot.png"
+    if ui_screenshot.exists():
+        w, h = _fit_image(ui_screenshot, Inches(7.2), Inches(5.4))
+        slide.shapes.add_picture(str(ui_screenshot), Inches(0.6), Inches(1.5), w, h)
 
     # Cột phải: Báo cáo kỹ thuật ĐÃ LÀM GÌ, DÙNG GÌ
-    _card(slide, Inches(6.5), Inches(1.5), Inches(6.2), Inches(5.4))
-    tb = slide.shapes.add_textbox(Inches(6.75), Inches(1.7), Inches(5.7), Inches(5.0))
+    _card(slide, Inches(8.0), Inches(1.5), Inches(4.7), Inches(5.4))
+    tb = slide.shapes.add_textbox(Inches(8.25), Inches(1.7), Inches(4.2), Inches(5.0))
     tf = tb.text_frame
     tf.word_wrap = True
 
     p0 = tf.paragraphs[0]
-    r0 = _add_run(p0, "Nghiệm Thu Tính Năng Web / API (PR #28)")
+    r0 = _add_run(p0, "Nghiệm Thu Kỹ Thuật (PR #28)")
     _style_run(r0, 16, True, INDIGO)
 
     items = [
-        ("Công nghệ sử dụng:", "FastAPI backend, Pydantic v2 validation, Uvicorn server, Chart.js, Vanilla HTML/CSS/JS (Dark Theme Glassmorphism)."),
-        ("Kiến trúc Single-Port:", "Phục vụ đồng thời REST API (/api/*) và static frontend trên cổng 8000, triệt tiêu lỗi CORS và độ trễ proxy."),
-        ("6 Endpoints chuẩn hóa:", "GET /health, GET /profiles, POST /targets (tính BMR/TDEE), POST /menu/generate (chạy solver 2 tầng), GET /foods, POST /menu/swap (stub 501)."),
-        ("Xử lý phi nghẽn (Non-blocking):", "Bao bọc two_tier_optimize() bằng asyncio.to_thread, Event Loop không bị khóa khi tối ưu."),
-        ("Tuân thủ quy chuẩn khẩu phần:", "Bảng thực đơn hiển thị minh bạch Gram liên tục và Gram làm tròn bước 5g (portion_g_rounded). Dinh dưỡng được tính toán lại chính xác trên gram làm tròn."),
-        ("Trực quan hóa đa chiều (W11-F5):", "Biểu đồ Radar thể hiện tỷ lệ % đạt chuẩn 6 trục dinh dưỡng, đi kèm dải dung sai cho phép (80%–120%).")
+        ("Công nghệ sử dụng:", "FastAPI, Pydantic v2, Uvicorn, Chart.js, Vanilla HTML5/CSS3/ES6 (Dark Theme Glassmorphism)."),
+        ("Kiến trúc Single-Port:", "Phục vụ đồng thời REST API (/api/*) và giao diện Web tĩnh trên cùng cổng 8000. Không phụ thuộc proxy."),
+        ("6 Endpoints chuẩn hóa:", "GET /health, GET /profiles, POST /targets, POST /menu/generate, GET /foods, POST /menu/swap (stub 501)."),
+        ("Xử lý phi nghẽn:", "two_tier_optimize() chạy qua asyncio.to_thread, không gây nghẽn Event Loop."),
+        ("Quy chuẩn khẩu phần 5g:", "Bảng thực đơn hiển thị minh bạch Gram gốc và Gram làm tròn 5g (portion_g_rounded), tính lại dinh dưỡng chuẩn."),
+        ("Trực quan hóa đa chiều:", "Biểu đồ Radar 6 trục dinh dưỡng và thanh tiến độ theo dải dung sai chuẩn (80%–120%).")
     ]
     for title, desc in items:
         p = tf.add_paragraph()
-        p.space_before = Pt(7)
+        p.space_before = Pt(6)
         rt = _add_run(p, f"• {title} ")
-        _style_run(rt, 12, True, INDIGO2)
+        _style_run(rt, 11.5, True, INDIGO2)
         rd = _add_run(p, desc)
-        _style_run(rd, 11, False, INK)
+        _style_run(rd, 10.5, False, INK)
 
     _footer(slide, 2)
+
 
 
 # =========================================================================== #
