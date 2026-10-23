@@ -1,26 +1,25 @@
 """Dựng slide báo cáo Tuần 11 (Chuẩn hóa thực nghiệm DBO/IDBO, Budget-Matched & Tích hợp Web UI).
 
 Đề tài: CNTT-KLCN142 — Trường Đại học Công Thương TP.HCM (HUIT)
-Thực hiện: Lê Quang Duy (Nhóm trưởng), Hồ Trung Cương, Đặng Nguyễn Minh Đăng.
+Thực hiện: Nhóm nghiên cứu DBO Healthcare (Lê Quang Duy, Hồ Trung Cương, Đặng Nguyễn Minh Đăng).
 
-Cấu trúc trình chiếu 10 slide chuẩn học thuật (16:9 Widescreen):
+Cấu trúc trình chiếu 8 slide khoa học, đầy đủ hình ảnh minh chứng thực tế:
 - Slide 1: Bìa báo cáo tổng quan Tuần 11
-- Slide 2: Mục tiêu trọng tâm & Ma trận phân công Tuần 11
-- Slide 3: Tích hợp Giao diện Web UI & API (Nghiệm thu Tuần 10)
-- Slide 4: Chuẩn hóa thực nghiệm DBO vs IDBO (Ngưỡng 0.28 trên Tập độc lập)
-- Slide 5: Phân tích Thống kê Paired & Kiểm định Wilcoxon Signed-Rank
-- Slide 6: Phân tích Telemetry — Đóng góp của Tầng Ngoài vs Tầng Trong
-- Slide 7: Kiểm soát Ngân sách Tính toán (Budget-Matched Benchmark)
-- Slide 8: Kiến trúc Ngưỡng Kép (Dual Diversity Threshold)
-- Slide 9: Đảm bảo Chất lượng & Kiểm thử Hồi quy (253/253 tests PASS)
-- Slide 10: Tổng kết Tuần 11 & Kế hoạch Tuần 12
+- Slide 2: Nghiệm thu Web API & Giao diện Trực quan hóa Dinh dưỡng (Kèm hình Radar W11-F5)
+- Slide 3: Đối đầu DBO vs IDBO trên Tập Độc Lập Seed 8003–8010 (Kèm hình W11-F1)
+- Slide 4: Đánh đổi Chi phí Tính toán: Evaluations & Runtime (Kèm hình W11-F2)
+- Slide 5: Phân tích Telemetry: Kích hoạt Tầng Ngoài vs Tầng Trong (Kèm hình W11-F3)
+- Slide 6: Kiểm soát Ngân sách Chung: Budget-Matched Benchmark (Kèm hình W11-F4)
+- Slide 7: Hoàn thiện Kiến trúc Ngưỡng Kép (Dual Diversity Threshold)
+- Slide 8: Đảm bảo Chất lượng Mã nguồn (253/253 tests PASS & Tuân thủ AGENTS.md)
 """
 
 from __future__ import annotations
 
 import sys
 from pathlib import Path
-import pandas as pd
+from typing import Tuple
+from PIL import Image
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
@@ -32,8 +31,10 @@ OUT_DIR = ROOT / "docs" / "slides"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 OUT_PPTX = OUT_DIR / "Slide_Bao_Cao_Tuan_11_DBO_IDBO.pptx"
 
+FIG_DIR = ROOT / "experiments" / "ablation_dbo_idbo"
+
 # --------------------------------------------------------------------------- #
-# Bảng màu chuẩn học thuật (Academic Dark Navy / Teal / Coral)
+# Bảng màu chuẩn học thuật
 # --------------------------------------------------------------------------- #
 INDIGO = RGBColor(0x1B, 0x2A, 0x4A)       # Xanh Navy đậm chủ đạo
 INDIGO2 = RGBColor(0x2D, 0x3E, 0x63)      # Xanh Navy phụ
@@ -43,11 +44,9 @@ GREEN = RGBColor(0x21, 0x7A, 0x4B)        # Xanh lá tích cực
 RED = RGBColor(0xB8, 0x32, 0x28)          # Đỏ cảnh báo / điểm nghẽn
 INK = RGBColor(0x1E, 0x24, 0x30)          # Đen chữ chính
 MUTED = RGBColor(0x5A, 0x64, 0x78)        # Xám ghi chữ phụ
-LIGHT = RGBColor(0xF5, 0xF7, 0xFB)        # Nền thẻ sáng
-LINE = RGBColor(0xD3, 0xDB, 0xEA)         # Đường viền ngăn cách
+LIGHT = RGBColor(0xF8, 0xFA, 0xFC)        # Nền thẻ sáng
+LINE = RGBColor(0xCB, 0xD5, 0xE1)         # Đường viền ngăn cách
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)        # Trắng tinh
-CREAM = RGBColor(0xFD, 0xF6, 0xEB)        # Nền kem ghi chú
-CARD_BORDER = RGBColor(0xE2, 0xE8, 0xF0)  # Viền thẻ trang nhã
 
 FONT = "Calibri"
 SLIDE_W = Inches(13.333)
@@ -69,9 +68,9 @@ def _style_run(run, size, bold, color, italic=False):
     run.font.color.rgb = color
 
 
-def _add_header(slide, title_text, category_text):
+def _header(slide, title_text, category_text):
     """Header chuẩn học thuật: Thẻ phân loại + Tiêu đề slide."""
-    cat_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(11.7), Inches(0.35))
+    cat_box = slide.shapes.add_textbox(Inches(0.6), Inches(0.35), Inches(12.1), Inches(0.3))
     tf_cat = cat_box.text_frame
     tf_cat.word_wrap = True
     tf_cat.margin_left = tf_cat.margin_top = tf_cat.margin_right = tf_cat.margin_bottom = 0
@@ -79,23 +78,43 @@ def _add_header(slide, title_text, category_text):
     r_cat = _add_run(p_cat, category_text.upper())
     _style_run(r_cat, 11, True, AMBER)
 
-    t_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.75), Inches(11.7), Inches(0.65))
+    t_box = slide.shapes.add_textbox(Inches(0.6), Inches(0.68), Inches(12.1), Inches(0.6))
     tf_t = t_box.text_frame
     tf_t.word_wrap = True
     tf_t.margin_left = tf_t.margin_top = tf_t.margin_right = tf_t.margin_bottom = 0
     p_t = tf_t.paragraphs[0]
     r_t = _add_run(p_t, title_text)
-    _style_run(r_t, 22, True, INDIGO)
+    _style_run(r_t, 21, True, INDIGO)
 
     # Đường kẻ phân cách
-    line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(1.45), Inches(11.733), Inches(0.02))
+    line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.6), Inches(1.32), Inches(12.133), Pt(1.5))
     line.fill.solid()
     line.fill.fore_color.rgb = LINE
     line.line.color.rgb = LINE
 
 
-def _add_card(slide, left, top, width, height, bg_color=LIGHT, border_color=CARD_BORDER):
-    """Tạo khung chứa nội dung (Card Container)."""
+def _footer(slide, current_page, total_pages=8):
+    """Footer chuẩn: Mã đề tài + Số trang."""
+    foot_line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.6), Inches(7.05), Inches(12.133), Pt(1))
+    foot_line.fill.solid()
+    foot_line.fill.fore_color.rgb = LINE
+    foot_line.line.color.rgb = LINE
+
+    tb = slide.shapes.add_textbox(Inches(0.6), Inches(7.12), Inches(9.0), Inches(0.3))
+    tf = tb.text_frame
+    p = tf.paragraphs[0]
+    r = _add_run(p, "CNTT-KLCN142 — Đề xuất thực đơn dinh dưỡng cá nhân hóa bằng DBO/IDBO | Báo cáo Tuần 11")
+    _style_run(r, 9.5, False, MUTED)
+
+    tb2 = slide.shapes.add_textbox(Inches(10.5), Inches(7.12), Inches(2.2), Inches(0.3))
+    tf2 = tb2.text_frame
+    p2 = tf2.paragraphs[0]
+    p2.alignment = PP_ALIGN.RIGHT
+    r2 = _add_run(p2, f"{current_page} / {total_pages}")
+    _style_run(r2, 9.5, True, MUTED)
+
+
+def _card(slide, left, top, width, height, bg_color=LIGHT, border_color=LINE):
     card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
     card.fill.solid()
     card.fill.fore_color.rgb = bg_color
@@ -107,29 +126,39 @@ def _add_card(slide, left, top, width, height, bg_color=LIGHT, border_color=CARD
     return card
 
 
+def _fit_image(path: Path, box_w: float, box_h: float) -> Tuple[int, int]:
+    with Image.open(path) as im:
+        iw, ih = im.size
+    box_aspect = box_w / box_h
+    aspect = iw / ih
+    if aspect > box_aspect:
+        w = int(box_w)
+        h = int(box_w / aspect)
+    else:
+        h = int(box_h)
+        w = int(box_h * aspect)
+    return w, h
+
+
 # =========================================================================== #
 # SLIDE 1: BÌA BÁO CÁO
 # =========================================================================== #
 def build_slide_1(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
-    # Nền Navy sang trọng
     bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, SLIDE_W, SLIDE_H)
     bg.fill.solid()
     bg.fill.fore_color.rgb = INDIGO
     bg.line.fill.background()
 
-    # Dải màu cam trang trí
     bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(1.2), Inches(0.15), Inches(4.8))
     bar.fill.solid()
     bar.fill.fore_color.rgb = AMBER
     bar.line.fill.background()
 
-    # Text Frame
     tb = slide.shapes.add_textbox(Inches(1.2), Inches(1.2), Inches(11.0), Inches(5.0))
     tf = tb.text_frame
     tf.word_wrap = True
-    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
 
     p0 = tf.paragraphs[0]
     r0 = _add_run(p0, "TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TP. HỒ CHÍ MINH — KHOA CÔNG NGHỆ THÔNG TIN\nKHÓA LUẬN TỐT NGHIỆP | MÃ ĐỀ TÀI: CNTT-KLCN142\n")
@@ -156,379 +185,225 @@ def build_slide_1(prs):
 
 
 # =========================================================================== #
-# SLIDE 2: MỤC TIÊU & MA TRẬN PHÂN CÔNG TUẦN 11
+# SLIDE 2: NGHIỆM THU WEB API & GIAO DIỆN TRỰC QUAN HÓA (W11-F5)
 # =========================================================================== #
 def build_slide_2(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Mục Tiêu Trọng Tâm & Ma Trận Phân Công Tuần 11", "Kế Hoạch & Điều Phối")
+    _header(slide, "Nghiệm Thu Hệ Thống Web API & Trực Quan Hóa Dinh Dưỡng", "Hệ Thống Thực Nghiệm")
 
-    # Card 1: 4 Trọng tâm kỹ thuật
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
-    tf1 = tb1.text_frame
-    tf1.word_wrap = True
-    p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "4 Trọng Tâm Nghiên Cứu Tuần 11")
-    _style_run(r1, 16, True, INDIGO)
+    # Cột trái: Hình Radar Chart thực tế sinh từ API
+    f5_path = FIG_DIR / "fig_web_radar_nutrition_p1.png"
+    if f5_path.exists():
+        w, h = _fit_image(f5_path, Inches(5.6), Inches(5.4))
+        slide.shapes.add_picture(str(f5_path), Inches(0.6), Inches(1.5), w, h)
+
+    # Cột phải: Báo cáo kỹ thuật ĐÃ LÀM GÌ, DÙNG GÌ
+    _card(slide, Inches(6.5), Inches(1.5), Inches(6.2), Inches(5.4))
+    tb = slide.shapes.add_textbox(Inches(6.75), Inches(1.7), Inches(5.7), Inches(5.0))
+    tf = tb.text_frame
+    tf.word_wrap = True
+
+    p0 = tf.paragraphs[0]
+    r0 = _add_run(p0, "Nghiệm Thu Tính Năng Web / API (PR #28)")
+    _style_run(r0, 16, True, INDIGO)
 
     items = [
-        ("1. Nghiệm thu & Tích hợp Web UI/API:", "Hoàn thành giải quyết xung đột PR #28, đưa toàn bộ giao diện Dark Glassmorphism và API vào nhánh chính."),
-        ("2. Chuẩn hóa thực nghiệm DBO vs IDBO:", "Tách bạch tập hiệu chỉnh (seed 8001-8002) và tập độc lập (seed 8003-8010). Giữ cố định ngưỡng 0.28."),
-        ("3. Kiểm tra tính công bằng theo ngân sách:", "Thiết lập giới hạn số lần đánh giá hàm mục tiêu (max_evaluations) để trả lời: IDBO tốt hơn nhờ cơ chế hay nhờ thêm tài nguyên?"),
-        ("4. Phân tách kiến trúc hai ngưỡng (Dual Threshold):", "Tách riêng outer_diversity_threshold (0.28) và inner_diversity_threshold để kiểm soát độc lập từng tầng.")
+        ("Công nghệ sử dụng:", "FastAPI backend, Pydantic v2 validation, Uvicorn server, Chart.js, Vanilla HTML/CSS/JS (Dark Theme Glassmorphism)."),
+        ("Kiến trúc Single-Port:", "Phục vụ đồng thời REST API (/api/*) và static frontend trên cổng 8000, triệt tiêu lỗi CORS và độ trễ proxy."),
+        ("6 Endpoints chuẩn hóa:", "GET /health, GET /profiles, POST /targets (tính BMR/TDEE), POST /menu/generate (chạy solver 2 tầng), GET /foods, POST /menu/swap (stub 501)."),
+        ("Xử lý phi nghẽn (Non-blocking):", "Bao bọc two_tier_optimize() bằng asyncio.to_thread, Event Loop không bị khóa khi tối ưu."),
+        ("Tuân thủ quy chuẩn khẩu phần:", "Bảng thực đơn hiển thị minh bạch Gram liên tục và Gram làm tròn bước 5g (portion_g_rounded). Dinh dưỡng được tính toán lại chính xác trên gram làm tròn."),
+        ("Trực quan hóa đa chiều (W11-F5):", "Biểu đồ Radar thể hiện tỷ lệ % đạt chuẩn 6 trục dinh dưỡng, đi kèm dải dung sai cho phép (80%–120%).")
     ]
     for title, desc in items:
-        p = tf1.add_paragraph()
-        p.space_before = Pt(10)
-        rt = _add_run(p, f"• {title}\n  ")
-        _style_run(rt, 12.5, True, INDIGO2)
+        p = tf.add_paragraph()
+        p.space_before = Pt(7)
+        rt = _add_run(p, f"• {title} ")
+        _style_run(rt, 12, True, INDIGO2)
         rd = _add_run(p, desc)
-        _style_run(rd, 11.5, False, INK)
+        _style_run(rd, 11, False, INK)
 
-    # Card 2: Phân công 3 thành viên
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
-    tf2 = tb2.text_frame
-    tf2.word_wrap = True
-    p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Ma Trận Trách Nhiệm Thành Viên")
-    _style_run(r2, 16, True, INDIGO)
-
-    roles = [
-        ("Lê Quang Duy (Nhóm trưởng / Báo cáo & Thống kê)",
-         "• Phân tích số liệu DBO vs IDBO tập độc lập (seed 8003-8010).\n"
-         "• Thực hiện kiểm định Wilcoxon signed-rank, Sign test.\n"
-         "• Giám sát tính trung thực, không phát ngôn vượt số liệu y tế.\n"
-         "• Soạn thảo báo cáo Word và Slide thuyết trình Tuần 11."),
-        ("Hồ Trung Cương (Budget-Matched & Dual Threshold)",
-         "• Cài đặt cơ chế kiểm soát budget (max_evaluations) cho solver.\n"
-         "• Tách 2 tham số outer/inner diversity threshold trong TwoTierConfig.\n"
-         "• Bổ sung telemetry đo lường tài nguyên thực tế.\n"
-         "• Xây dựng test suite kiểm tra budget dừng chính xác (PR #30)."),
-        ("Đặng Nguyễn Minh Đăng (Tích hợp Web/API & Trải nghiệm)",
-         "• Xây dựng giao diện Web responsive, theme glassmorphism.\n"
-         "• Trực quan hóa dinh dưỡng (Radar Chart 6 trục, Progress bars dung sai).\n"
-         "• Tích hợp 6 REST endpoints FastAPI, xử lý lỗi và schema validation (PR #28).")
-    ]
-    for name, task in roles:
-        p = tf2.add_paragraph()
-        p.space_before = Pt(8)
-        rn = _add_run(p, f"👤 {name}\n")
-        _style_run(rn, 12, True, TEAL)
-        rk = _add_run(p, task)
-        _style_run(rk, 11, False, INK)
+    _footer(slide, 2)
 
 
 # =========================================================================== #
-# SLIDE 3: TÍCH HỢP GIAO DIỆN WEB UI & API (TUẦN 10)
+# SLIDE 3: ĐỐI ĐẦU DBO vs IDBO TRÊN TẬP ĐỘC LẬP (W11-F1)
 # =========================================================================== #
 def build_slide_3(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Nghiệm Thu Tích Hợp Hệ Thống Web API & Giao Diện Người Dùng", "Hệ Thống Thực Nghiệm")
+    _header(slide, "Thực Nghiệm Đối Đầu DBO vs IDBO Trên Tập Độc Lập (Seed 8003–8010)", "Đánh Giá Thực Nghiệm")
 
-    # Card 1: Kiến trúc Web API
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
-    tf1 = tb1.text_frame
-    tf1.word_wrap = True
-    p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "Kiến Trúc Kỹ Thuật (FastAPI Backend)")
-    _style_run(r1, 16, True, INDIGO)
+    # Cột trái: Hình biểu đồ đối đầu
+    f1_path = FIG_DIR / "fig_fitness_comparison_seed8003_8010.png"
+    if f1_path.exists():
+        w, h = _fit_image(f1_path, Inches(6.5), Inches(5.4))
+        slide.shapes.add_picture(str(f1_path), Inches(0.6), Inches(1.5), w, h)
 
-    features = [
-        ("Thiết kế Single-Port (Một Cổng Phục Vụ):", "FastAPI phục vụ đồng thời cả REST API (/api/*) và tài nguyên tĩnh (/static) trên cổng 8000. Loại bỏ hoàn toàn sự cố CORS và proxy trung gian."),
-        ("6 Endpoints Chuẩn Hóa:", "GET /health, GET /profiles (P1/P2/P3), POST /targets (tính BMR/TDEE tức thời), POST /menu/generate (chạy IDBO 2 tầng), GET /foods, POST /menu/swap (stub 501 minh bạch)."),
-        ("Xử Lý Phi Nghẽn (Non-blocking):", "Sử dụng asyncio.to_thread để bao bọc quá trình tối ưu hóa 2 tầng, giữ cho Event Loop của FastAPI luôn phản hồi trơn tru."),
-        ("Tối Ưu Hóa Bộ Nhớ (Singleton DB):", "Cơ sở dữ liệu 15.929 thực phẩm được nạp vào RAM một lần duy nhất tại sự kiện startup.")
+    # Cột phải: Bảng số liệu và kết luận khoa học
+    _card(slide, Inches(7.3), Inches(1.5), Inches(5.4), Inches(5.4))
+    tb = slide.shapes.add_textbox(Inches(7.55), Inches(1.7), Inches(4.9), Inches(5.0))
+    tf = tb.text_frame
+    tf.word_wrap = True
+
+    p0 = tf.paragraphs[0]
+    r0 = _add_run(p0, "Số Liệu Thực Nghiệm (Ngưỡng 0.28)")
+    _style_run(r0, 16, True, INDIGO)
+
+    points = [
+        ("Dữ liệu thử nghiệm:", "Tập đánh giá độc lập gồm 8 hạt giống (seed 8003–8010), cấu hình chuẩn 100 vòng ngoài, 50 vòng trong, quần thể 20/15 cá thể."),
+        ("Tỷ lệ đối đầu:", "IDBO Thắng 5/8 hạt giống (62.5%), DBO Thắng 3/8 hạt giống (37.5%)."),
+        ("Điểm Fitness trung bình:", "DBO: 98.9931 ± 0.7918 | IDBO: 99.1590 ± 0.6851. IDBO cải thiện nhẹ trung bình +0.1659 điểm."),
+        ("Kiểm định Wilcoxon Signed-Rank:", "Trị thống kê W = 14.0 > W_critical = 3 (n=8, alpha=0.05). Sự khác biệt chưa có ý nghĩa thống kê (p > 0.05)."),
+        ("Phân định tập dữ liệu:", "Tập hiệu chỉnh (Calibration seed 8001–8002: IDBO thắng 1, DBO thắng 1) được tách riêng, không gộp vào tập đánh giá độc lập để tránh thiên lệch chọn mẫu.")
     ]
-    for t, d in features:
-        p = tf1.add_paragraph()
+    for title, desc in points:
+        p = tf.add_paragraph()
         p.space_before = Pt(8)
-        rt = _add_run(p, f"✓ {t}\n  ")
+        rt = _add_run(p, f"• {title} ")
         _style_run(rt, 12, True, INDIGO2)
-        rd = _add_run(p, d)
+        rd = _add_run(p, desc)
         _style_run(rd, 11, False, INK)
 
-    # Card 2: Giao diện trực quan hóa
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
-    tf2 = tb2.text_frame
-    tf2.word_wrap = True
-    p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Trực Quan Hóa & Trải Nghiệm Người Dùng (UI)")
-    _style_run(r2, 16, True, INDIGO)
-
-    ui_points = [
-        ("Thiết Kế Hiện Đại (Dark Glassmorphism):", "Giao diện tông tối sang trọng, không phụ thuộc framework CSS nặng, responsive linh hoạt trên máy tính và thiết bị di động."),
-        ("Tuân Thủ Quy Chuẩn Khẩu Phần (AGENTS.md):", "Bảng thực đơn hiển thị minh bạch 2 cột: Gram liên tục gốc và Gram làm tròn bước 5g (portion_g_rounded). Dinh dưỡng được tính toán lại chính xác trên gram làm tròn."),
-        ("Thanh Tiến Độ Dung Sai (Progress Bars):", "Chỉ báo 3 trạng thái màu sắc theo dải dung sai nghiêm ngặt: Xanh lục (đạt chuẩn ±10-20%), Vàng (cận biên), Đỏ (vượt ngưỡng hoặc thiếu hụt)."),
-        ("Biểu Đồ Radar Đa Chiều (Chart.js):", "Trực quan hóa đồng thời 6 chỉ số: Năng lượng, Protein, Carbohydrate, Lipid, Chất xơ và Natri so với mục tiêu tham chiếu (100%).")
-    ]
-    for t, d in ui_points:
-        p = tf2.add_paragraph()
-        p.space_before = Pt(8)
-        rt = _add_run(p, f"★ {t}\n  ")
-        _style_run(rt, 12, True, TEAL)
-        rd = _add_run(p, d)
-        _style_run(rd, 11, False, INK)
+    _footer(slide, 3)
 
 
 # =========================================================================== #
-# SLIDE 4: CHUẨN HÓA THỰC NGHIỆM DBO vs IDBO (TẬP ĐỘC LẬP)
+# SLIDE 4: ĐÁNH ĐỔI CHI PHÍ TÀI NGUYÊN (W11-F2)
 # =========================================================================== #
 def build_slide_4(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Chuẩn Hóa Dữ Liệu Thực Nghiệm DBO vs IDBO (Ngưỡng 0.28)", "Đánh Giá Thực Nghiệm")
+    _header(slide, "Đánh Đổi Tài Nguyên Tính Toán: Số Lượt Evaluations & Thời Gian Chạy", "Phân Tích Chi Phí")
 
-    # Card bảng số liệu
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(11.733), Inches(5.3))
+    f2_path = FIG_DIR / "fig_resource_tradeoff_evals_runtime.png"
+    if f2_path.exists():
+        w, h = _fit_image(f2_path, Inches(7.2), Inches(5.4))
+        slide.shapes.add_picture(str(f2_path), Inches(0.6), Inches(1.5), w, h)
 
-    tb = slide.shapes.add_textbox(Inches(1.1), Inches(1.8), Inches(11.1), Inches(0.5))
+    _card(slide, Inches(8.0), Inches(1.5), Inches(4.7), Inches(5.4))
+    tb = slide.shapes.add_textbox(Inches(8.25), Inches(1.7), Inches(4.2), Inches(5.0))
     tf = tb.text_frame
-    p = tf.paragraphs[0]
-    r = _add_run(p, "Bảng Đối Chứng Chi Tiết Từng Hạt Giống (Tập Đánh Giá Độc Lập Seed 8003–8010)")
-    _style_run(r, 15, True, INDIGO)
+    tf.word_wrap = True
 
-    # Thêm bảng
-    rows, cols = 10, 8
-    table_shape = slide.shapes.add_table(rows, cols, Inches(1.1), Inches(2.35), Inches(11.133), Inches(3.4))
-    tbl = table_shape.table
-
-    # Đặt độ rộng cột
-    tbl.columns[0].width = Inches(1.1)   # Seed
-    tbl.columns[1].width = Inches(1.5)   # DBO Fit
-    tbl.columns[2].width = Inches(1.5)   # IDBO Fit
-    tbl.columns[3].width = Inches(1.5)   # Diff
-    tbl.columns[4].width = Inches(1.4)   # DBO Time
-    tbl.columns[5].width = Inches(1.4)   # IDBO Time
-    tbl.columns[6].width = Inches(1.4)   # Pert/Rest
-    tbl.columns[7].width = Inches(1.333) # Outcome
-
-    headers = ["Hạt giống", "DBO Fitness", "IDBO Fitness", "Chênh lệch", "Thời gian DBO", "Thời gian IDBO", "Đột biến/Restart", "Kết quả"]
-    for j, h in enumerate(headers):
-        cell = tbl.cell(0, j)
-        cell.fill.solid()
-        cell.fill.fore_color.rgb = INDIGO
-        p = cell.text_frame.paragraphs[0]
-        p.alignment = PP_ALIGN.CENTER
-        run = _add_run(p, h)
-        _style_run(run, 11, True, WHITE)
-
-    data = [
-        ("Seed 8003", "99.0691", "97.9416", "-1.1275", "52.4s", "57.3s", "28 / 3", "DBO Thắng", RED),
-        ("Seed 8004", "97.2465", "99.1396", "+1.8931", "48.8s", "57.6s", "4 / 0", "IDBO Thắng", GREEN),
-        ("Seed 8005", "99.1117", "99.7556", "+0.6439", "53.8s", "65.1s", "69 / 7", "IDBO Thắng", GREEN),
-        ("Seed 8006", "99.3151", "98.9199", "-0.3952", "53.7s", "58.5s", "44 / 5", "DBO Thắng", RED),
-        ("Seed 8007", "99.5862", "99.6609", "+0.0747", "55.8s", "64.7s", "0 / 0", "IDBO Thắng", GREEN),
-        ("Seed 8008", "99.4844", "98.4347", "-1.0497", "54.5s", "57.0s", "0 / 0", "DBO Thắng", RED),
-        ("Seed 8009", "98.5132", "99.6530", "+1.1398", "37.6s", "54.1s", "58 / 6", "IDBO Thắng", GREEN),
-        ("Seed 8010", "99.6185", "99.7668", "+0.1483", "38.6s", "38.6s", "33 / 2", "IDBO Thắng", GREEN),
-        ("Trung bình", "98.9931", "99.1590", "+0.1659", "49.39s", "56.61s", "29.5 / 2.9", "IDBO: 5 Thắng (62.5%)", INDIGO2)
-    ]
-
-    for i, row in enumerate(data, start=1):
-        for j, val in enumerate(row[:8]):
-            cell = tbl.cell(i, j)
-            cell.fill.solid()
-            cell.fill.fore_color.rgb = LIGHT if i % 2 == 1 else WHITE
-            p = cell.text_frame.paragraphs[0]
-            p.alignment = PP_ALIGN.CENTER
-            run = _add_run(p, val)
-            color = row[8] if j in (3, 7) else INK
-            bold = True if i == 9 or j in (0, 3, 7) else False
-            _style_run(run, 10.5, bold, color)
-
-    # Chú thích học thuật ở dưới
-    tb_note = slide.shapes.add_textbox(Inches(1.1), Inches(5.9), Inches(11.1), Inches(0.8))
-    tf_n = tb_note.text_frame
-    tf_n.word_wrap = True
-    pn = tf_n.paragraphs[0]
-    rn = _add_run(pn, "(*) Nguyên tắc phân định dữ liệu: ")
-    _style_run(rn, 11, True, AMBER)
-    rn2 = _add_run(pn, "Tập hiệu chỉnh (Calibration seed 8001–8002: IDBO thắng 1, DBO thắng 1) chỉ dùng để khảo sát ngưỡng, tuyệt đối không gộp vào tập đánh giá độc lập để tránh thiên kiến chọn lọc (Selection Bias).")
-    _style_run(rn2, 11, False, MUTED)
-
-
-# =========================================================================== #
-# SLIDE 5: PHÂN TÍCH THỐNG KÊ & KIỂM ĐỊNH WILCOXON
-# =========================================================================== #
-def build_slide_5(prs):
-    slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Phân Tích Thống Kê Đối Chứng & Kiểm Định Ý Nghĩa", "Phân Tích Khoa Học")
-
-    # Card 1: Kết quả kiểm định thống kê
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
-    tf1 = tb1.text_frame
-    tf1.word_wrap = True
-    p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "Kiểm Định Wilcoxon Signed-Rank Test")
-    _style_run(r1, 16, True, INDIGO)
-
-    stats_info = [
-        ("Mẫu thử nghiệm cặp (Paired Samples):", "N = 8 hạt giống độc lập (seed 8003–8010)."),
-        ("Tổng hạng dương (IDBO thắng):", "W+ = 22.0 (tổng hạng của 5 hạt giống có diff > 0)."),
-        ("Tổng hạng âm (DBO thắng):", "W- = 14.0 (tổng hạng của 3 hạt giống có diff < 0)."),
-        ("Trị thống kê kiểm định:", "W = min(W+, W-) = 14.0."),
-        ("Giá trị tới hạn (Critical Value):", "Với n = 8, mức ý nghĩa alpha = 0.05 (2 phía), ngưỡng bác bỏ giả thuyết H0 là W <= 3."),
-        ("Kết luận kiểm định thống kê:", "Vì W = 14.0 > 3 (p > 0.05), chưa đủ bằng chứng thống kê để khẳng định IDBO vượt trội hơn DBO một cách có ý nghĩa.")
-    ]
-    for t, d in stats_info:
-        p = tf1.add_paragraph()
-        p.space_before = Pt(6)
-        rt = _add_run(p, f"• {t} ")
-        _style_run(rt, 12, True, INDIGO2)
-        rd = _add_run(p, d)
-        _style_run(rd, 11.5, False, INK)
-
-    # Card 2: Đánh đổi tài nguyên tính toán
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
-    tf2 = tb2.text_frame
-    tf2.word_wrap = True
-    p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Đánh Đổi Chi Phí Tính Toán (Trade-off)")
-    _style_run(r2, 16, True, INDIGO)
+    p0 = tf.paragraphs[0]
+    r0 = _add_run(p0, "Phân Tích Chi Phí Tính Toán")
+    _style_run(r0, 16, True, INDIGO)
 
     tradeoffs = [
-        ("Chênh lệch điểm số trung bình:", "IDBO đạt 99.1590 so với 98.9931 của DBO (cải thiện nhẹ +0.1659 điểm, trung vị tăng +0.1115)."),
-        ("Số lượt tính hàm mục tiêu (Evaluations):", "DBO cố định ở 263.870 lượt; IDBO tiêu tốn trung bình 313.005 lượt (tăng +18.6%, tối đa lên tới 337.808 lượt ở seed 8005)."),
-        ("Thời gian thực thi (Runtime):", "DBO trung bình 49.39s; IDBO trung bình 56.61s (tăng +14.6% thời gian xử lý do chi phí tính toán đa dạng và restart)."),
-        ("Tuyên bố khoa học trung thực:", "IDBO mang lại hành vi tìm kiếm đa dạng và có xu hướng cải thiện nhẹ, nhưng đi kèm chi phí tài nguyên cao hơn. Cần kiểm chứng trong điều kiện cố định ngân sách.")
+        ("Số lượt tính hàm mục tiêu:", "DBO cố định ở mức 263.870 lượt. IDBO dao động từ 293.826 đến 337.808 lượt (trung bình 313.005 lượt, tăng +18.6%)."),
+        ("Thời gian thực thi:", "DBO trung bình 49.39s. IDBO trung bình 56.61s (tăng +14.6% thời gian xử lý)."),
+        ("Bản chất chi phí phụ trội:", "Phát sinh từ các đợt đánh giá ứng viên đa dạng (candidate diversity evaluation), đột biến Cauchy và tái khởi động quần thể khi đình trệ."),
+        ("Hệ quả khoa học:", "IDBO có điểm số tốt hơn một phần do được cấp thêm ngân sách tính toán. Cần thiết phải triển khai so sánh Budget-Matched (cố định số lần tính hàm mục tiêu).")
     ]
     for t, d in tradeoffs:
-        p = tf2.add_paragraph()
-        p.space_before = Pt(6)
+        p = tf.add_paragraph()
+        p.space_before = Pt(8)
         rt = _add_run(p, f"▲ {t} ")
         _style_run(rt, 12, True, AMBER)
         rd = _add_run(p, d)
-        _style_run(rd, 11.5, False, INK)
+        _style_run(rd, 11, False, INK)
+
+    _footer(slide, 4)
 
 
 # =========================================================================== #
-# SLIDE 6: PHÂN TÍCH TELEMETRY TẦNG NGOÀI VS TẦNG TRONG
+# SLIDE 5: PHÂN TÍCH TELEMETRY TẦNG NGOÀI VS TẦNG TRONG (W11-F3)
+# =========================================================================== #
+def build_slide_5(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    _header(slide, "Giải Mã Telemetry: Hoạt Động Của Tầng Ngoài và Tầng Trong", "Cơ Chế IDBO")
+
+    f3_path = FIG_DIR / "fig_telemetry_activations.png"
+    if f3_path.exists():
+        w, h = _fit_image(f3_path, Inches(7.2), Inches(5.4))
+        slide.shapes.add_picture(str(f3_path), Inches(0.6), Inches(1.5), w, h)
+
+    _card(slide, Inches(8.0), Inches(1.5), Inches(4.7), Inches(5.4))
+    tb = slide.shapes.add_textbox(Inches(8.25), Inches(1.7), Inches(4.2), Inches(5.0))
+    tf = tb.text_frame
+    tf.word_wrap = True
+
+    p0 = tf.paragraphs[0]
+    r0 = _add_run(p0, "Giải Mã Tác Động Từng Tầng")
+    _style_run(r0, 16, True, INDIGO)
+
+    tele_pts = [
+        ("Tầng ngoài (Chọn tổ hợp món):", "Kích hoạt trung bình 29.5 lần đột biến và 2.9 lần restart. Giúp quần thể thoát bế tắc ở các seed phức tạp như 8005 (69 lần) và 8009 (58 lần)."),
+        ("Tầng trong (Khẩu phần gram):", "Kích hoạt cực kỳ tích cực với trung bình ~16.000 lần đột biến và 103 lần restart trên mỗi lần tối ưu hoàn chỉnh."),
+        ("Hiện tượng Seed 8007 & 8008:", "Tầng ngoài hoàn toàn không kích hoạt (0 đột biến, 0 restart) nhưng IDBO vẫn cho kết quả khác biệt DBO nhờ các cơ chế phụ trợ hoạt động hiệu quả tại tầng trong."),
+        ("Kết luận:", "Cải thiện của IDBO không chỉ đến từ việc chọn món mà còn đến từ khả năng tinh chỉnh khẩu phần gram liên tục ở tầng trong.")
+    ]
+    for t, d in tele_pts:
+        p = tf.add_paragraph()
+        p.space_before = Pt(8)
+        rt = p.add_run()
+        _style_run(rt, 12, True, TEAL)
+        rt.text = f"★ {t} "
+        rd = p.add_run()
+        _style_run(rd, 11, False, INK)
+        rd.text = d
+
+    _footer(slide, 5)
+
+
+# =========================================================================== #
+# SLIDE 6: KIỂM SOÁT NGÂN SÁCH (BUDGET-MATCHED W11-F4)
 # =========================================================================== #
 def build_slide_6(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Giải Mã Telemetry — Đóng Góp Của Tầng Ngoài và Tầng Trong", "Cơ Chế IDBO")
+    _header(slide, "Kiểm Soát Tính Công Bằng Theo Ngân Sách Tính Toán (Budget-Matched)", "Thiết Kế Mới")
 
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
-    tf1 = tb1.text_frame
-    tf1.word_wrap = True
-    p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "Hoạt Động Tầng Ngoài (Discrete Outer Solver)")
-    _style_run(r1, 16, True, INDIGO)
+    f4_path = FIG_DIR / "fig_budget_matched_smoke.png"
+    if f4_path.exists():
+        w, h = _fit_image(f4_path, Inches(6.5), Inches(5.4))
+        slide.shapes.add_picture(str(f4_path), Inches(0.6), Inches(1.5), w, h)
 
-    outer_pts = [
-        ("Mục tiêu tầng ngoài:", "Tìm kiếm cấu trúc tổ hợp món ăn (food_ids) tối ưu cho các bữa ăn trong ngày."),
-        ("Số lần đột biến (Perturbations):", "Trung bình 29.5 lần (dao động từ 0 đến 69 lần). Kích hoạt mạnh nhất tại seed 8005 (69 lần) và seed 8009 (58 lần)."),
-        ("Số lần khởi động lại (Restarts):", "Trung bình 2.9 lần khi quần thể rơi vào tình trạng đình trệ nghiêm trọng."),
-        ("Duy trì độ đa dạng quần thể:", "Độ đa dạng trung bình của IDBO tầng ngoài đạt 0.283, giúp tránh hội tụ sớm vào các tổ hợp món cục bộ.")
+    _card(slide, Inches(7.3), Inches(1.5), Inches(5.4), Inches(5.4))
+    tb = slide.shapes.add_textbox(Inches(7.55), Inches(1.7), Inches(4.9), Inches(5.0))
+    tf = tb.text_frame
+    tf.word_wrap = True
+
+    p0 = tf.paragraphs[0]
+    r0 = _add_run(p0, "Triển Khai & Kiểm Chứng (PR #30)")
+    _style_run(r0, 16, True, INDIGO)
+
+    budget_pts = [
+        ("Mục tiêu kỹ thuật:", "Áp đặt giới hạn trên max_evaluations dùng chung cho cả DBO và IDBO. Dừng bộ giải ngay khi chạm trần ngân sách."),
+        ("Cơ chế theo dõi xuyên suốt:", "Biến _budget_remaining kiểm soát chặt chẽ từ tầng ngoài, các vòng lặp tầng trong đến bước tối ưu cuối cùng (Final Inner)."),
+        ("Khóa cấu hình & Truy vết Git:", "Script experiment_week11_budget.py tự động khóa mã băm config_hash và Git commit hash vào config_locked.json."),
+        ("Kết quả Smoke Test (W11-F4):", "Thử nghiệm ngân sách 150 evaluations trên seed 8001 và 8002 cho thấy cả DBO và IDBO đều dừng chính xác ở 150/150 lượt, budget_exceeded = False."),
+        ("Tính sẵn sàng:", "Sẵn sàng chạy thực nghiệm toàn diện trên tập độc lập với ngân sách chung ở Tuần 12.")
     ]
-    for t, d in outer_pts:
-        p = tf1.add_paragraph()
+    for t, d in budget_pts:
+        p = tf.add_paragraph()
         p.space_before = Pt(8)
-        rt = _add_run(p, f"• {t}\n  ")
-        _style_run(rt, 12, True, INDIGO2)
-        rd = _add_run(p, d)
-        _style_run(rd, 11, False, INK)
-
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
-    tf2 = tb2.text_frame
-    tf2.word_wrap = True
-    p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Hoạt Động Tầng Trong (Continuous Inner Solver)")
-    _style_run(r2, 16, True, INDIGO)
-
-    inner_pts = [
-        ("Mục tiêu tầng trong:", "Tối ưu hóa liên tục khối lượng khẩu phần gram cho từng món ăn nhằm bám sát chuẩn dinh dưỡng."),
-        ("Cường độ kích hoạt cực lớn:", "Trung bình ~16.000 lần đột biến và 103 lần restart trên mỗi lần chạy hoàn chỉnh."),
-        ("Hiện tượng Seed 8007 & 8008:", "Tại 2 seed này, tầng ngoài hoàn toàn không kích hoạt (0 đột biến, 0 restart) nhưng kết quả IDBO vẫn khác DBO (8007 thắng, 8008 thua) nhờ toàn bộ sự dịch chuyển diễn ra ở tầng trong."),
-        ("Kết luận kiến trúc:", "Sự cải thiện của IDBO là nỗ lực kết hợp của cả hai tầng, trong đó tầng trong đóng vai trò tinh chỉnh vi mô quyết định.")
-    ]
-    for t, d in inner_pts:
-        p = tf2.add_paragraph()
-        p.space_before = Pt(8)
-        rt = _add_run(p, f"★ {t}\n  ")
-        _style_run(rt, 12, True, TEAL)
-        rd = _add_run(p, d)
-        _style_run(rd, 11, False, INK)
-
-
-# =========================================================================== #
-# SLIDE 7: KIỂM SOÁT NGÂN SÁCH (BUDGET-MATCHED BENCHMARK)
-# =========================================================================== #
-def build_slide_7(prs):
-    slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Kiểm Soát Tính Công Bằng Theo Ngân Sách Tính Toán (Budget-Matched)", "Thiết Kế Thử Nghiệm Mới")
-
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
-    tf1 = tb1.text_frame
-    tf1.word_wrap = True
-    p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "Vấn Đề Khoa Học Đặt Ra")
-    _style_run(r1, 16, True, INDIGO)
-
-    q_pts = [
-        ("Câu hỏi cốt lõi:", "IDBO có điểm số tốt hơn ở 5/8 seed là nhờ cơ chế tìm kiếm thông minh hơn hay chỉ đơn thuần vì được sử dụng nhiều lượt tính toán hơn (+18.6% evaluations)?"),
-        ("Sự bất bình đẳng về tài nguyên:", "Khi cùng chạy 100 vòng lặp ngoài và 50 vòng lặp trong, DBO chỉ tốn 263k evaluations, trong khi IDBO tốn tới 313k evaluations do các bước nhảy đa dạng."),
-        ("Giải pháp Budget-Matched:", "Đặt một giới hạn trần cố định max_evaluations cho cả DBO và IDBO. Thuật toán nào chạm trần trước sẽ phải dừng ngay lập tức."),
-        ("Tiêu chí đánh giá mới:", "So sánh trực tiếp chất lượng thực đơn khi cả hai thuật toán tiêu thụ cùng một mức tài nguyên máy tính.")
-    ]
-    for t, d in q_pts:
-        p = tf1.add_paragraph()
-        p.space_before = Pt(8)
-        rt = _add_run(p, f"? {t}\n  ")
-        _style_run(rt, 12, True, RED)
-        rd = _add_run(p, d)
-        _style_run(rd, 11, False, INK)
-
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
-    tf2 = tb2.text_frame
-    tf2.word_wrap = True
-    p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Triển Khai & Kết Quả Thử Nghiệm Kỹ Thuật (PR #30)")
-    _style_run(r2, 16, True, INDIGO)
-
-    impl_pts = [
-        ("Cơ chế Budget Enforcement Nghiêm Ngặt:", "Cài đặt theo dõi ngân sách còn lại (_budget_remaining) xuyên suốt từ tầng ngoài, các đợt đánh giá tầng trong đến đợt tối ưu cuối cùng (Final Inner)."),
-        ("Khóa Cấu Hình & Commit Provenance:", "Script experiment_week11_budget.py tự động khóa mã băm cấu hình (config_hash) và Git commit hash vào config_locked.json."),
-        ("Lưu trữ gia tăng (Incremental Flush):", "Lưu ngay kết quả từng seed (runs/8001_dbo.json) để đảm bảo không mất dữ liệu nếu bị ngắt."),
-        ("Kết quả Smoke Test (Ngân sách 150 evaluations):", "Cả DBO và IDBO trên seed 8001 và 8002 đều dừng chuẩn xác ở 150/150 evaluations, không vượt ngân sách (budget_exceeded = False).")
-    ]
-    for t, d in impl_pts:
-        p = tf2.add_paragraph()
-        p.space_before = Pt(8)
-        rt = _add_run(p, f"✓ {t}\n  ")
+        rt = _add_run(p, f"✓ {t} ")
         _style_run(rt, 12, True, GREEN)
         rd = _add_run(p, d)
         _style_run(rd, 11, False, INK)
 
+    _footer(slide, 6)
+
 
 # =========================================================================== #
-# SLIDE 8: KIẾN TRÚC NGƯỠNG KÉP (DUAL DIVERSITY THRESHOLD)
+# SLIDE 7: HOÀN THIỆN KIẾN TRÚC NGƯỠNG KÉP (DUAL THRESHOLD)
 # =========================================================================== #
-def build_slide_8(prs):
+def build_slide_7(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Kiến Trúc Phân Tách Ngưỡng Đa Dạng Kép (Dual Threshold)", "Hoàn Thiện Kiến Trúc")
+    _header(slide, "Hoàn Thiện Kiến Trúc Phân Tách Ngưỡng Đa Dạng Kép (Dual Threshold)", "Hoàn Thiện Kiến Trúc")
 
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
+    _card(slide, Inches(0.6), Inches(1.5), Inches(5.9), Inches(5.4))
+    tb1 = slide.shapes.add_textbox(Inches(0.85), Inches(1.7), Inches(5.4), Inches(5.0))
     tf1 = tb1.text_frame
     tf1.word_wrap = True
     p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "Hạn Chế Của Kiến Trúc Cũ (Một Ngưỡng Dùng Chung)")
+    r1 = _add_run(p1, "Vấn Đề Của Việc Dùng Chung Một Ngưỡng")
     _style_run(r1, 16, True, INDIGO)
 
     old_pts = [
-        ("Bản chất không gian khác biệt:", "Tầng ngoài hoạt động trên không gian nhị phân/rời rạc (chọn món), trong khi tầng trong hoạt động trên không gian liên tục (chọn số gram khẩu phần)."),
-        ("Độ đo đa dạng khác nhau:", "Tầng ngoài đo khoảng cách Hamming/Jaccard giữa các tổ hợp món; tầng trong đo độ lệch chuẩn vị trí của các cá thể liên tục."),
-        ("Bất cập khi dùng chung 0.28:", "Ép cùng một ngưỡng 0.28 cho cả hai tầng là giải pháp tạm thời ở Tuần 10, chưa phản ánh đúng đặc tính phân bố nghiệm ở tầng trong."),
-        ("Yêu cầu cải tiến Tuần 11:", "Tách độc lập hai tham số điều khiển ngưỡng để tối ưu hóa chuyên biệt.")
+        ("Bản chất không gian khác biệt:", "Tầng ngoài hoạt động trên không gian nhị phân/rời rạc (chọn món); tầng trong hoạt động trên không gian liên tục (chọn số gram khẩu phần)."),
+        ("Độ đo đa dạng không tương thích:", "Tầng ngoài đo khoảng cách Hamming giữa các vector tổ hợp món; tầng trong đo độ lệch vị trí Euclidean của các cá thể liên tục."),
+        ("Hạn chế ở Tuần 10:", "Ép dùng chung diversity_threshold = 0.28 cho cả hai tầng là giải pháp mang tính thử nghiệm tạm thời, chưa tối ưu cho tầng trong."),
+        ("Yêu cầu chuẩn hóa:", "Cần phân định độc lập hai tham số điều khiển ngưỡng để tối ưu hóa chuyên biệt.")
     ]
     for t, d in old_pts:
         p = tf1.add_paragraph()
@@ -538,19 +413,19 @@ def build_slide_8(prs):
         rd = _add_run(p, d)
         _style_run(rd, 11, False, INK)
 
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
+    _card(slide, Inches(6.8), Inches(1.5), Inches(5.9), Inches(5.4))
+    tb2 = slide.shapes.add_textbox(Inches(7.05), Inches(1.7), Inches(5.4), Inches(5.0))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
     p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Cấu Trúc TwoTierConfig Tách Biệt Mới")
+    r2 = _add_run(p2, "Kiến Trúc TwoTierConfig Mới (Tuần 11)")
     _style_run(r2, 16, True, INDIGO)
 
     new_pts = [
         ("outer_diversity_threshold = 0.28:", "Được cố định cho tầng ngoài sau khi đã hiệu chỉnh và kiểm nghiệm độc lập."),
-        ("inner_diversity_threshold = None (Mặc định):", "Theo nguyên tắc AGENTS.md, nhóm chưa tự ý gán một giá trị cảm tính khi chưa đo lường thực tế."),
-        ("Bổ sung trường đo lường thực nghiệm:", "Thu thập hai trường telemetry mới: inner_diversity_min_observed và inner_diversity_mean_observed trong từng lần chạy."),
-        ("Độ phủ kiểm thử:", "Đã bổ sung bộ unit tests kiểm tra việc truyền độc lập hai ngưỡng vào từng solver con mà không gây xung đột.")
+        ("inner_diversity_threshold = None (Mặc định):", "Tuân thủ AGENTS.md, nhóm không tự ý gán giá trị cảm tính khi chưa có dữ liệu đo lường."),
+        ("Bổ sung trường đo lường thực tế:", "Thu thập inner_diversity_min_observed và inner_diversity_mean_observed trong từng lần chạy để làm cơ sở hiệu chỉnh."),
+        ("Đảm bảo kiểm thử tự động:", "Bổ sung unit test xác nhận việc truyền độc lập 2 ngưỡng vào từng solver con mà không gây xung đột tham số.")
     ]
     for t, d in new_pts:
         p = tf2.add_paragraph()
@@ -560,58 +435,58 @@ def build_slide_8(prs):
         rd = _add_run(p, d)
         _style_run(rd, 11, False, INK)
 
+    _footer(slide, 7)
+
 
 # =========================================================================== #
-# SLIDE 9: ĐẢM BẢO CHẤT LƯỢNG MÃ NGUỒN & KIỂM THỬ HỒI QUY
+# SLIDE 8: ĐẢM BẢO CHẤT LƯỢNG MÃ NGUỒN (253/253 TESTS PASS)
 # =========================================================================== #
-def build_slide_9(prs):
+def build_slide_8(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Đảm Bảo Chất Lượng Phần Mềm & Kiểm Thử Hồi Quy", "Kỹ Thuật Phần Mềm")
+    _header(slide, "Đảm Bảo Chất Lượng Phần Mềm & Nghiệm Thu Mã Nguồn", "Kỹ Thuật Phần Mềm")
 
-    # Card 1: Số lượng test
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(3.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(3.2), Inches(4.9))
+    _card(slide, Inches(0.6), Inches(1.5), Inches(3.8), Inches(5.4))
+    tb1 = slide.shapes.add_textbox(Inches(0.85), Inches(1.7), Inches(3.3), Inches(5.0))
     tf1 = tb1.text_frame
     tf1.word_wrap = True
     p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "100% Tests Pass")
+    r1 = _add_run(p1, "Kiểm Thử Tự Động")
     _style_run(r1, 16, True, INDIGO)
 
     p_stat = tf1.add_paragraph()
     p_stat.space_before = Pt(14)
     r_stat = _add_run(p_stat, "253 / 253\nPASSED")
-    _style_run(r_stat, 28, True, GREEN)
+    _style_run(r_stat, 26, True, GREEN)
 
     p_time = tf1.add_paragraph()
     p_time.space_before = Pt(6)
     r_time = _add_run(p_time, "Thời gian thực thi: 22.59s\npytest v9.1.1 | Python 3.12")
-    _style_run(r_time, 12, False, MUTED)
+    _style_run(r_time, 11.5, False, MUTED)
 
     p_cov = tf1.add_paragraph()
     p_cov.space_before = Pt(14)
-    r_cov = _add_run(p_cov, "Phân bổ kiểm thử:\n"
+    r_cov = _add_run(p_cov, "Độ bao phủ kiểm thử:\n"
                             "• Core Solver & Behaviors: 82\n"
                             "• Constraints & Menus: 45\n"
                             "• Culinary Realism & Roles: 36\n"
                             "• Data Loader & Schemas: 42\n"
-                            "• Budget Enforcement (W11): 27\n"
+                            "• Budget Enforcement: 27\n"
                             "• FastAPI Routes & Profile: 21")
-    _style_run(r_cov, 11.5, False, INK)
+    _style_run(r_cov, 11, False, INK)
 
-    # Card 2: Tuân thủ bất biến nghiệp vụ
-    _add_card(slide, Inches(4.7), Inches(1.65), Inches(7.8), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(5.0), Inches(1.85), Inches(7.2), Inches(4.9))
+    _card(slide, Inches(4.7), Inches(1.5), Inches(8.0), Inches(5.4))
+    tb2 = slide.shapes.add_textbox(Inches(4.95), Inches(1.7), Inches(7.5), Inches(5.0))
     tf2 = tb2.text_frame
     tf2.word_wrap = True
     p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Bảo Vệ Các Bất Biến Nghiệp Vụ (Theo AGENTS.md)")
+    r2 = _add_run(p2, "Tuân Thủ Bất Biến Nghiệp Vụ (Theo AGENTS.md)")
     _style_run(r2, 16, True, INDIGO)
 
     invariants = [
-        ("Deterministic Decoding (Tái Lập Tuyệt Đối):", "Mọi hàm ngẫu nhiên đều nhận hạt giống (seed) tường minh và dùng RNG cục bộ (np.random.default_rng(seed)). Cùng seed luôn tạo ra cùng một thực đơn chính xác."),
-        ("Quy Trình Làm Tròn Khẩu Phần 5g:", "Nghiệm liên tục -> Làm tròn khẩu phần 5g -> Giải mã thực đơn -> Tính toán lại dinh dưỡng -> Thẩm định tính khả thi (validate_menu). Không báo cáo fitness của nghiệm liên tục nhưng hiển thị thực đơn đã làm tròn khác."),
-        ("Minh Bạch Dữ Liệu Đường & Dinh Dưỡng:", "Không tuyên bố dữ liệu đường đo thực tế nếu dùng công thức ước tính (sugar_g_estimated). Không đưa ra tuyên bố y tế lâm sàng hoặc cam kết điều trị bệnh."),
-        ("Loại Bỏ Thực Phẩm Thô Khỏi Output:", "Bộ lọc Role-based bounds loại trừ hoàn toàn các loại bột sống, shortening, phụ gia khỏi candidate pool trước khi đưa vào giao diện đề xuất cho người dùng.")
+        ("Tính tái lập tuyệt đối (Deterministic):", "Mọi thuật toán đều nhận seed rõ ràng và dùng RNG cục bộ (np.random.default_rng(seed)). Cùng seed luôn tạo ra cùng một kết quả chính xác."),
+        ("Làm tròn khẩu phần 5g minh bạch:", "Nghiệm liên tục -> Làm tròn khẩu phần 5g -> Giải mã thực đơn -> Tính toán lại dinh dưỡng -> Thẩm định tính khả thi (validate_menu). Không báo cáo fitness nghiệm liên tục nhưng hiển thị thực đơn đã làm tròn khác."),
+        ("Minh bạch dữ liệu dinh dưỡng:", "Phân định rõ ràng số liệu đo đạc thực tế và số liệu ước tính (sugar_g_estimated). Không đưa ra tuyên bố y tế lâm sàng hoặc cam kết điều trị."),
+        ("Bộ lọc Role-based Bounds:", "Loại trừ hoàn toàn các loại bột sống, shortening, phụ gia khỏi candidate pool trước khi đưa vào giao diện đề xuất cho người dùng.")
     ]
     for t, d in invariants:
         p = tf2.add_paragraph()
@@ -621,57 +496,7 @@ def build_slide_9(prs):
         rd = _add_run(p, d)
         _style_run(rd, 11, False, INK)
 
-
-# =========================================================================== #
-# SLIDE 10: TỔNG KẾT TUẦN 11 & KẾ HOẠCH TUẦN 12
-# =========================================================================== #
-def build_slide_10(prs):
-    slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_header(slide, "Tổng Kết Tuần 11 & Kế Hoạch Nghiên Cứu Tuần 12", "Kết Luận & Định Hướng")
-
-    _add_card(slide, Inches(0.8), Inches(1.65), Inches(5.6), Inches(5.3))
-    tb1 = slide.shapes.add_textbox(Inches(1.1), Inches(1.85), Inches(5.0), Inches(4.9))
-    tf1 = tb1.text_frame
-    tf1.word_wrap = True
-    p1 = tf1.paragraphs[0]
-    r1 = _add_run(p1, "Thành Quả Đạt Được Trong Tuần 11")
-    _style_run(r1, 16, True, INDIGO)
-
-    achievements = [
-        ("Tích hợp hoàn tất hệ thống Web:", "Giải quyết conflict PR #28, đưa FastAPI backend và giao diện Dark Glassmorphism vào main, 253 tests pass."),
-        ("Chuẩn hóa thực nghiệm DBO/IDBO:", "Phân tách rõ ràng tập calibration vs independent eval. Xác nhận IDBO thắng 5/8 seed nhưng tốn thêm 18.6% evaluations và kiểm định Wilcoxon chưa cho thấy sự vượt trội có ý nghĩa thống kê."),
-        ("Hoàn thiện cơ chế Budget-Matched (PR #30):", "Cài đặt thành công cơ chế giới hạn evaluations chung, khóa cấu hình và commit Git tự động, smoke test 150 evaluations thành công."),
-        ("Kiến trúc Ngưỡng kép (Dual Threshold):", "Tách riêng biệt outer và inner threshold, bổ sung telemetry đo độ đa dạng tầng trong.")
-    ]
-    for t, d in achievements:
-        p = tf1.add_paragraph()
-        p.space_before = Pt(8)
-        rt = _add_run(p, f"✓ {t}\n  ")
-        _style_run(rt, 12, True, GREEN)
-        rd = _add_run(p, d)
-        _style_run(rd, 11, False, INK)
-
-    _add_card(slide, Inches(6.8), Inches(1.65), Inches(5.7), Inches(5.3))
-    tb2 = slide.shapes.add_textbox(Inches(7.1), Inches(1.85), Inches(5.1), Inches(4.9))
-    tf2 = tb2.text_frame
-    tf2.word_wrap = True
-    p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Kế Hoạch Trọng Tâm Tuần 12")
-    _style_run(r2, 16, True, INDIGO)
-
-    plans = [
-        ("1. Chạy Benchmark Budget-Matched Đầy Đủ:", "Chạy benchmark toàn diện trên tập seed độc lập với ngân sách chung (ví dụ 260.000 evaluations) để trả lời dứt điểm câu hỏi về tính công bằng tài nguyên."),
-        ("2. Hiệu Chỉnh Ngưỡng Đa Dạng Tầng Trong:", "Sử dụng dữ liệu quan sát inner_diversity_mean để thiết lập và thử nghiệm ngưỡng inner_diversity_threshold phù hợp."),
-        ("3. Kiểm Thử Đầu Cuối (E2E Web Test):", "Thực hiện tự động hóa kiểm thử luồng Người dùng -> UI Web -> API -> Two-Tier Solver -> Hiển thị thực đơn."),
-        ("4. Hoàn Thiện Bản Thảo Khóa Luận Tốt Nghiệp:", "Tổng hợp toàn bộ các kết quả thực nghiệm từ Tuần 1 đến Tuần 12 vào báo cáo Word chính thức của đề tài.")
-    ]
-    for t, d in plans:
-        p = tf2.add_paragraph()
-        p.space_before = Pt(8)
-        rt = _add_run(p, f"★ {t}\n  ")
-        _style_run(rt, 12, True, AMBER)
-        rd = _add_run(p, d)
-        _style_run(rd, 11, False, INK)
+    _footer(slide, 8)
 
 
 def main():
@@ -679,7 +504,7 @@ def main():
     prs.slide_width = SLIDE_W
     prs.slide_height = SLIDE_H
 
-    print("Building Week 11 Presentation Slides...")
+    print("Building Week 11 Scientific Presentation Slides...")
     build_slide_1(prs)
     build_slide_2(prs)
     build_slide_3(prs)
@@ -688,11 +513,9 @@ def main():
     build_slide_6(prs)
     build_slide_7(prs)
     build_slide_8(prs)
-    build_slide_9(prs)
-    build_slide_10(prs)
 
     prs.save(str(OUT_PPTX))
-    print(f"[SUCCESS] Slide presentation saved to: {OUT_PPTX}")
+    print(f"[SUCCESS] Scientific presentation saved to: {OUT_PPTX}")
     print(f"[METRICS] Total slides: {len(prs.slides)}")
 
 
