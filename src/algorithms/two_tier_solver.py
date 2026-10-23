@@ -40,7 +40,10 @@ class TwoTierConfig:
     seed: int = 8000
     min_pool_size: int = 20
     # IDBO specific parameters
-    diversity_threshold: float = 1e-3
+    diversity_threshold: float = 1e-3  # Legacy fallback for inner tier
+    outer_diversity_threshold: float = 0.28
+    inner_diversity_threshold: Optional[float] = None  # None: legacy value, not a calibrated threshold
+    max_evaluations: Optional[int] = None  # Shared budget for outer + all inner evaluations
     stagnation_window: int = 25
     perturbation_rate: float = 0.2
     perturbation_scale: float = 0.1
@@ -72,6 +75,12 @@ class TwoTierResult:
     outer_collapse_events: int = 0
     final_inner_min_diversity: float = 0.0
     final_inner_max_stagnation: int = 0
+    final_inner_fitness: float = 0.0
+    final_inner_runtime_s: float = 0.0
+    function_evaluations: int = 0
+    inner_runtime_total_s: float = 0.0
+    inner_fitness_history: list[float] = field(default_factory=list)
+    inner_diversity_history: list[float] = field(default_factory=list)
 
 
 def two_tier_optimize(
@@ -117,6 +126,29 @@ def two_tier_optimize(
     inner_perturbations_counter = [0]
     inner_restarts_counter = [0]
     eval_call_idx = [0]
+    inner_runtime_counter = [0.0]
+    inner_fitness_history = []
+    inner_diversity_history = []
+
+    # Reserve a final inner run. Every outer evaluation invokes one inner solver.
+    # Preallocate a per-inner ceiling, so IDBO's extra perturb/restart evaluations
+    # cannot make the shared budget overflow. No budget value is hardcoded.
+    if config.max_evaluations is not None:
+        budget = config.max_evaluations
+        minimum = config.outer_n_agents * (config.inner_n_agents + 1) + config.inner_n_agents
+        if isinstance(budget, bool) or not isinstance(budget, (int, np.integer)) or budget < minimum:
+            raise ValueError(f"max_evaluations must be an integer >= {minimum} for two-tier initialization and final refinement")
+        # A conservative upper bound on outer evaluations (including IDBO extras).
+        max_outer_calls = min(
+            config.outer_n_agents * (config.outer_max_iter + 1) * 3,
+            (budget - config.inner_n_agents) // (config.inner_n_agents + 1),
+        )
+        per_inner_budget = (budget - config.inner_n_agents - max_outer_calls) // max_outer_calls
+        if per_inner_budget < config.inner_n_agents:
+            raise ValueError("insufficient shared evaluation budget")
+    else:
+        max_outer_calls = None
+        per_inner_budget = None
 
     def portion_bounds(food_ids: list[str]) -> tuple[np.ndarray, np.ndarray]:
         bounds = []
@@ -147,17 +179,19 @@ def two_tier_optimize(
             inner_solver = DBO(
                 n_agents=config.inner_n_agents,
                 max_iter=config.inner_max_iter,
+                max_evaluations=per_inner_budget,
             )
         else:
             inner_solver = IDBO(
                 n_agents=config.inner_n_agents,
                 max_iter=config.inner_max_iter,
-                diversity_threshold=config.diversity_threshold,
+                diversity_threshold=(config.inner_diversity_threshold if config.inner_diversity_threshold is not None else config.diversity_threshold),
                 stagnation_window=config.stagnation_window,
                 perturbation_rate=config.perturbation_rate,
                 perturbation_scale=config.perturbation_scale,
                 restart_rate=config.restart_rate,
                 n_elite=config.n_elite,
+                max_evaluations=per_inner_budget,
             )
 
         inner_lb, inner_ub = portion_bounds(food_ids)
@@ -169,6 +203,9 @@ def two_tier_optimize(
             seed=inner_seed,
         )
         inner_evals_counter[0] += inner_res.n_evaluations
+        inner_runtime_counter[0] += inner_res.runtime_s
+        inner_fitness_history.append(float(inner_res.best_fitness))
+        inner_diversity_history.extend(getattr(inner_res, "diversity_history", []))
         inner_perturbations_counter[0] += int(getattr(inner_res, "n_perturbations", 0))
         inner_restarts_counter[0] += int(getattr(inner_res, "n_restarts", 0))
 
@@ -185,7 +222,7 @@ def two_tier_optimize(
         outer_solver = IDBO(
             n_agents=config.outer_n_agents,
             max_iter=config.outer_max_iter,
-            diversity_threshold=config.diversity_threshold,
+            diversity_threshold=config.outer_diversity_threshold,
             stagnation_window=config.stagnation_window,
             perturbation_rate=config.perturbation_rate,
             perturbation_scale=config.perturbation_scale,
@@ -193,6 +230,7 @@ def two_tier_optimize(
             n_elite=config.n_elite,
         )
 
+    outer_solver.max_evaluations = max_outer_calls
     outer_res = outer_solver.optimize(
         outer_objective,
         dim=dim_k,
@@ -205,21 +243,29 @@ def two_tier_optimize(
     best_food_ids = decode_food_selection(outer_res.best_x, pools, meal_order)
     final_inner_obj = make_menu_objective(profile, best_food_ids, food_map, targets)
 
+    final_budget = None if config.max_evaluations is None else (
+        config.max_evaluations - outer_res.n_evaluations - inner_evals_counter[0]
+    )
+    if final_budget is not None and final_budget < config.inner_n_agents:
+        raise RuntimeError("shared budget accounting error: final inner budget exhausted")
+
     if inner_algo == "dbo":
         final_inner_solver = DBO(
             n_agents=config.inner_n_agents,
             max_iter=config.inner_max_iter,
+            max_evaluations=final_budget,
         )
     else:
         final_inner_solver = IDBO(
             n_agents=config.inner_n_agents,
             max_iter=config.inner_max_iter,
-            diversity_threshold=config.diversity_threshold,
+            diversity_threshold=(config.inner_diversity_threshold if config.inner_diversity_threshold is not None else config.diversity_threshold),
             stagnation_window=config.stagnation_window,
             perturbation_rate=config.perturbation_rate,
             perturbation_scale=config.perturbation_scale,
             restart_rate=config.restart_rate,
             n_elite=config.n_elite,
+            max_evaluations=final_budget,
         )
 
     final_lb, final_ub = portion_bounds(best_food_ids)
@@ -231,6 +277,11 @@ def two_tier_optimize(
         seed=config.seed,
     )
     inner_evals_counter[0] += final_res.n_evaluations
+    inner_runtime_counter[0] += final_res.runtime_s
+    inner_fitness_history.append(float(final_res.best_fitness))
+    inner_diversity_history.extend(getattr(final_res, "diversity_history", []))
+    inner_perturbations_counter[0] += int(getattr(final_res, "n_perturbations", 0))
+    inner_restarts_counter[0] += int(getattr(final_res, "n_restarts", 0))
 
     runtime_s = time.perf_counter() - t_start
 
@@ -259,4 +310,10 @@ def two_tier_optimize(
         outer_collapse_events=int(getattr(outer_res, "n_collapse_events", 0)),
         final_inner_min_diversity=float(getattr(final_res, "min_diversity", 0.0)),
         final_inner_max_stagnation=int(getattr(final_res, "max_stagnation", 0)),
+        final_inner_fitness=float(final_res.best_fitness),
+        final_inner_runtime_s=float(final_res.runtime_s),
+        function_evaluations=outer_res.n_evaluations + inner_evals_counter[0],
+        inner_runtime_total_s=inner_runtime_counter[0],
+        inner_fitness_history=inner_fitness_history,
+        inner_diversity_history=inner_diversity_history,
     )

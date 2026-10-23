@@ -100,3 +100,6 @@ patches/
 *.7z*
 .ai_base_commit
 latest_*
+
+# Week 11 benchmark outputs
+results/
