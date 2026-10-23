@@ -1,48 +1,48 @@
+"""FastAPI app entry point — Week 10.
+
+Khởi động:
+    uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+Phục vụ cả API lẫn static files trên một cổng (tránh CORS + cấu hình proxy).
 """
-FastAPI main application for DBO Healthcare Menu System
-Serves both API endpoints and static frontend files from a single port
-"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-import os
+
+from app.api.routes import router
+from app.api.services import get_food_map  # warm-up lazy singleton
+
+# ---------------------------------------------------------------------------
+# App khởi tạo
+# ---------------------------------------------------------------------------
 
 app = FastAPI(
     title="DBO Healthcare Menu API",
-    description="API for generating personalized nutrition menus using IDBO solver",
-    version="1.0.0"
+    description="Hệ thống đề xuất thực đơn dinh dưỡng cá nhân hóa bằng IDBO (Tuần 10)",
+    version="1.0.0",
 )
 
-# CORS middleware for development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Gắn API router
+app.include_router(router)
 
-# Import and include routers
-from app.api import routes, swap
+# Serve static files (frontend của Đăng)
+STATIC_DIR = Path(__file__).parent / "static"
+STATIC_DIR.mkdir(exist_ok=True)
+app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
 
-app.include_router(routes.router, prefix="/api", tags=["api"])
-app.include_router(swap.router, prefix="/api", tags=["swap"])
 
-# Mount static files (frontend)
-static_path = os.path.join(os.path.dirname(__file__), "static")
-if os.path.exists(static_path):
-    app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
+# ---------------------------------------------------------------------------
+# Startup event: warm-up food_map singleton
+# ---------------------------------------------------------------------------
+
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize services on startup"""
-    from app.api.services import get_food_db
-    # Preload food database
-    get_food_db()
-    print("✓ Food database loaded")
-    print("✓ API ready at /api")
-    print("✓ Frontend ready at /")
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    """Nạp food_map vào RAM khi app khởi động — không load mỗi request."""
+    import asyncio
+    await asyncio.to_thread(get_food_map)
+    print("[startup] Food database loaded.")

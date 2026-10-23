@@ -1,70 +1,106 @@
+"""FastAPI routes cho Week 10.
+
+Endpoints (theo TASK_WEEK10.md):
+  GET  /api/health
+  GET  /api/profiles
+  POST /api/targets
+  POST /api/menu/generate
+  POST /api/menu/swap        ← swap.py (Cương) — stub ở đây
+  GET  /api/foods
 """
-API routes for menu generation and targets calculation
-"""
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse
+
+from __future__ import annotations
+
 import asyncio
 
-from app.api.schemas import ProfileIn, TargetsOut, GenerateIn, MenuOut, MacroNutrition
-from app.api.services import (
-    get_profiles,
-    profile_in_to_user_profile,
-    calculate_targets,
-    generate_menu
+from fastapi import APIRouter, HTTPException, Query
+
+from .schemas import (
+    FoodItem,
+    GenerateIn,
+    MenuOut,
+    ProfileIn,
+    SwapIn,
+    SwapOut,
+    TargetsOut,
+)
+from .services import (
+    PRESET_PROFILES,
+    generate_menu,
+    get_targets,
+    search_foods,
 )
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
-@router.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {"status": "ok", "service": "DBO Healthcare Menu API"}
 
-@router.get("/profiles")
+# ---------------------------------------------------------------------------
+# Health
+# ---------------------------------------------------------------------------
+
+
+@router.get("/health", tags=["system"])
+async def health():
+    return {"status": "ok"}
+
+
+# ---------------------------------------------------------------------------
+# Profiles presets (P1 / P2 / P3)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/profiles", tags=["profile"])
 async def list_profiles():
-    """Get preset profiles P1, P2, P3"""
-    return {"profiles": get_profiles()}
+    """Trả 3 preset profile P1/P2/P3 cho frontend điền sẵn."""
+    return PRESET_PROFILES
 
-@router.post("/targets", response_model=TargetsOut)
-async def compute_targets(profile: ProfileIn):
-    """Calculate BMR, TDEE and nutrition targets for a profile"""
-    try:
-        user_profile = profile_in_to_user_profile(profile)
-        result = calculate_targets(user_profile)
-        
-        targets_macro = MacroNutrition(
-            calories=result["targets"].get("calories", 0),
-            protein_g=result["targets"].get("protein_g", 0),
-            carbs_g=result["targets"].get("carbs_g", 0),
-            fat_g=result["targets"].get("fat_g", 0),
-            fiber_g=result["targets"].get("fiber_g", 0),
-            sodium_mg=result["targets"].get("sodium_mg", 2300)
-        )
-        
-        return TargetsOut(
-            bmr=result["bmr"],
-            tdee=result["tdee"],
-            targets=targets_macro
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error calculating targets: {str(e)}")
 
-@router.post("/menu/generate", response_model=MenuOut)
-async def create_menu(request: GenerateIn):
-    """Generate a personalized menu using IDBO solver"""
+# ---------------------------------------------------------------------------
+# Targets: nhận hồ sơ → trả BMR/TDEE/macro
+# ---------------------------------------------------------------------------
+
+
+@router.post("/targets", response_model=TargetsOut, tags=["nutrition"])
+async def compute_targets(profile: ProfileIn) -> TargetsOut:
+    """Tính BMR, TDEE, và mục tiêu dinh dưỡng từ hồ sơ người dùng."""
+    return await asyncio.to_thread(get_targets, profile)
+
+
+# ---------------------------------------------------------------------------
+# Menu generate
+# ---------------------------------------------------------------------------
+
+
+@router.post("/menu/generate", response_model=MenuOut, tags=["menu"])
+async def api_generate_menu(req: GenerateIn) -> MenuOut:
+    """Chạy IDBO two-tier solver → trả menu + dinh dưỡng + vi phạm."""
+    return await asyncio.to_thread(generate_menu, req)
+
+
+# ---------------------------------------------------------------------------
+# Menu swap  (stub — Cương implements swap.py)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/menu/swap", response_model=SwapOut, tags=["menu"])
+async def api_swap_menu(req: SwapIn) -> SwapOut:
+    """Thay 1 món trong slot → tối ưu lại khẩu phần → trả menu mới + delta."""
     try:
-        user_profile = profile_in_to_user_profile(request.profile)
-        
-        # Run solver in thread pool to avoid blocking event loop
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None,
-            generate_menu,
-            user_profile,
-            request.seed,
-            request.config
-        )
-        
-        return MenuOut(**result)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generating menu: {str(e)}")
+        from .swap import swap_menu_item
+    except ImportError:
+        raise HTTPException(status_code=501, detail="swap.py chưa được triển khai")
+    return await asyncio.to_thread(swap_menu_item, req)
+
+
+# ---------------------------------------------------------------------------
+# Food search
+# ---------------------------------------------------------------------------
+
+
+@router.get("/foods", response_model=list[FoodItem], tags=["food"])
+async def api_search_foods(
+    q: str = Query(default="", description="Từ khóa tìm kiếm"),
+    limit: int = Query(default=20, ge=1, le=100),
+) -> list[FoodItem]:
+    """Tìm kiếm món ăn trong cơ sở dữ liệu."""
+    return await asyncio.to_thread(search_foods, q, limit)
