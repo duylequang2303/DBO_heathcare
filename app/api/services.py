@@ -156,6 +156,10 @@ def build_profile(pin: ProfileIn) -> UserProfile:
     )
 
 
+# Backward compatibility alias
+profile_in_to_user_profile = build_profile
+
+
 def _get_targets_with_conditions(profile: UserProfile) -> dict[str, float]:
     """Tính targets + áp điều chỉnh bệnh lý (sodium giảm cho hypertension)."""
     targets = daily_all_targets(profile)
