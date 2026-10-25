@@ -471,15 +471,24 @@ inpSeed.addEventListener('change', () => { state.seed = parseInt(inpSeed.value, 
 
 let condCtrl, allergyCtrl, dislikeCtrl;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   condCtrl    = createTagsInput(conditionsTags);
   allergyCtrl = createTagsInput(allergyTags);
   dislikeCtrl = createTagsInput(dislikeTags);
 
   initCharts();
-  loadPresets();
+  await loadPresets();
 
   // Ẩn menu section cho đến khi có menu
   menuSection.style.display = 'none';
   targetsBar.style.display  = 'none';
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('auto') === 'p1') {
+    btnLoadP1.click();
+    setConfig('smoke');
+    await computeTargets();
+    await generateMenu();
+    document.body.classList.add('ready-screenshot');
+  }
 });

@@ -571,27 +571,9 @@ def build_slide_10(prs):
 
 
 def main():
-    prs = Presentation()
-    prs.slide_width = SLIDE_W
-    prs.slide_height = SLIDE_H
-
-    print("Building Week 9 - 10 - 11 Comprehensive Presentation Slides...")
-    build_slide_1(prs)
-    build_slide_2(prs)
-    build_slide_3(prs)
-    build_slide_4(prs)
-    build_slide_5(prs)
-    build_slide_6(prs)
-    build_slide_7(prs)
-    build_slide_8(prs)
-    build_slide_9(prs)
-    build_slide_10(prs)
-
-    prs.save(str(OUT_PPTX))
-    prs.save(str(OUT_PPTX_W11))
-    print(f"[SUCCESS] Saved to: {OUT_PPTX}")
-    print(f"[SUCCESS] Saved to: {OUT_PPTX_W11}")
-    print(f"[METRICS] Total slides: {len(prs.slides)}")
+    # Chuyển tiếp tự động sang bộ sinh slide gộp toàn diện Tuần 8–9–10–11 (14 slides)
+    from scripts.build_pptx_week8_9_10_11 import main as build_all
+    build_all()
 
 
 if __name__ == "__main__":
