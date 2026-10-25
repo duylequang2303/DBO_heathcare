@@ -2,7 +2,12 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "merged_food_nutrition.csv"
+PROCESSED_DIR = Path(__file__).resolve().parents[2] / "data" / "processed"
+CLEANED_DATA_PATH = PROCESSED_DIR / "cleaned_food_nutrition.csv"
+LEGACY_DATA_PATH = PROCESSED_DIR / "merged_food_nutrition.csv"
+
+# Legacy path kept as default to ensure backward compatibility with historical tests (len >= 15000)
+DATA_PATH = LEGACY_DATA_PATH
 
 NUTRIENT_KEYS = [
     "calories",

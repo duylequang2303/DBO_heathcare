@@ -38,7 +38,7 @@ from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.models.constraints import validate_menu
 from src.models.diversity_penalty import calculate_unique_main_dish_pct, diversity_penalty
 from src.models.food_selector import get_meal_order_slots
-from src.utils.data_loader import build_food_map, load_food_db
+from src.utils.data_loader import build_food_map, load_food_db, CLEANED_DATA_PATH, DATA_PATH
 from src.utils.portion_utils import round_portions
 
 
@@ -193,6 +193,7 @@ def main() -> None:
     parser.add_argument("--inner-agents", type=int, default=8, help="Inner agents (default: 8)")
     parser.add_argument("--base-seed", type=int, default=9000, help="Base seed offset (default: 9000)")
     parser.add_argument("--output-dir", type=str, default="experiments/week9", help="Output directory")
+    parser.add_argument("--data-path", type=Path, default=CLEANED_DATA_PATH if CLEANED_DATA_PATH.exists() else DATA_PATH, help="Path to food database CSV")
     parser.add_argument("--smoke", action="store_true", help="Quick smoke test")
 
     args = parser.parse_args()
@@ -222,9 +223,10 @@ def main() -> None:
     print("EXPERIMENT WEEK 9: 7-DAY MEAL PLANNER & MULTI-PROFILE BENCHMARK", flush=True)
     print(f"Profiles: {profiles} | Algos: {algos} | Runs: {runs} | Days: {days}", flush=True)
     print(f"Outer: {outer_agents}x{outer_iter} | Inner: {inner_agents}x{inner_iter} | Output: {out_dir}", flush=True)
+    print(f"Database: {args.data_path.name}", flush=True)
     print("=" * 80, flush=True)
 
-    df_food = load_food_db()
+    df_food = load_food_db(args.data_path)
     food_map = build_food_map(df_food)
 
     all_daily_records: List[Dict[str, object]] = []

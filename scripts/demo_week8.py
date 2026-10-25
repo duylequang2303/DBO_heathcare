@@ -27,7 +27,7 @@ from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.algorithms.menu_objective import decode_result
 from src.models.constraints import validate_menu
 from src.models.user_profile import ActivityLevel, DietType, Gender, Goal, UserProfile
-from src.utils.data_loader import build_food_map, load_food_db
+from src.utils.data_loader import build_food_map, load_food_db, CLEANED_DATA_PATH, DATA_PATH
 from src.utils.nutrition import calc_bmr, calc_calorie_target, calc_tdee, daily_all_targets
 from src.utils.portion_utils import round_portions
 
@@ -65,6 +65,7 @@ def main():
     parser.add_argument("--inner-iter", type=int, default=25, help="Số vòng lặp tầng 2 (mặc định: 25)")
     parser.add_argument("--inner-agents", type=int, default=10, help="Số cá thể tầng 2 (mặc định: 10)")
     parser.add_argument("--seed", type=int, default=None, help="Ngẫu nhiên seed (mặc định: theo thời gian hiện tại)")
+    parser.add_argument("--data-path", type=Path, default=CLEANED_DATA_PATH if CLEANED_DATA_PATH.exists() else DATA_PATH, help="Đường dẫn file dữ liệu thực phẩm")
     args = parser.parse_args()
 
     seed = args.seed if args.seed is not None else int(time.time() * 1000) % 2147483647
@@ -78,6 +79,7 @@ def main():
     print("=" * 80)
     print("DEMO TUẦN 8: MIXED-INTEGER OPTIMIZATION (TỰ CHỌN MÓN 2 TẦNG)")
     print(f"Thuật toán: Outer={args.outer_algo.upper()} | Inner={args.inner_algo.upper()} | Seed={seed}")
+    print(f"Dữ liệu: {args.data_path.name}")
     print("=" * 80)
     print("1. HỒ SƠ NGƯỜI DÙNG (PROFILE P1)")
     print(f"   Họ tên: {profile.name} | Tuổi: {profile.age} | Giới tính: {profile.gender.value}")
@@ -88,7 +90,7 @@ def main():
     print(f"   Calo mục tiêu:         {target_cals:.1f} kcal/ngày")
 
     # Load database
-    df = load_food_db()
+    df = load_food_db(args.data_path)
     food_map = build_food_map(df)
 
     config = TwoTierConfig(
