@@ -1,0 +1,7 @@
+algo,profile,runs,mean_fitness_7days,mean_violations,mean_calo_deviation_pct
+dbo,p1,5,96.9717,0.03,0.44
+dbo,p2,5,72.7706,0.86,1.46
+dbo,p3,5,88.7692,0.26,1.13
+idbo,p1,5,97.6194,0.0,0.41
+idbo,p2,5,69.374,0.94,1.15
+idbo,p3,5,87.86,0.26,1.31
