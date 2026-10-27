@@ -112,8 +112,6 @@ class IDBOResult(DBOResult):
     final_diversity: float = 0.0
     max_stagnation: int = 0
     n_collapse_events: int = 0
-    n_diversity_collapse_events: int = 0
-    n_stagnation_events: int = 0
 
 
 class IDBO(DBO):
@@ -130,6 +128,7 @@ class IDBO(DBO):
         stagnation_window: int = 25,
         restart_rate: float = 0.25,
         n_elite: int = 1,
+        max_evaluations: Optional[int] = None,
     ) -> None:
         super().__init__(
             n_agents=n_agents,
@@ -137,6 +136,7 @@ class IDBO(DBO):
             ratios=ratios,
             cfg=cfg,
             behaviors=behaviors,
+            max_evaluations=max_evaluations,
         )
         if not 0.0 < diversity_threshold < 1.0:
             raise ValueError("diversity_threshold must be in (0, 1)")
@@ -161,7 +161,6 @@ class IDBO(DBO):
         self._n_perturbations = 0
         self._n_restarts = 0
         self._n_collapse_events = 0
-        self._n_stagnation_events = 0
         self._diversity_history: list[float] = []
         self._prev_best: Optional[float] = None
 
@@ -173,7 +172,6 @@ class IDBO(DBO):
         self._n_perturbations = 0
         self._n_restarts = 0
         self._n_collapse_events = 0
-        self._n_stagnation_events = 0
         self._diversity_history = []
         self._prev_best = None
         base = super().optimize(objective, dim, lb, ub, seed)
@@ -195,8 +193,6 @@ class IDBO(DBO):
             final_diversity=final_div,
             max_stagnation=self._max_stagnation,
             n_collapse_events=self._n_collapse_events,
-            n_diversity_collapse_events=self._n_collapse_events,
-            n_stagnation_events=self._n_stagnation_events,
         )
 
     def _after_iteration(
@@ -219,8 +215,6 @@ class IDBO(DBO):
             self._stagnation = 0
         else:
             self._stagnation += 1
-        if self._stagnation == self.stagnation_window:
-            self._n_stagnation_events += 1
         if self._stagnation > self._max_stagnation:
             self._max_stagnation = self._stagnation
         self._prev_best = best_fitness
@@ -244,6 +238,11 @@ class IDBO(DBO):
                 n_elite=self.n_elite,
             )
             if idx.size:
+                remaining = getattr(self, "_budget_remaining", None)
+                if remaining is not None:
+                    idx = idx[:remaining]
+                if idx.size == 0:
+                    return positions, fitness, best_x, best_fitness, extra_evals
                 new_f = self._evaluate(objective, positions[idx])
                 extra_evals += int(idx.size)
                 fitness[idx] = new_f
@@ -268,6 +267,11 @@ class IDBO(DBO):
                 n_elite=self.n_elite,
             )
             if idx.size:
+                remaining = getattr(self, "_budget_remaining", None)
+                if remaining is not None:
+                    idx = idx[:remaining]
+                if idx.size == 0:
+                    return positions, fitness, best_x, best_fitness, extra_evals
                 new_f = self._evaluate(objective, positions[idx])
                 extra_evals += int(idx.size)
                 fitness[idx] = new_f

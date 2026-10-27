@@ -188,38 +188,3 @@ def test_two_tier_config_propagates_idbo_params_and_records_telemetry(food_map_f
     assert result.outer_collapse_events > 0
 
 
-
-
-def test_telemetry_direct_idbo_counters_and_sanity():
-    opt = IDBO(n_agents=8, max_iter=10, diversity_threshold=0.5,
-               stagnation_window=2, perturbation_rate=0.5, restart_rate=0.5)
-    result = opt.optimize(lambda x: 42.0, dim=4, lb=-5.0, ub=5.0, seed=42)
-    assert len(result.diversity_history) == 10
-    assert result.min_diversity == min(result.diversity_history)
-    assert result.mean_diversity == pytest.approx(np.mean(result.diversity_history))
-    assert result.final_diversity == result.diversity_history[-1]
-    assert 0 <= result.min_diversity <= result.mean_diversity
-    assert result.n_diversity_collapse_events == sum(
-        x < opt.diversity_threshold for x in result.diversity_history)
-    assert result.n_collapse_events == result.n_diversity_collapse_events
-    for name in ("max_stagnation", "n_diversity_collapse_events", "n_stagnation_events",
-                 "n_perturbations", "n_restarts"):
-        value = getattr(result, name)
-        assert type(value) is int and value >= 0
-
-
-def test_telemetry_two_tier_mapping(food_map_fixture, profile_p1):
-    targets = daily_all_targets(profile_p1)
-    config = TwoTierConfig(outer_algo="idbo", inner_algo="idbo", outer_n_agents=6,
-                           inner_n_agents=6, outer_max_iter=4, inner_max_iter=4,
-                           seed=8006, diversity_threshold=0.5, stagnation_window=1,
-                           perturbation_rate=1.0, restart_rate=1.0)
-    result = two_tier_optimize(profile_p1, food_map_fixture, targets, config)
-    for prefix in ("outer", "inner", "final_inner"):
-        assert 0 <= getattr(result, f"{prefix}_min_diversity") <= getattr(result, f"{prefix}_mean_diversity")
-        assert getattr(result, f"{prefix}_final_diversity") >= 0
-        assert getattr(result, f"{prefix}_max_stagnation") >= 0
-    for name in ("outer_n_diversity_collapse_events", "outer_n_stagnation_events",
-                 "inner_n_diversity_collapse_events_total", "inner_n_stagnation_events_total",
-                 "final_inner_n_diversity_collapse_events", "final_inner_n_stagnation_events"):
-        assert type(getattr(result, name)) is int and getattr(result, name) >= 0
