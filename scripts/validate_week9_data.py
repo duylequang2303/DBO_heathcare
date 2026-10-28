@@ -442,6 +442,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    enriched_df, md_summary = run_validation(args.input, args.outdir)
+
     if sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
         try:
             sys.stdout.reconfigure(encoding="utf-8")

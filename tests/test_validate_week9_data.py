@@ -11,6 +11,7 @@ from scripts.validate_week9_data import (
     audit_sodium,
     generate_detailed_report,
     load_weekly_runs,
+    main,
     run_validation,
 )
 
@@ -122,3 +123,21 @@ def test_run_validation_end_to_end(tmp_path: Path, sample_runs_df: pd.DataFrame)
     assert (outdir / "validation_summary.md").exists()
     assert "BÁO CÁO THẨM ĐỊNH" in summary_md
     assert len(enriched_df) == 4
+
+
+def test_main_cli(tmp_path: Path, sample_runs_df: pd.DataFrame, monkeypatch: pytest.MonkeyPatch):
+    """Test CLI entry point main() parses arguments and executes validation."""
+    input_csv = tmp_path / "weekly_runs.csv"
+    sample_runs_df.to_csv(input_csv, index=False)
+    outdir = tmp_path / "cli_output"
+
+    monkeypatch.setattr(
+        "sys.argv",
+        ["validate_week9_data.py", "--input", str(input_csv), "--outdir", str(outdir)],
+    )
+
+    main()
+
+    assert (outdir / "validation_report.csv").exists()
+    assert (outdir / "validation_summary.md").exists()
+
