@@ -258,6 +258,9 @@ def generate_menu(req: GenerateIn) -> MenuOut:
       continuous solution → round portions 5g → decode → recalc nutrients → validate
     """
     profile = build_profile(req.profile)
+    if sum(profile.meal_counts.values()) <= 0:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="Cần ít nhất 1 món ăn trong thực đơn để tối ưu.")
     food_map = get_food_map()
     targets = _get_targets_with_conditions(profile)
     config = _make_tt_config(req.config, req.seed)
