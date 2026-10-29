@@ -1,5 +1,6 @@
 from .menu import MealType, Menu
 from .user_profile import UserProfile
+from .dish_category import classify_dish_role, get_role_portion_bounds
 
 PORTION_RANGE = {"min": 25.0, "max": 350.0}
 ENERGY_TOLERANCE = 0.10
@@ -20,13 +21,18 @@ MEAL_TYPE_ALLOWED = {
 }
 
 
-def validate_menu(menu: Menu, profile: UserProfile, targets: dict[str, float]) -> list[str]:
+def validate_menu(
+    menu: Menu,
+    profile: UserProfile,
+    targets: dict[str, float],
+    food_map: dict | None = None,
+) -> list[str]:
     violations: list[str] = []
     violations += _check_energy(menu, targets["calories"])
     violations += _check_macros(menu, targets)
     violations += _check_medical_constraints(menu, profile, targets)
     violations += _check_meal_count(menu, profile.meal_counts)
-    violations += _check_portion(menu)
+    violations += _check_portion(menu, food_map)
     violations += _check_dislikes(menu, profile.dislikes)
     violations += _check_allergies(menu, profile.allergies)
     violations += _check_duplicates(menu)
@@ -34,8 +40,10 @@ def validate_menu(menu: Menu, profile: UserProfile, targets: dict[str, float]) -
     return violations
 
 
-def is_feasible(menu: Menu, profile: UserProfile, targets: dict[str, float]) -> bool:
-    return len(validate_menu(menu, profile, targets)) == 0
+def is_feasible(
+    menu: Menu, profile: UserProfile, targets: dict[str, float], food_map: dict | None = None
+) -> bool:
+    return len(validate_menu(menu, profile, targets, food_map)) == 0
 
 
 def _check_energy(menu: Menu, calorie_target: float) -> list[str]:
@@ -104,12 +112,19 @@ def _check_meal_count(menu: Menu, meal_counts: dict[str, int]) -> list[str]:
     return issues
 
 
-def _check_portion(menu: Menu) -> list[str]:
+def _check_portion(menu: Menu, food_map: dict | None = None) -> list[str]:
     issues = []
-    low, high = PORTION_RANGE["min"], PORTION_RANGE["max"]
     for item in menu.all_items():
+        if food_map is not None:
+            row = food_map.get(item.food_id, {})
+            role = classify_dish_role(item.food_name, str(row.get("category", "")))
+            low, high = get_role_portion_bounds(role)
+        else:
+            low, high = PORTION_RANGE["min"], PORTION_RANGE["max"]
         if not (low <= item.portion_g <= high):
-            issues.append(f"{item.food_name}: portion {item.portion_g:.0f}g out of range")
+            issues.append(
+                f"{item.food_name}: portion {item.portion_g:.0f}g out of range [{low:.0f}, {high:.0f}]"
+            )
     return issues
 
 
