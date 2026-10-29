@@ -76,7 +76,8 @@ def main():
     if "sugar_g" in targets:
         print(f"   Ngưỡng proxy Đường (ước tính):      <= {targets['sugar_g']:.1f} g/ngày (Ràng buộc ĐTĐ)")
     if "sodium_mg" in targets:
-        print(f"   Giới hạn Natri:      <= {targets['sodium_mg']:.1f} mg/ngày (Ràng buộc Tăng HA)")
+        sodium_label = "Ràng buộc Tăng HA" if "hypertension" in profile.medical_conditions else "Trần an toàn DRI CDRR"
+        print(f"   Giới hạn Natri:      <= {targets['sodium_mg']:.1f} mg/ngày ({sodium_label})")
 
     meal_order = get_meal_order_slots(profile.meal_counts)
     history_food_ids: list[list[str]] = []

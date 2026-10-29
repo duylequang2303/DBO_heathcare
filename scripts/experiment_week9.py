@@ -79,6 +79,12 @@ def run_7day_experiment_single(
     daily_records: list[dict[str, object]] = []
     meal_order = get_meal_order_slots(profile.meal_counts)
 
+    # Ensure sodium target is defensively populated (CDRR 2300mg or hypertension 1500mg)
+    targets = dict(targets)
+    if "sodium_mg" not in targets:
+        conditions = {str(v).strip().lower() for v in profile.medical_conditions}
+        targets["sodium_mg"] = 1500.0 if "hypertension" in conditions else 2300.0
+
     for day in range(1, days + 1):
         day_seed = base_seed + day * 19
 

@@ -58,7 +58,63 @@ def test_hypertension_rejects_sodium_above_profile_limit(valid_menu, profile, ta
 
 
 def test_healthy_profile_does_not_apply_hypertension_limit(valid_menu, profile, targets):
+    """Healthy profile conforms to CDRR limit (2300 mg) and passes with valid menu (~1411 mg)."""
     profile.medical_conditions = ["healthy"]
-    targets["sodium_mg"] = 1.0
+    targets["sodium_mg"] = 2300.0
     issues = validate_menu(valid_menu, profile, targets)
     assert not any("sodium_mg" in msg for msg in issues)
+
+
+def test_healthy_profile_rejects_sodium_above_general_ceiling(valid_menu, profile, targets):
+    """Healthy profile rejects sodium exceeding the general CDRR / target limit."""
+    profile.medical_conditions = ["healthy"]
+    targets["sodium_mg"] = 1000.0
+    issues = validate_menu(valid_menu, profile, targets)
+    assert any("sodium_mg" in msg and "exceeds" in msg for msg in issues)
+
+
+def test_sodium_default_ceiling_when_unspecified_in_targets(valid_menu, profile, targets):
+    """When targets dictionary lacks sodium_mg, default CDRR ceiling (2300 mg) is enforced."""
+    profile.medical_conditions = ["healthy"]
+    targets.pop("sodium_mg", None)
+    issues = validate_menu(valid_menu, profile, targets)
+    assert not any("sodium_mg" in msg for msg in issues)
+
+
+def test_hypertension_caps_sodium_at_1500_even_when_targets_specifies_higher(valid_menu, profile, targets, food_map):
+    """Hypertension profile must clamp sodium at 1500 mg even if targets has general 2300 mg."""
+    profile.medical_conditions = ["hypertension"]
+    targets["sodium_mg"] = 2300.0  # Common default from daily_all_targets
+    # valid_menu sodium is ~1411 mg; add extra salty item to push it to ~1800 mg (>1500, <2300)
+    extra = item_from_map(food_map, "VN_1004", 50)
+    extra.food_id = "EXTRA_SALT"
+    extra.sodium_mg = 400.0
+    valid_menu.meals[MealType.SNACK].add_item(extra)
+    profile.meal_counts["snack"] = 3
+    issues = validate_menu(valid_menu, profile, targets)
+    assert any("sodium_mg" in msg and "exceeds 1500.0" in msg for msg in issues)
+
+
+def test_hypertension_honors_stricter_clinical_target(valid_menu, profile, targets):
+    """If clinician specifies stricter target (<1500 mg, e.g. 1200 mg), it is respected."""
+    profile.medical_conditions = ["hypertension"]
+    targets["sodium_mg"] = 1200.0
+    issues = validate_menu(valid_menu, profile, targets)
+    assert any("sodium_mg" in msg and "exceeds 1200.0" in msg for msg in issues)
+
+
+def test_healthy_profile_caps_sodium_at_upper_tolerance_ceiling(valid_menu, profile, targets, food_map):
+    """Even if targets specifies an excessive sodium allowance (e.g. 5000 mg), upper tolerance ceiling (3000 mg) is enforced."""
+    profile.medical_conditions = ["healthy"]
+    targets["sodium_mg"] = 5000.0
+    extra = item_from_map(food_map, "VN_1004", 100)
+    extra.food_id = "VERY_SALTY"
+    extra.food_name = "Muối biển"
+    extra.meal_type = "snack"
+    extra.sodium_mg = 4000.0  # 4000 mg per 100g -> 4000 mg sodium
+    valid_menu.meals[MealType.SNACK].add_item(extra)
+    profile.meal_counts["snack"] = 3
+    # Total sodium is ~1411 + 4000 = ~5411 mg (> 3000 mg ceiling, but < 5000 mg target)
+    issues = validate_menu(valid_menu, profile, targets)
+    assert any("sodium_mg" in msg and "exceeds 3000.0" in msg for msg in issues)
+

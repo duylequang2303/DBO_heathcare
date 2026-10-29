@@ -9,6 +9,9 @@ MACRO_TOLERANCE = {
     "fat_g": 0.20,
     "fiber_g": 0.30,
 }
+DEFAULT_MAX_SODIUM_MG: float = 2300.0  # DRI CDRR ceiling for healthy adults (mg/day)
+HYPERTENSION_MAX_SODIUM_MG: float = 1500.0  # AHA / clinical guideline for hypertension (mg/day)
+MAX_SODIUM_TOLERANCE_MG: float = 3000.0  # Technical upper tolerance ceiling (mg/day)
 MEAL_TYPE_ALLOWED = {
     MealType.BREAKFAST: {"breakfast"},
     MealType.SNACK: {"snack"},
@@ -56,24 +59,40 @@ def _check_macros(menu: Menu, targets: dict[str, float]) -> list[str]:
     return issues
 
 
+def _check_sodium(
+    menu: Menu, profile: UserProfile, targets: dict[str, float]
+) -> list[str]:
+    """Validate sodium against clinical condition limits and general DRI CDRR ceilings.
+
+    - Hypertension: Enforces stricter clinical target (min of targets['sodium_mg'] and 1500 mg).
+    - General/Healthy/Other: Enforces DRI CDRR ceiling (targets['sodium_mg'] or 2300 mg, capped at 3000 mg).
+    """
+    conditions = {str(value).strip().lower() for value in profile.medical_conditions}
+    issues: list[str] = []
+    if "hypertension" in conditions:
+        limit = min(float(targets.get("sodium_mg", HYPERTENSION_MAX_SODIUM_MG)), HYPERTENSION_MAX_SODIUM_MG)
+    elif "sodium_mg" in targets:
+        limit = min(float(targets["sodium_mg"]), MAX_SODIUM_TOLERANCE_MG)
+    else:
+        limit = DEFAULT_MAX_SODIUM_MG
+
+    actual = menu.total("sodium_mg")
+    if actual > limit:
+        issues.append(f"sodium_mg: {actual:.1f} exceeds {limit:.1f}")
+    return issues
+
 
 def _check_medical_constraints(
     menu: Menu, profile: UserProfile, targets: dict[str, float]
 ) -> list[str]:
     """Validate only condition constraints backed by nutrients in the dataset.
 
-    Sodium is available in the merged database and can be enforced for
-    hypertension. The current dataset has no total-sugar column, so diabetes
-    must not be declared safe from a carbohydrate-derived sugar estimate.
+    Sodium is available in the merged database and enforced for all profiles
+    (with clinical restrictions for hypertension and general DRI CDRR ceiling
+    for healthy/other profiles). The current dataset has no total-sugar column,
+    so diabetes must not be declared safe from a carbohydrate-derived sugar estimate.
     """
-    conditions = {str(value).strip().lower() for value in profile.medical_conditions}
-    issues: list[str] = []
-    if "hypertension" in conditions and "sodium_mg" in targets:
-        actual = menu.total("sodium_mg")
-        limit = float(targets["sodium_mg"])
-        if actual > limit:
-            issues.append(f"sodium_mg: {actual:.1f} exceeds {limit:.1f}")
-    return issues
+    return _check_sodium(menu, profile, targets)
 
 def _check_meal_count(menu: Menu, meal_counts: dict[str, int]) -> list[str]:
     issues = []

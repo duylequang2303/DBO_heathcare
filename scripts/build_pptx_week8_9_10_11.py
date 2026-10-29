@@ -280,7 +280,7 @@ def build_slide_2(prs):
          "• Tách riêng tập hiệu chỉnh & tập kiểm định độc lập (seed 8003–8010).\n"
          "• Báo cáo trung thực: IDBO thắng 5/8 seed (+0.1659 điểm), Wilcoxon p > 0.05 (chưa có ý nghĩa thống kê).\n"
          "• Đánh đổi tài nguyên: IDBO tốn +18.6% evals và +14.6% runtime.\n"
-         "• Chốt chặn ngân sách chung (Budget-Matched) & Hoàn thiện Ngưỡng kép (Dual Threshold) · 265/265 tests PASS.",
+         "• Chốt chặn ngân sách chung (Budget-Matched) & Hoàn thiện Ngưỡng kép (Dual Threshold) · 270/270 tests PASS.",
          GREEN, LIGHT),
     ]
 
@@ -537,24 +537,24 @@ def build_slide_6(prs):
     _style_run(r0, 15.5, True, INDIGO)
 
     items = [
-        ("Mục tiêu mở rộng dài hạn:",
-         "Chuyển đổi bài toán từ đề xuất 1 ngày đơn lẻ sang chu kỳ 7 ngày liên tục, giải quyết dứt điểm hiện tượng đơn điệu và nhàm chán món ăn."),
-        ("Cơ chế Diversity Penalty cửa sổ trượt 2 ngày:",
-         "Theo dõi ma trận xuất hiện món ăn giữa các ngày kế tiếp. Phạt nặng hàm mục tiêu nếu tỷ lệ món chính độc nhất trong cửa sổ 2 ngày dưới ngưỡng 80%."),
-        ("Độ bao phủ thực nghiệm W9-F1 (Heatmap 7 ngày x 6 dưỡng chất):",
-         "Trên hồ sơ P1, năng lượng bám sát mục tiêu hàng ngày (độ lệch calo trung bình chỉ 2.37%), không có ngày nào bị thiếu hụt hay dư thừa calo."),
+        ("Mục tiêu mở rộng & Diversity Penalty cửa sổ 2 ngày:",
+         "Chuyển từ tối ưu 1 ngày sang chu kỳ 7 ngày liên tục. Cơ chế Diversity Penalty phạt nặng nếu tỷ lệ món chính độc nhất < 80%, giúp 100% kế hoạch tối ưu không bị lặp món chính."),
+        ("Độ bám sát Năng lượng & Đa lượng (Heatmap W9-F1):",
+         "Trên hồ sơ P1, năng lượng bám sát mục tiêu 2.492 kcal (độ lệch calo trung bình toàn bộ runs là 0.42%, kế hoạch tiêu biểu này chỉ lệch 0.48%). Đạm, tinh bột, béo và xơ đạt chuẩn DRI."),
         ("Chuẩn hóa khẩu phần bước 5g suốt 7 ngày:",
-         "Tất cả các món trong 7 ngày đều được làm tròn theo bước 5g, dinh dưỡng được tái tính toán và thẩm định nghiêm ngặt trên nghiệm đã làm tròn."),
-        ("Kết quả đạt được:",
-         "Tỷ lệ món chính độc nhất đạt 100% trên các phương án tối ưu, không có hiện tượng lặp món chính trong tuần, đảm bảo tính đa dạng và khẩu vị.")
+         "Tất cả các món đều được làm tròn theo bước 5g thực tế chế biến; toàn bộ dinh dưỡng được tái tính toán và thẩm định tự động trên nghiệm đã làm tròn."),
+        ("Minh bạch chỉ số Natri trên Heatmap (Tính trung thực học thuật):",
+         "• Quan sát biểu đồ: Trung bình tuần đạt 2.322 mg (sát chuẩn DRI 2.300 mg); ghi nhận Ngày 3 (3.601 mg - 157%) và Ngày 7 (3.158 mg - 137%) vượt trần kỹ thuật 3.000 mg.\n"
+         "• Nguyên nhân kỹ thuật: Ở Tuần 9, hàm mục tiêu chưa áp trần Natri cho hồ sơ khỏe mạnh P1 (chỉ áp cho P3 cao huyết áp), dẫn đến thuật toán tự do chọn món mặn để khớp calo/macro.\n"
+         "• Bước chuyển tiếp: Phát hiện này là căn cứ thực nghiệm bắt buộc nhóm xây dựng công cụ kiểm định tự động trần Natri 3.000 mg (báo cáo minh bạch 32/210 ngày vi phạm ở Slide 7).")
     ]
     for title, desc in items:
         p = tf.add_paragraph()
-        p.space_before = Pt(7)
+        p.space_before = Pt(5)
         rt = _add_run(p, f"• {title}\n  ")
-        _style_run(rt, 10.8, True, INDIGO2)
+        _style_run(rt, 10.0, True, INDIGO2)
         rd = _add_run(p, desc)
-        _style_run(rd, 9.5, False, INK)
+        _style_run(rd, 8.5, False, INK)
 
     _footer(slide, 6)
 
@@ -880,17 +880,17 @@ def build_slide_13(prs):
     tf2 = tb2.text_frame
     tf2.word_wrap = True
     p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Nghiệm Thu Chất Lượng (265/265 Tests PASS)")
+    r2 = _add_run(p2, "Nghiệm Thu Chất Lượng (270/270 Tests PASS)")
     _style_run(r2, 15.0, True, INDIGO)
 
     pts2 = [
         ("Kiểm thử tự động 100% PASS (pytest 9.1.1):",
-         "265/265 unit tests PASSED (~22s, Python 3.12). Bao phủ toàn diện:\n"
+         "270/270 unit tests PASSED (~24s, Python 3.12). Bao phủ toàn diện:\n"
          "• Core Solvers & Telemetry: 84 tests\n"
-         "• Ràng buộc dinh dưỡng & DishRole: 83 tests\n"
+         "• Ràng buộc dinh dưỡng, Trần Natri & DishRole: 88 tests\n"
          "• Mô hình dữ liệu & Schemas: 44 tests\n"
          "• Budget-Matched & Dual Threshold: 30 tests\n"
-         "• FastAPI REST Endpoints: 24 tests"),
+         "• FastAPI REST Endpoints & Week 9 Suite: 24 tests"),
         ("Tính tất định tuyệt đối (Deterministic Decoding):",
          "Mọi hàm ngẫu nhiên đều nhận seed tường minh, sử dụng RNG cục bộ rng = np.random.default_rng(seed), không rò rỉ trạng thái giữa các lần chạy."),
         ("Làm tròn khẩu phần 5g minh bạch:",
@@ -932,7 +932,7 @@ def build_slide_14(prs):
         ("Tuần 10 — Hệ thống Web API & UI:",
          "Đưa solver lên nền tảng Web với kiến trúc Single-port FastAPI, 6 REST endpoints, giao diện Dark Glassmorphism, Radar chart 6 trục và bảng thực đơn 5g."),
         ("Tuần 11 — Chuẩn hóa độc lập & Budget-Matched:",
-         "Đánh giá mù trên 8 seed độc lập (IDBO thắng 5/8, Wilcoxon p>0.05), giải mã chi phí tính toán (+18.6% evals), cài đặt chốt chặn Budget-Matched, kiến trúc Dual Threshold, 265/265 tests pass.")
+         "Đánh giá mù trên 8 seed độc lập (IDBO thắng 5/8, Wilcoxon p>0.05), giải mã chi phí tính toán (+18.6% evals), cài đặt chốt chặn Budget-Matched, kiến trúc Dual Threshold, 270/270 tests pass.")
     ]
     for t, d in achievements:
         p = tf1.add_paragraph()

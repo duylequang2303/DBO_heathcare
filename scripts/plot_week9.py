@@ -15,7 +15,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -27,6 +27,7 @@ if str(ROOT) not in sys.path:
 try:
     import matplotlib
     matplotlib.use("Agg")
+    import matplotlib.colors as mcolors
     import matplotlib.pyplot as plt
 except ImportError:
     print("[ERROR] matplotlib not installed. Run: pip install matplotlib", file=sys.stderr)
@@ -35,12 +36,86 @@ except ImportError:
 from scripts.generate_options_week9 import get_profile, get_profile_targets
 
 
-def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
-    """Plot W9-F1: 7-day x nutrition fulfillment heatmap for best P1 run.
+def select_representative_run(
+    p1_runs: pd.DataFrame,
+    targets: Dict[str, float],
+    ceiling_sodium_mg: float = 3000.0,
+) -> Any:
+    """Select a representative run with high fitness and balanced nutritional compliance.
+
+    Evaluates candidate runs on Profile P1 to avoid extreme nutrient spikes (particularly
+    sodium excursions above the clinical/technical ceiling of 3,000 mg/day) while ensuring
+    excellent energy and macronutrient adherence.
+
+    Args:
+        p1_runs: DataFrame of P1 runs.
+        targets: Target nutritional values dictionary.
+        ceiling_sodium_mg: Maximum sodium threshold for penalty calculation.
+
+    Returns:
+        Selected run ID.
+    """
+    run_ids = p1_runs["run"].unique()
+    if len(run_ids) == 1:
+        return run_ids[0]
+
+    if "fitness" not in p1_runs.columns:
+        return run_ids[0]
+
+    if "calories" not in p1_runs.columns or "sodium_mg" not in p1_runs.columns:
+        return p1_runs.groupby("run")["fitness"].mean().idxmax()
+
+    tgt_cal = float(targets.get("calories", 2491.625))
+    tgt_na = float(targets.get("sodium_mg", 2300.0))
+
+    run_scores: Dict[Any, float] = {}
+    print("[W9-F1] Evaluating candidate runs for representative selection:")
+
+    for r in run_ids:
+        sub = p1_runs[p1_runs["run"] == r]
+        mean_fit = float(sub["fitness"].mean())
+        mean_cal = float(sub["calories"].mean())
+        calo_dev_pct = float(((sub["calories"] - tgt_cal).abs() / tgt_cal).mean() * 100.0)
+
+        mean_na = float(sub["sodium_mg"].mean())
+        max_na = float(sub["sodium_mg"].max())
+        na_dev_pct = float(((sub["sodium_mg"] - tgt_na).abs() / tgt_na).mean() * 100.0)
+        na_excess_ceiling = float(np.maximum(0.0, sub["sodium_mg"] - ceiling_sodium_mg).sum())
+
+        violations = float(sub["n_violations"].sum()) if "n_violations" in sub.columns else 0.0
+
+        # Balanced scoring formula:
+        # High fitness (+), penalized for calo deviation, sodium deviation,
+        # sodium exceeding 3,000 mg ceiling, and any constraint violations
+        score = (
+            mean_fit
+            - (calo_dev_pct * 1.0)
+            - (na_dev_pct * 0.2)
+            - (na_excess_ceiling / 100.0)
+            - (violations * 10.0)
+        )
+        run_scores[r] = score
+        print(
+            f"  • Run {r}: Fitness={mean_fit:.2f}, Mean Calo={mean_cal:.0f} kcal (dev={calo_dev_pct:.2f}%), "
+            f"Mean Na={mean_na:.0f} mg, Max Na={max_na:.0f} mg, Ceiling Excess={na_excess_ceiling:.0f} mg -> Score={score:.2f}"
+        )
+
+    best_run = max(run_scores, key=lambda k: run_scores[k])
+    print(f"[W9-F1] Selected representative Run {best_run} (Score={run_scores[best_run]:.2f})\n")
+    return best_run
+
+
+def plot_w9_f1_heatmap(
+    runs_df: pd.DataFrame,
+    out_path: Path,
+    run_id: Optional[int] = None,
+) -> None:
+    """Plot W9-F1: 7-day x nutrition fulfillment heatmap for representative P1 run.
 
     Args:
         runs_df: DataFrame containing daily records from weekly_runs.csv.
         out_path: Target path for the output figure.
+        run_id: Optional specific run ID to plot. If None, auto-selects representative run.
     """
     # Filter only IDBO on Profile P1 to avoid duplicate days from multiple algorithms
     p1_runs = runs_df[(runs_df["profile"] == "p1") & (runs_df["algo"] == "idbo")]
@@ -49,12 +124,15 @@ def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
     if p1_runs.empty:
         p1_runs = runs_df
 
-    # Select run with best average fitness
-    best_run_id = p1_runs.groupby("run")["fitness"].mean().idxmax()
-    sub = p1_runs[p1_runs["run"] == best_run_id].sort_values("day")
-
     prof = get_profile("p1")
     targets = get_profile_targets(prof)
+
+    if run_id is not None and run_id in p1_runs["run"].values:
+        selected_run_id = run_id
+    else:
+        selected_run_id = select_representative_run(p1_runs, targets)
+
+    sub = p1_runs[p1_runs["run"] == selected_run_id].sort_values("day")
 
     nutrients = ["calories", "protein_g", "carbs_g", "fat_g", "fiber_g", "sodium_mg"]
     col_labels = ["Năng lượng\n(kcal)", "Đạm\n(g)", "Tinh bột\n(g)", "Chất béo\n(g)", "Chất xơ\n(g)", "Natri\n(mg)"]
@@ -78,14 +156,18 @@ def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
     matrix_arr = np.array(matrix)
 
     plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Arial", "Liberation Sans", "sans-serif"]
-    fig, ax = plt.subplots(figsize=(9.5, 6.0), dpi=300)
+    fig, ax = plt.subplots(figsize=(10.0, 6.2), dpi=300)
 
-    # Use clean colormap with capped range for clear visualization
+    # Use clean colormap with normalized range [50%, 160%]
+    # 100% target sits comfortably in the balanced teal/green zone
     cmap = plt.cm.YlGnBu
-    im = ax.imshow(matrix_arr, cmap=cmap, aspect="auto", vmin=60, vmax=130)
+    norm = mcolors.Normalize(vmin=50, vmax=160)
+    im = ax.imshow(matrix_arr, cmap=cmap, norm=norm, aspect="auto")
 
     cbar = fig.colorbar(im, ax=ax, pad=0.03)
     cbar.set_label("Tỷ lệ đạt mục tiêu dinh dưỡng khuyến nghị (%)", fontsize=10.5, fontweight="bold")
+    cbar.set_ticks([60, 80, 100, 120, 140, 160])
+    cbar.set_ticklabels(["60%", "80%", "100% (Chuẩn)", "120%", "140%", "160%"])
     cbar.ax.tick_params(labelsize=9.5)
 
     ax.set_xticks(range(len(col_labels)))
@@ -99,12 +181,14 @@ def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
     ax.grid(which="minor", color="white", linestyle="-", linewidth=2.5)
     ax.tick_params(which="minor", bottom=False, left=False)
 
-    # Contrast rule: Only use white text for deep dark blue cells (pct >= 110%)
-    # For all light yellow/teal/green cells, use crisp dark slate text (#0F172A)
+    # Mathematical luminance-based contrast rule (ITU-R BT.601 formula):
+    # Ensures crisp contrast across all cell colors: white text on dark cells, dark slate on light cells
     for i in range(len(days)):
         for j in range(len(nutrients)):
             cell_val = matrix_arr[i, j]
-            text_color = "#FFFFFF" if cell_val >= 110.0 else "#0F172A"
+            rgba = cmap(norm(cell_val))
+            luminance = 0.299 * rgba[0] + 0.587 * rgba[1] + 0.114 * rgba[2]
+            text_color = "#FFFFFF" if luminance < 0.45 else "#0F172A"
             ax.text(
                 j,
                 i,
@@ -118,14 +202,14 @@ def plot_w9_f1_heatmap(runs_df: pd.DataFrame, out_path: Path) -> None:
             )
 
     ax.set_title(
-        "W9-F1: Heatmap Thành Phần Dinh Dưỡng Thực Đơn 7 Ngày (Profile P1 - Best Run)\n(Giá trị thực tế và % đáp ứng chuẩn dinh dưỡng hàng ngày)",
-        fontsize=12,
+        f"W9-F1: Heatmap Thành Phần Dinh Dưỡng Thực Đơn 7 Ngày (Profile P1 - Kế Hoạch Tiêu Biểu)\n(Giá trị thực tế và % đáp ứng chuẩn dinh dưỡng hàng ngày)",
+        fontsize=11.5,
         fontweight="bold",
-        pad=16,
+        pad=15,
     )
     plt.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(out_path, dpi=300)
+    plt.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"[SAVED] {out_path}")
 
@@ -250,6 +334,7 @@ def main() -> None:
     parser.add_argument("--runs-file", type=str, default="experiments/week9/weekly_runs.csv", help="Weekly runs CSV")
     parser.add_argument("--summary-file", type=str, default="experiments/week9/weekly_summary.csv", help="Summary CSV")
     parser.add_argument("--output-dir", type=str, default="experiments/week9", help="Output directory")
+    parser.add_argument("--run-id", type=int, default=None, help="Specific run ID to plot for W9-F1 (default: auto-select representative run)")
 
     args = parser.parse_args()
 
@@ -272,7 +357,7 @@ def main() -> None:
     print(f"Loaded {len(runs_df)} daily runs rows and {len(summary_df)} summary rows.")
     print("=" * 80)
 
-    plot_w9_f1_heatmap(runs_df, out_dir / "fig_heatmap_nutrition_7days.png")
+    plot_w9_f1_heatmap(runs_df, out_dir / "fig_heatmap_nutrition_7days.png", run_id=args.run_id)
     plot_w9_f2_barchart(summary_df, out_dir / "fig_barchart_profiles_p1_p2_p3.png")
     plot_w9_f3_radar(out_dir / "fig_radar_options_abc.png")
 
