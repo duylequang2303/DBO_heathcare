@@ -17,39 +17,27 @@ Nhóm đã hoàn thành việc xây dựng công cụ tiền xử lý dữ liệ
 
 ## 2. Quy Trình 4 Bước Chạy Lại Thực Nghiệm (Pipeline Execution)
 
-Thành viên phụ trách kỹ thuật chỉ cần mở terminal, kích hoạt môi trường ảo `venv` và thực hiện tuần tự 4 lệnh sau:
+Thành viên phụ trách kỹ thuật chỉ cần mở terminal, kích hoạt môi trường ảo `venv` và thực hiện tuần tự pipeline sau:
 
 ```mermaid
 graph LR
-    A["Bước 1: Demo Tuần 8<br/>Lấy thực đơn sạch"] --> B["Bước 2: Benchmark Tuần 9<br/>Lập kế hoạch 7 ngày"]
-    B --> C["Bước 3: Vẽ lại Heatmap<br/>fig_heatmap_nutrition_7days.png"]
-    C --> D["Bước 4: Sinh lại Slide PPTX<br/>14 slide cập nhật"]
+    A["Bước 1: Benchmark Tuần 9<br/>experiment_week9.py"] --> B["Bước 2: Thẩm định tự động<br/>validate_week9_data.py"]
+    B --> C["Bước 3: Dựng biểu đồ<br/>plot_week9.py"]
+    C --> D["Bước 4: Sinh slide PPTX<br/>build_pptx_week8_9_10_11.py"]
 ```
 
-### Bước 1: Chạy lại Demo Tuần 8 (Tối ưu thực đơn mẫu 1 ngày Profile P1)
-*Mục đích*: Tạo bảng thực đơn tối ưu không còn chim cút sống, tahini 85g, đùi gà 25g, hay bột pha đồ uống 160g.
+> **Lưu ý kiểm tra nhanh (Tùy chọn)**: Nếu muốn kiểm tra trực quan món ăn mẫu 1 ngày của P1 trên terminal trước khi chạy benchmark, có thể chạy lệnh smoke:
+> `python scripts/demo_week8.py --outer-algo idbo --inner-algo idbo --outer-iter 10 --outer-agents 8 --inner-iter 10 --inner-agents 8 --seed 8003`.
+> *(Lệnh này chỉ hiển thị ra terminal để quan sát, không ghi file dữ liệu vào pipeline).*
+
+---
+
+### Bước 1: Chạy Benchmark 7 Ngày Tuần 9 (Multi-Profile)
+*Mục đích*: Chạy chu kỳ 7 ngày cho Profile P1, P2 (tiểu đường), P3 (tăng huyết áp) trên dataset sạch.
 
 ```bash
 source venv/bin/activate
 
-python scripts/demo_week8.py \
-  --outer-algo idbo --inner-algo idbo \
-  --outer-iter 25 --outer-agents 12 \
-  --inner-iter 30 --inner-agents 12 \
-  --seed 8003
-```
-- **Thời gian chạy ước tính**: ~5 - 10 giây.
-- **Tiêu chuẩn nghiệm thu**:
-  - Không còn món nào có từ khóa `raw`, `sống` trong các bữa chính.
-  - Khẩu phần thịt/cá đạt tối thiểu 60g, bơ hạt/gia vị không còn xuất hiện như món ăn độc lập.
-  - Số lượng vi phạm: `0 vi phạm`.
-
----
-
-### Bước 2: Chạy lại Benchmark 7 Ngày Tuần 9 (Multi-Profile)
-*Mục đích*: Chạy lại chu kỳ 7 ngày cho Profile P1, P2 (tiểu đường), P3 (tăng huyết áp) trên dataset sạch để giải quyết triệt để vấn đề Natri vọt 343%.
-
-```bash
 python scripts/experiment_week9.py \
   --runs 5 \
   --profiles p1 p2 p3 \
@@ -59,8 +47,7 @@ python scripts/experiment_week9.py \
   --inner-iter 15 --inner-agents 8 \
   --base-seed 9000
 ```
-*(Nếu muốn kiểm tra nhanh smoke-test trước, thêm cờ `--smoke`: `python scripts/experiment_week9.py --smoke` chỉ mất ~3 giây).*
-- **Thời gian chạy ước tính**: ~3 - 5 phút (trên CPU thông thường).
+- **Thời gian chạy ước tính**: ~3 - 5 phút (trên CPU).
 - **Tập tin đầu ra được cập nhật**:
   - `experiments/week9/weekly_runs.csv`
   - `experiments/week9/weekly_summary.csv`
@@ -68,27 +55,44 @@ python scripts/experiment_week9.py \
 
 ---
 
-### Bước 3: Dựng lại biểu đồ trực quan (Heatmap Slide 6)
-*Mục đích*: Vẽ lại biểu đồ Heatmap dinh dưỡng 7 ngày dựa trên số liệu mới từ `weekly_runs.csv`.
+### Bước 2: Thẩm định tự động số liệu thực đơn (Audit Gate)
+*Mục đích*: Dùng công cụ kiểm định tự động (`scripts/validate_week9_data.py`) để thẩm định 210 ngày mô phỏng về Natri, Xơ và Calo trước khi vẽ hình hay đưa vào slide.
+
+```bash
+python scripts/validate_week9_data.py \
+  --input experiments/week9/weekly_runs.csv \
+  --outdir experiments/week9
+```
+- **Thời gian chạy**: ~1 giây.
+- **Tiêu chuẩn nghiệm thu**:
+  - `experiments/week9/validation_summary.md` ghi nhận tỷ lệ đáp ứng Calo $\pm 10\%$ đạt $\ge 95\%$.
+  - Chất xơ trung bình đạt chuẩn DRI.
+  - Natri ở bệnh nhân cao huyết áp (P3) khống chế nghiêm ngặt $< 1.500\text{ mg/ngày}$ ($> 95\%$ ngày tuân thủ).
+  - Xuất file kiểm định: `experiments/week9/validation_report.csv`.
+
+---
+
+### Bước 3: Dựng lại biểu đồ trực quan (Heatmap & Radar)
+*Mục đích*: Vẽ lại biểu đồ Heatmap dinh dưỡng 7 ngày và biểu đồ radar dựa trên số liệu mới từ `weekly_runs.csv`.
 
 ```bash
 python scripts/plot_week9.py
 ```
 - **Thời gian chạy**: ~2 giây.
 - **Tập tin hình ảnh được cập nhật**:
-  - `experiments/week9/fig_heatmap_nutrition_7days.png` (Cột natri sẽ nằm trong dải sinh lý an toàn 80% - 110%, không còn vọt 343%).
+  - `experiments/week9/fig_heatmap_nutrition_7days.png`
   - `experiments/week9/fig_barchart_profiles_p1_p2_p3.png`
   - `experiments/week9/fig_radar_options_abc.png`
 
 ---
 
 ### Bước 4: Tái tạo Slide Báo Cáo PowerPoint
-*Mục đích*: Tự động cập nhật bảng thực đơn mới, số liệu mới và hình ảnh heatmap sạch vào các slide thuyết trình.
+*Mục đích*: Tự động cập nhật bảng thực đơn mới, số liệu mới và hình ảnh heatmap sạch vào các slide thuyết trình chính thức.
 
 ```bash
 python scripts/build_pptx_week8_9_10_11.py
 ```
-- **Tập tin slide được cập nhật**:
+- **Tập tin slide được cập nhật trực tiếp**:
   - `docs/slides/Slide_Bao_Cao_Tuan_8_9_10_11_DBO_IDBO.pptx`
   - `docs/slides/Slide_Bao_Cao_Tuan_9_10_11_DBO_IDBO.pptx`
 
@@ -98,9 +102,9 @@ python scripts/build_pptx_week8_9_10_11.py
 
 | Thành viên | Trách nhiệm chính | Chi tiết công việc cụ thể |
 |---|---|---|
-| **Thành viên 1** (Kỹ thuật/Chạy code) | Chạy Pipeline thực nghiệm | - Kích hoạt `venv` và chạy lần lượt 4 bước trên.<br>- Giám sát terminal log đảm bảo không có cảnh báo/lỗi.<br>- Lưu log chạy vào `experiments/week9/run_log.txt`. |
-| **Thành viên 2** (Kiểm tra dữ liệu) | Thẩm định số liệu thực đơn | - Mở file `experiments/week9/weekly_runs.csv`.<br>- Kiểm tra cột `sodium_mg` (đảm bảo không còn ngày nào > 3.000 mg/ngày).<br>- Kiểm tra lượng chất xơ `fiber_g` và tỷ lệ đáp ứng calo. |
-| **Thành viên 3** (Trình bày/Slide) | Kiểm tra slide & Đối chiếu hình ảnh | - Mở file slide PowerPoint vừa sinh trong `docs/slides/`.<br>- Kiểm tra Slide 3 (Bảng chuẩn hóa dữ liệu), Slide 5 (Bảng thực đơn mẫu), Slide 6 (Hình Heatmap 7 ngày).<br>- Đảm bảo không bị tràn chữ, hình ảnh sắc nét. |
+| **Thành viên 1** (Kỹ thuật/Chạy code) | Chạy Pipeline thực nghiệm | - Kích hoạt `venv` và chạy Bước 1 (`experiment_week9.py`).<br>- Giám sát terminal log đảm bảo không có cảnh báo/lỗi.<br>- Lưu log chạy vào `experiments/week9/run_log.txt`. |
+| **Thành viên 2** (Kiểm tra dữ liệu) | Thẩm định số liệu thực đơn | - Chạy Bước 2 (`python scripts/validate_week9_data.py`).<br>- Đọc file báo cáo tự động `experiments/week9/validation_summary.md`.<br>- Đối chiếu 3 chỉ tiêu: Calo ($\pm 10\%$), Xơ DRI, và Natri bệnh nhân P3 ($< 1.500\text{ mg}$). |
+| **Thành viên 3** (Trình bày/Slide) | Kiểm tra slide & Đối chiếu hình ảnh | - Chạy Bước 3 & Bước 4 để cập nhật biểu đồ và slide PowerPoint.<br>- Mở slide trong `docs/slides/` kiểm tra Slide 3, Slide 5, Slide 6.<br>- Đảm bảo hình ảnh mới nhất, không dùng file rời rạc có đuôi lạ. |
 
 ---
 
@@ -108,14 +112,14 @@ python scripts/build_pptx_week8_9_10_11.py
 
 ### ❓ Câu hỏi 1: "Tại sao ở slide cũ lượng Natri ngày 1 vọt lên 7.898 mg (343%) và ngày 6 vọt 260%?"
 > **Trả lời**: *"Dạ thưa Thầy/Cô, nhóm đã truy vết mã nguồn và phát hiện nguyên nhân gốc xuất phát từ tập dữ liệu thô USDA Branded Foods bị lỗi đơn vị nhập liệu từ nhà sản xuất (ví dụ món Cá cơm ngâm dầu `USDA_2110512` ghi nhận **4.690.000 mg natri/100g**, hay món mì ghi nhận đạm **131g/100g**). Đồng thời, ở phiên bản trước Profile P1 là người khỏe mạnh nên hàm ràng buộc chưa áp trần natri bệnh lý, dẫn tới thuật toán tự do chọn các món mặn/lỗi đơn vị này để tối ưu calo.*  
-> *Nhóm đã khắc phục triệt để bằng cách xây dựng pipeline tiền xử lý `clean_dataset.py`, áp trần natri tối đa 3.000 mg/100g cho kho dữ liệu và bảo đảm định luật bảo toàn khối lượng. Kết quả chạy lại trên Heatmap mới cho thấy toàn bộ các ngày đều bám sát ngưỡng khuyến nghị an toàn."*
+> *Nhóm đã khắc phục triệt để bằng cách xây dựng pipeline tiền xử lý `clean_dataset.py`, áp trần natri tối đa 3.000 mg/100g cho kho dữ liệu và bảo đảm định luật bảo toàn khối lượng. Nhờ đó, các trường hợp lỗi dữ liệu hàng triệu mg đã bị triệt tiêu hoàn toàn, đưa hàm lượng muối về dải sinh lý thực tế."*
 
 ---
 
 ### ❓ Câu hỏi 2: "Tại sao lại đề xuất món thịt chim cút sống, đùi gà 25g hay Tahini 85g?"
 > **Trả lời**: *"Dạ thưa Thầy/Cô:*  
-> *1. **Về món chim cút sống (`Quail, breast, raw`)**: Do cơ sở dữ liệu USDA lưu trữ cả nguyên liệu thô và gắn nhãn `, raw`. Nhóm đã bổ sung bộ lọc phân loại Edibility, chặn hoàn toàn các loại thịt, cá, gia cầm và nội tạng sống trước khi đưa vào candidate pool.*  
-> *2. **Về đùi gà 25g & Tahini 85g**: Trước đây khoảng chặn khẩu phần được đặt chung `[25g, 350g]` cho mọi món. Nhóm đã kích hoạt lớp `ROLE_PORTION_BOUNDS` trong `dish_category.py`, quy định rõ món đạm chính (Main Protein) phải từ 60g - 180g (không còn tình trạng đùi gà 25g), và bơ hạt/gia vị chỉ được dùng làm phụ gia (5g - 30g), không thể đóng vai trò bữa ăn độc lập."*
+> *1. **Về món chim cút sống (`Quail, breast, raw`)**: Do cơ sở dữ liệu USDA lưu trữ cả nguyên liệu thô và gắn nhãn `, raw`. Nhóm đã bổ sung bộ lọc tiền xử lý Edibility, chặn hoàn toàn các loại thịt, cá, gia cầm và nội tạng sống trước khi đưa vào candidate pool.*  
+> *2. **Về đùi gà 25g & Tahini 85g**: Trước đây khoảng chặn khẩu phần được đặt chung `[25g, 350g]` cho mọi món. Nhóm đã nghiên cứu kiến trúc `ROLE_PORTION_BOUNDS` trong `dish_category.py` để phân loại vai trò ẩm thực: món đạm chính (Main Protein) cần định lượng tối thiểu 60g - 180g, và bơ hạt/gia vị chỉ được dùng làm phụ gia (5g - 30g), không thể đóng vai trò bữa ăn độc lập."*
 
 ---
 
@@ -123,7 +127,7 @@ python scripts/build_pptx_week8_9_10_11.py
 > **Trả lời**: *"Dạ thưa Thầy/Cô, nhóm đã chuẩn hóa quy trình thành pipeline tự động có khả năng tái lập 100% qua script `scripts/clean_dataset.py` và báo cáo `cleaning_report.md`:*  
 > *- Ban đầu kho dữ liệu có **15.929 món**.*  
 > *- Qua phễu lọc 8 bước (lọc ngoại lai natri, calo > 900, bảo toàn khối lượng, loại thịt sống, gia vị, bột công nghiệp), nhóm đã loại bỏ **2.220 món rác** (13,9%).*  
-> *- Tập dữ liệu sạch hiện tại gồm **13.709 món** đạt chuẩn sinh lý, được bảo vệ bởi 5 unit tests chuyên biệt trong bộ test suite 258 bài test của hệ thống."*
+> *- Tập dữ liệu sạch hiện tại gồm **13.709 món** đạt chuẩn sinh lý, được bảo vệ bởi test suite tự động của hệ thống."*
 
 ---
 
