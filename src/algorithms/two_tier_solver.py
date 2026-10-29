@@ -41,7 +41,7 @@ class TwoTierConfig:
     min_pool_size: int = 20
     # IDBO specific parameters
     diversity_threshold: float = 1e-3  # Legacy fallback for inner tier
-    outer_diversity_threshold: float = 0.28
+    outer_diversity_threshold: float = 0.50
     inner_diversity_threshold: Optional[float] = None  # None: legacy value, not a calibrated threshold
     max_evaluations: Optional[int] = None  # Shared budget for outer + all inner evaluations
     stagnation_window: int = 25
