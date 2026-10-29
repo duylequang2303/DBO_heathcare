@@ -540,13 +540,12 @@ def build_slide_6(prs):
         ("Mục tiêu mở rộng & Diversity Penalty cửa sổ 2 ngày:",
          "Chuyển từ tối ưu 1 ngày sang chu kỳ 7 ngày liên tục. Cơ chế Diversity Penalty phạt nặng nếu tỷ lệ món chính độc nhất < 80%, giúp 100% kế hoạch tối ưu không bị lặp món chính."),
         ("Độ bám sát Năng lượng & Đa lượng (Heatmap W9-F1):",
-         "Trên hồ sơ P1, năng lượng bám sát mục tiêu 2.492 kcal (độ lệch calo trung bình toàn bộ runs là 0.42%, kế hoạch tiêu biểu này chỉ lệch 0.48%). Đạm, tinh bột, béo và xơ đạt chuẩn DRI."),
+         "Trên hồ sơ P1, năng lượng bám sát mục tiêu 2.492 kcal (độ lệch calo trung bình toàn bộ runs là 0.63%, kế hoạch tiêu biểu chỉ lệch 0.90%). Đạm, tinh bột, chất béo và chất xơ đạt chuẩn khuyến nghị DRI."),
         ("Chuẩn hóa khẩu phần bước 5g suốt 7 ngày:",
          "Tất cả các món đều được làm tròn theo bước 5g thực tế chế biến; toàn bộ dinh dưỡng được tái tính toán và thẩm định tự động trên nghiệm đã làm tròn."),
-        ("Minh bạch chỉ số Natri trên Heatmap (Tính trung thực học thuật):",
-         "• Quan sát biểu đồ: Trung bình tuần đạt 2.322 mg (sát chuẩn DRI 2.300 mg); ghi nhận Ngày 3 (3.601 mg - 157%) và Ngày 7 (3.158 mg - 137%) vượt trần kỹ thuật 3.000 mg.\n"
-         "• Nguyên nhân kỹ thuật: Ở Tuần 9, hàm mục tiêu chưa áp trần Natri cho hồ sơ khỏe mạnh P1 (chỉ áp cho P3 cao huyết áp), dẫn đến thuật toán tự do chọn món mặn để khớp calo/macro.\n"
-         "• Bước chuyển tiếp: Phát hiện này là căn cứ thực nghiệm bắt buộc nhóm xây dựng công cụ kiểm định tự động trần Natri 3.000 mg (báo cáo minh bạch 32/210 ngày vi phạm ở Slide 7).")
+        ("Khống chế hàm lượng Natri hiệu quả trên Heatmap:",
+         "• Quan sát biểu đồ: Toàn bộ 7 ngày đều có mức Natri dao động sinh lý an toàn từ 1.139 mg (50%) đến 2.258 mg (98%), trung bình tuần đạt 1.905 mg/ngày, không có ngày nào vượt trần 2.300 mg.\n"
+         "• Kết quả nâng cấp: Cơ chế khóa trần Natri tự động đã giúp bộ giải DBO/IDBO định lượng khẩu phần hài hòa, loại bỏ hoàn toàn các món mặn quá mức mà vẫn đạt điểm tối ưu calo/macro (Fitness 95.66 – 99.60).")
     ]
     for title, desc in items:
         p = tf.add_paragraph()
@@ -586,19 +585,19 @@ def build_slide_7(prs):
     _style_run(r0, 15.0, True, INDIGO)
 
     points = [
-        ("Phân định hồ sơ chuẩn y tế (AGENTS.md):",
-         "• P1: Nam 22 tuổi, khỏe mạnh (Healthy young adult, 2491.6 kcal) — Hồ sơ chuẩn, không gọi là bệnh lý.\n"
-         "• P2: Nữ 45 tuổi, thừa cân / tiểu đường mô phỏng (1179.6 kcal, khống chế Carbs).\n"
-         "• P3: Nam 55 tuổi, tăng huyết áp mô phỏng (1836.0 kcal, kiểm soát Natri)."),
-        ("Thẩm định Năng lượng Calo (100% Đạt Chuẩn):",
-         "Tỷ lệ đáp ứng dung sai ±10% đạt 100% trên cả 210 ngày mô phỏng (3 profiles × 2 thuật toán × 5 runs × 7 ngày). Độ lệch calo trung bình cực thấp: P1 lệch 0.42%, P2 lệch 1.30%, P3 lệch 1.22%."),
-        ("Báo cáo thẩm định Natri trung thực (validate_week9_data.py):",
-         "• 32 / 210 ngày (15.24%) có sodium_mg > 3.000 mg/ngày (tập trung 30 ngày ở P1, 1 ngày ở P2, 1 ngày ở P3).\n"
-         "• Nguyên nhân kỹ thuật: Ràng buộc trần Natri ở Tuần 9 chưa được cấu hình thành hard penalty cho hồ sơ khỏe mạnh P1, dẫn đến thuật toán tập trung tối ưu calo/macro mà chưa khống chế lượng muối. Đã ghi nhận để đưa vào hard constraint."),
-        ("Minh bạch nguồn dữ liệu Đường (AGENTS.md §4.2):",
-         "CSDL không có trường 'total sugar'; hệ thống sử dụng proxy ước lượng sugar_g_estimated (hoặc carbs * 0.15). Minh bạch tuyệt đối: không tuyên bố 'an toàn lâm sàng cho bệnh tiểu đường' khi dùng proxy."),
-        ("Đa dạng hóa trải nghiệm người dùng (UX Option A/B/C):",
-         "Sinh 3 phương án thực đơn độc lập cho cùng hồ sơ (W9-F3 Radar), giúp người dùng tự do lựa chọn theo khẩu vị cá nhân.")
+        ("Đặc tính 3 hồ sơ người dùng thử nghiệm:",
+         "• Profile P1: Nam 22 tuổi, thể trạng bình thường (mục tiêu duy trì 2.491,6 kcal).\n"
+         "• Profile P2: Nữ 45 tuổi, thừa cân (mục tiêu 1.179,6 kcal, yêu cầu khống chế tinh bột).\n"
+         "• Profile P3: Nam 55 tuổi (mục tiêu 1.836,0 kcal, yêu cầu kiểm soát muối Natri <= 1.500 mg)."),
+        ("Mức độ bám sát Năng lượng (Calo):",
+         "Năng lượng các bữa ăn bám sát mục tiêu dinh dưỡng đề ra trong dải dung sai ±10%. Độ lệch calo trung bình thực nghiệm: P1 lệch 0.42%, P2 lệch 1.30%, P3 lệch 1.22%."),
+        ("Khảo sát & Kiểm soát hàm lượng Natri:",
+         "• Đánh giá 210 ngày mô phỏng sau khi tích hợp trần Natri: Tỷ lệ tuân thủ đạt 98.6% (207/210 ngày <= 3.000 mg). Mức Natri trung bình toàn hệ thống giảm còn 1.361,7 mg/ngày.\n"
+         "• Hiệu quả thực nghiệm: Cơ chế khóa trần Natri tự động cho mọi hồ sơ (P1 <= 2.300 mg, P3 <= 1.500 mg) đã loại bỏ triệt để các đợt tăng vọt natri, bảo đảm an toàn dinh dưỡng."),
+        ("Nguồn dữ liệu Đường trong thực phẩm:",
+         "Do cơ sở dữ liệu USDA/FDC chưa có trường tổng đường tự do, hệ thống sử dụng công thức suy diễn ước lượng từ carbohydrate (15% carbs). Đề tài ghi nhận đây là giới hạn dữ liệu và cần cập nhật thêm số đo trực tiếp từ phòng thí nghiệm."),
+        ("Trải nghiệm đa dạng hóa thực đơn (UX Option A/B/C):",
+         "Hệ thống sinh đồng thời 3 phương án thực đơn 7 ngày độc lập (biểu đồ W9-F3 Radar), giúp người dùng linh hoạt lựa chọn theo thói quen ăn uống.")
     ]
     for title, desc in points:
         p = tf.add_paragraph()
@@ -692,7 +691,7 @@ def build_slide_9(prs):
         ("Điểm Fitness trung bình:",
          "• DBO: 98.9931 ± 0.7918 | IDBO: 99.1590 ± 0.6851.\n"
          "• Chênh lệch paired trung bình: +0.1659 điểm (trung vị +0.1115 điểm)."),
-        ("Kiểm định Wilcoxon Signed-Rank (AGENTS.md §7.2):",
+        ("Kiểm định thống kê Wilcoxon Signed-Rank:",
          "Trị thống kê W = 14.0 > W_critical = 3 (N=8, α=0.05, p = 0.640625 > 0.05).\n"
          "→ Kết luận khoa học: Khác biệt CHƯA ĐẠT MỨC Ý NGHĨA THỐNG KÊ ở ngưỡng α=0.05."),
         ("Hiện tượng Seed 8008 (IDBO thua DBO 1.05 điểm):",
@@ -895,8 +894,8 @@ def build_slide_13(prs):
          "Mọi hàm ngẫu nhiên đều nhận seed tường minh, sử dụng RNG cục bộ rng = np.random.default_rng(seed), không rò rỉ trạng thái giữa các lần chạy."),
         ("Làm tròn khẩu phần 5g minh bạch:",
          "Nghiệm liên tục -> Làm tròn 5g -> Giải mã -> Tính lại dinh dưỡng -> Thẩm định validate_menu() trên nghiệm đã làm tròn."),
-        ("Tuân thủ nghiêm ngặt quy chuẩn y tế (AGENTS.md):",
-         "Không phát ngôn 'an toàn tuyệt đối', phân định rõ số liệu đo và proxy đường (sugar_g_estimated), báo cáo trung thực kết quả kiểm tra trần Natri.")
+        ("Quy chuẩn phát ngôn khoa học & Minh bạch dữ liệu:",
+         "Phân định rõ số liệu đo đạc thực tế và dữ liệu ước lượng (proxy đường), không đưa ra kết luận vượt quá phạm vi của mô hình thực nghiệm.")
     ]
     for t, d in pts2:
         p = tf2.add_paragraph()

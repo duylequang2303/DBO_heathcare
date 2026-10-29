@@ -259,7 +259,7 @@ def plot_w9_f2_barchart(summary_df: pd.DataFrame, out_path: Path) -> None:
     ax1.set_xticks(x)
     ax1.set_xticklabels(labels, fontsize=10, fontweight="bold")
     plt.title(
-        "W9-F2: Hiệu Năng Tối Ưu Thực Đơn Chu Kỳ 7 Ngày Trên 3 Hồ Sơ Bệnh Lý\n(Profile P1: Chuẩn | P2: Giới hạn Đường <= 25g | P3: Giới hạn Natri <= 1500mg)",
+        "W9-F2: Hiệu Năng Tối Ưu Thực Đơn Chu Kỳ 7 Ngày Trên 3 Hồ Sơ Người Dùng\n(Profile P1: Chuẩn | P2: Giới hạn Đường <= 25g | P3: Giới hạn Natri <= 1500mg)",
         fontsize=11.5,
         fontweight="bold",
         pad=15,
@@ -278,7 +278,7 @@ def plot_w9_f3_radar(out_path: Path) -> None:
     Args:
         out_path: Target path for the output figure.
     """
-    categories = ["Mean Fitness\n(Điểm số)", "Độ đa dạng món\n(% độc nhất)", "Chuẩn Calo\n(100 - %lệch)", "An toàn\n(Không vi phạm)"]
+    categories = ["Mean Fitness\n(Điểm số)", "Độ đa dạng món\n(% độc nhất)", "Chuẩn Calo\n(100 - %lệch)", "Tuân thủ\nràng buộc (%)"]
     num_vars = len(categories)
 
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
