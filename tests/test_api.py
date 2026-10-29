@@ -125,24 +125,37 @@ def test_search_foods():
     assert all(food["food_name"] != "Unknown" for food in data)
 
 def test_menu_swap():
-    """Test POST /api/menu/swap returns 501 stub as per AGENTS.md"""
+    """Test POST /api/menu/swap successfully replaces an item and recalculates nutrients."""
+    profile = {
+        "name": "Duy",
+        "age": 22,
+        "gender": "male",
+        "height_cm": 170.0,
+        "weight_kg": 65.0,
+        "activity_level": "MODERATE",
+        "goal": "MAINTAIN",
+        "meal_counts": {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1},
+        "medical_conditions": [],
+        "allergies": [],
+        "dislikes": []
+    }
+    gen_res = client.post("/api/menu/generate", json={"profile": profile, "seed": 9001, "config": "smoke"})
+    assert gen_res.status_code == 200
+    gen_data = gen_res.json()
+    food_ids = [item["food_id"] for item in gen_data["items"]]
+
     swap_request = {
-        "profile": {
-            "name": "Duy",
-            "age": 22,
-            "gender": "male",
-            "height_cm": 170.0,
-            "weight_kg": 65.0,
-            "activity_level": "MODERATE",
-            "goal": "MAINTAIN",
-            "meal_counts": {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1},
-        },
-        "food_ids": ["USDA_2037503"],
-        "portions_g": [150.0],
+        "profile": profile,
+        "food_ids": food_ids,
         "slot": "breakfast_0",
         "new_food_id": None,
         "seed": 9001,
     }
     swap_response = client.post("/api/menu/swap", json=swap_request)
-    assert swap_response.status_code == 501
-    assert "chưa hỗ trợ" in swap_response.json()["detail"].lower() or "501" in str(swap_response.status_code)
+    assert swap_response.status_code == 200
+    data = swap_response.json()
+    assert "items" in data
+    assert "totals" in data
+    assert "delta" in data
+    assert len(data["items"]) == 7
+    assert data["items"][0]["portion_g_rounded"] % 5 == 0
