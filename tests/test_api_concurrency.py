@@ -64,3 +64,4 @@ def test_runtime_field_populated_and_accurate():
     data = res.json()
     assert "runtime_s" in data
     assert 0 < data["runtime_s"] < 5.0
+

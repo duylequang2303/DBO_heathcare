@@ -139,3 +139,4 @@ def test_edibility_no_standalone_raw_ingredients():
         for bad in banned_raw:
             # Standalone match check: name is equal or purely this condiment
             assert name_lower != bad, f"Standalone raw ingredient '{item['name']}' served as a dish"
+

@@ -93,3 +93,4 @@ def test_contract_food_search():
         required_food = ["food_id", "food_name", "calories", "protein_g", "carbs_g", "fat_g", "fiber_g", "sodium_mg", "meal_type"]
         for field in required_food:
             assert field in item, f"Missing FoodItem field '{field}'"
+
