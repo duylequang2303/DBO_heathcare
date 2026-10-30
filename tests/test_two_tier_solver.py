@@ -188,3 +188,23 @@ def test_two_tier_config_propagates_idbo_params_and_records_telemetry(food_map_f
     assert result.outer_collapse_events > 0
 
 
+def test_idbo_mechanism_fires_with_default_threshold(food_map_fixture, profile_p1):
+    """Test that IDBO perturbation/restart fire with default outer_diversity_threshold."""
+    targets = daily_all_targets(profile_p1)
+    config = TwoTierConfig(
+        outer_algo="idbo",
+        outer_n_agents=8,
+        outer_max_iter=10,
+        inner_algo="idbo",
+        inner_n_agents=8,
+        inner_max_iter=10,
+        stagnation_window=2,
+        perturbation_rate=1.0,
+        restart_rate=1.0,
+        seed=8007,
+    )
+    result = two_tier_optimize(profile_p1, food_map_fixture, targets, config)
+    assert result.outer_collapse_events > 0
+    assert result.outer_perturbations > 0 or result.outer_restarts > 0
+
+

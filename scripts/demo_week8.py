@@ -110,10 +110,13 @@ def main():
     menu = decode_result(res.best_food_ids, res.best_portions_g, food_map, profile.meal_counts)
     rounded_portions = round_portions(res.best_portions_g, step=5)
 
+    # §4.4 Rounding pipeline: continuous → round → decode rounded → recalc → validate → report
+    rounded_menu = decode_result(res.best_food_ids, rounded_portions, food_map, profile.meal_counts)
+
     print("\n2. THỰC ĐƠN TỰ CHỌN TỪ KHO 15.929 MÓN & KHẨU PHẦN TỐI ƯU")
     meal_names = {"breakfast": "Bữa sáng", "lunch": "Bữa trưa", "dinner": "Bữa tối", "snack": "Bữa phụ"}
     idx = 0
-    for meal_type_enum, meal in menu.meals.items():
+    for meal_type_enum, meal in rounded_menu.meals.items():
         m_name = meal_names.get(meal_type_enum.value, meal_type_enum.value)
         for item in meal.items:
             portion_orig = res.best_portions_g[idx]
@@ -130,16 +133,16 @@ def main():
     print(f"   Tổng đánh giá Inner:{res.inner_evals_total} lần")
     print(f"   Thời gian thực thi: {res.runtime_s:.2f} giây")
 
-    print("\n4. THÀNH PHẦN DINH DƯỠNG SO VỚI MỤC TIÊU")
-    cals = menu.total("calories")
+    print("\n4. THÀNH PHẦN DINH DƯỠNG SO VỚI MỤC TIÊU (tính trên thực đơn đã làm tròn)")
+    cals = rounded_menu.total("calories")
     print(f"   Năng lượng:   {cals:>7.1f} kcal / {targets['calories']:>7.1f} kcal (Lệch: {abs(cals - targets['calories']):.1f} kcal, {abs(cals - targets['calories'])/targets['calories']*100:.2f}%)")
-    print(f"   Protein:      {menu.total('protein_g'):>7.1f} g    / {targets['protein_g']:>7.1f} g")
-    print(f"   Carbohydrate: {menu.total('carbs_g'):>7.1f} g    / {targets['carbs_g']:>7.1f} g")
-    print(f"   Chất béo:     {menu.total('fat_g'):>7.1f} g    / {targets['fat_g']:>7.1f} g")
-    print(f"   Chất xơ:      {menu.total('fiber_g'):>7.1f} g    / {targets['fiber_g']:>7.1f} g")
+    print(f"   Protein:      {rounded_menu.total('protein_g'):>7.1f} g    / {targets['protein_g']:>7.1f} g")
+    print(f"   Carbohydrate: {rounded_menu.total('carbs_g'):>7.1f} g    / {targets['carbs_g']:>7.1f} g")
+    print(f"   Chất béo:     {rounded_menu.total('fat_g'):>7.1f} g    / {targets['fat_g']:>7.1f} g")
+    print(f"   Chất xơ:      {rounded_menu.total('fiber_g'):>7.1f} g    / {targets['fiber_g']:>7.1f} g")
 
-    print("\n5. KIỂM TRA RÀNG BUỘC (VALIDATE_MENU)")
-    violations = validate_menu(menu, profile, targets)
+    print("\n5. KIỂM TRA RÀNG BUỘC (VALIDATE_MENU trên thực đơn đã làm tròn)")
+    violations = validate_menu(rounded_menu, profile, targets)
     print(f"   Số vi phạm: {len(violations)}")
     if violations:
         for v in violations:

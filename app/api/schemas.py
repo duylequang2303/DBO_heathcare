@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -59,6 +59,7 @@ class SwapIn(BaseModel):
     slot: str          # vd "lunch_0"
     new_food_id: str | None = None   # None → tự chọn món khác cùng pool
     seed: int = 9001
+    old_portions_g: list[float] | None = None
 
 
 # ---------------------------------------------------------------------------

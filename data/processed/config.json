@@ -1,0 +1,67 @@
+{
+  "dataset": "cleaned_food_nutrition.csv",
+  "description": "Cleaned and standardized food nutrition dataset for DBO/IDBO menu optimization.",
+  "source": {
+    "raw_files": [
+      "data/raw/vietnamese_food_composition.csv",
+      "data/raw/usda_food_nutrition.csv"
+    ],
+    "raw_row_counts": {
+      "usda": 15403,
+      "vietnamese": 526,
+      "total": 15929
+    },
+    "cleaning_script": "scripts/clean_dataset.py",
+    "cleaning_report": "data/processed/cleaning_report.md"
+  },
+  "row_count": 13709,
+  "row_counts_by_source": {
+    "usda": 13224,
+    "vietnamese": 485
+  },
+  "rows_removed": 2220,
+  "columns": [
+    "food_id",
+    "food_name",
+    "category",
+    "meal_type",
+    "serving_size_g",
+    "calories",
+    "protein_g",
+    "carbs_g",
+    "fat_g",
+    "fiber_g",
+    "sodium_mg",
+    "calcium_mg",
+    "iron_mg",
+    "vitamin_c_mg"
+  ],
+  "nutrient_units": {
+    "calories": "kcal/100g",
+    "protein_g": "g/100g",
+    "carbs_g": "g/100g",
+    "fat_g": "g/100g",
+    "fiber_g": "g/100g",
+    "sodium_mg": "mg/100g",
+    "calcium_mg": "mg/100g",
+    "iron_mg": "mg/100g",
+    "vitamin_c_mg": "mg/100g"
+  },
+  "cleaning_filters_applied": [
+    "sodium_mg > 3000 mg/100g removed (physical natri ceiling)",
+    "calories > 900 kcal or < 0 per 100g removed",
+    "individual macro > 100g or sum(protein+carbs+fat) > 105g/100g removed",
+    "protein, carbs, fat all NaN removed",
+    "American Indian/Alaska Native Foods & Gia vị groups removed",
+    "Raw meat/poultry/game/seafood/organs removed (regex)",
+    "Industrial flour/starch/baking powder/tahini/drink mix removed (regex)",
+    "Salt/soy sauce/bouillon/broth base condiments removed (regex)"
+  ],
+  "known_limitations": [
+    "No total_sugar column in dataset; sugar is not directly measured",
+    "Sodium is the only condition-specific nutrient enforced",
+    "Raw/unprepared ingredients excluded from candidate pool per §4.5"
+  ],
+  "generated_at": "2026-10-25",
+  "version": "1.0.0"
+}

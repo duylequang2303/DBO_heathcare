@@ -3,6 +3,7 @@ from src.models.constraints import (
     is_feasible,
     validate_menu,
 )
+from src.models.dish_category import classify_dish_role
 from src.models.menu import MealType
 from tests.conftest import build_menu, item_from_map
 
@@ -117,4 +118,54 @@ def test_healthy_profile_caps_sodium_at_upper_tolerance_ceiling(valid_menu, prof
     # Total sodium is ~1411 + 4000 = ~5411 mg (> 3000 mg ceiling, but < 5000 mg target)
     issues = validate_menu(valid_menu, profile, targets)
     assert any("sodium_mg" in msg and "exceeds 3000.0" in msg for msg in issues)
+
+
+def test_role_aware_portion_bounds_when_food_map_provided(profile, targets, food_map):
+    """Role-aware bounds are stricter than universal PORTION_RANGE when food_map is given."""
+    staple_id = None
+    staple_name = None
+    for fid, row in food_map.items():
+        if classify_dish_role(row.get("food_name", ""), str(row.get("category", ""))).value == "staple":
+            staple_id = fid
+            staple_name = row.get("food_name", "")
+            break
+    assert staple_id is not None, "expected at least one staple food in food_map"
+
+    menu = build_menu(
+        food_map,
+        [(MealType.BREAKFAST, staple_id, 50.0)],
+    )
+    profile.meal_counts = {"breakfast": 1, "lunch": 0, "dinner": 0, "snack": 0}
+
+    # 50g is within universal PORTION_RANGE [25, 350] but below STAPLE min [100, 250]
+    issues_universal = validate_menu(menu, profile, targets)
+    assert not any("portion" in msg for msg in issues_universal)
+
+    issues_role = validate_menu(menu, profile, targets, food_map=food_map)
+    assert any("portion" in msg and staple_name in msg for msg in issues_role)
+
+
+def test_main_protein_role_aware_portion_bounds(profile, targets, food_map):
+    """Main protein portion below role min but above universal min triggers violation with food_map."""
+    protein_id = None
+    protein_name = None
+    for fid, row in food_map.items():
+        if classify_dish_role(row.get("food_name", ""), str(row.get("category", ""))).value == "main_protein":
+            protein_id = fid
+            protein_name = row.get("food_name", "")
+            break
+    assert protein_id is not None, "expected at least one main_protein food in food_map"
+
+    menu = build_menu(
+        food_map,
+        [(MealType.LUNCH, protein_id, 40.0)],
+    )
+    profile.meal_counts = {"breakfast": 0, "lunch": 1, "dinner": 0, "snack": 0}
+
+    # 40g is within universal PORTION_RANGE [25, 350] but below MAIN_PROTEIN min [60, 180]
+    issues_universal = validate_menu(menu, profile, targets)
+    assert not any("portion" in msg for msg in issues_universal)
+
+    issues_role = validate_menu(menu, profile, targets, food_map=food_map)
+    assert any("portion" in msg and protein_name in msg for msg in issues_role)
 
