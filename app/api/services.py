@@ -138,6 +138,24 @@ _GOAL_MAP = {
 }
 
 
+# Alias tiếng Việt → token chuẩn (TV3: user gõ "tăng huyết áp" bị bỏ sót).
+# diabetes/tiểu đường = no-op (không có cột total_sugar), giữ token để ghi chú.
+_MEDICAL_ALIASES: dict[str, str] = {
+    "tăng huyết áp": "hypertension", "cao huyết áp": "hypertension",
+    "huyết áp cao": "hypertension", "huyết áp": "hypertension",
+    "tăng huyết ap": "hypertension", "tiểu đường": "diabetes",
+    "đái tháo đường": "diabetes", "tie duong": "diabetes",
+}
+
+def _normalize_medical_conditions(conditions: list[str]) -> list[str]:
+    normalized: list[str] = []
+    for raw in conditions or []:
+        key = str(raw).strip().lower()
+        if not key: continue
+        normalized.append(_MEDICAL_ALIASES.get(key, key))
+    return normalized
+
+
 def build_profile(pin: ProfileIn) -> UserProfile:
     """ProfileIn (Pydantic) → UserProfile (domain)."""
     return UserProfile(
@@ -149,7 +167,7 @@ def build_profile(pin: ProfileIn) -> UserProfile:
         activity_level=_ACTIVITY_MAP[pin.activity_level],
         goal=_GOAL_MAP[pin.goal],
         meal_counts=pin.meal_counts,
-        medical_conditions=pin.medical_conditions,
+        medical_conditions=_normalize_medical_conditions(pin.medical_conditions),
         allergies=pin.allergies,
         dislikes=pin.dislikes,
         diet_type=DietType.STANDARD,
@@ -261,6 +279,10 @@ def generate_menu(req: GenerateIn) -> MenuOut:
     if sum(profile.meal_counts.values()) <= 0:
         from fastapi import HTTPException
         raise HTTPException(status_code=400, detail="Cần ít nhất 1 món ăn trong thực đơn để tối ưu.")
+    # diversity_penalty yêu cầu lunch_0 + dinner_0; thiếu → 500. Chặn sớm trả 400.
+    if profile.meal_counts.get("lunch", 0) < 1 or profile.meal_counts.get("dinner", 0) < 1:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="Thực đơn cần ít nhất 1 món trưa (lunch) và 1 món tối (dinner) để đánh giá đa dạng món chính.")
     food_map = get_food_map()
     targets = _get_targets_with_conditions(profile)
     config = _make_tt_config(req.config, req.seed)

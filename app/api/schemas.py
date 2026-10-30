@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 class ProfileIn(BaseModel):
     name: str
-    age: int = Field(ge=0, le=120)
+    age: int = Field(ge=18, le=120)
     gender: Literal["male", "female"]
     height_cm: float = Field(gt=0, le=250)
     weight_kg: float = Field(gt=0, le=400)
