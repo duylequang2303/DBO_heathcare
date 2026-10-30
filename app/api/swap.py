@@ -53,6 +53,11 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
             detail=f"Số lượng food_ids ({len(req.food_ids)}) không khớp số lượng slot ({len(meal_order)})",
         )
 
+    # Dữ liệu đầu vào phải thuộc danh sách món demo, tránh KeyError khi decode.
+    unknown = [fid for fid in req.food_ids if fid not in food_map]
+    if unknown:
+        raise HTTPException(status_code=400, detail=f"food_ids không hợp lệ: {unknown[:3]}")
+
     slot_idx = meal_order.index(req.slot)
     meal_name = req.slot.rsplit("_", 1)[0]
 
@@ -126,7 +131,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
     new_food_ids[slot_idx] = new_food_id
 
     # 7. Tính totals_old trước khi đổi
-    if req.old_portions_g and len(req.old_portions_g) == len(req.food_ids):
+    if req.old_portions_g is not None:
         old_rounded = round_portions(req.old_portions_g, step=5)
         old_menu = decode_result(req.food_ids, old_rounded, food_map, profile.meal_counts)
         totals_old = _totals_from_menu(old_menu)

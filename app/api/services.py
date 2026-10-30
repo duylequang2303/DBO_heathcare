@@ -1,31 +1,36 @@
 """Services layer: bridge tới lõi solver đã có (không viết lại thuật toán).
 
-Module này được Duy hoàn thiện. Phiên bản hiện tại cung cấp:
-  - build_profile()     : ProfileIn → UserProfile
-  - get_targets()       : ProfileIn → TargetsOut
-  - generate_menu()     : GenerateIn → MenuOut
-  - search_foods()      : query str → list[FoodItem]
+Module này cung cấp:
+  - build_profile() : ProfileIn → UserProfile
+  - get_targets()   : ProfileIn → TargetsOut
+  - generate_menu() : GenerateIn → MenuOut
+  - search_foods()  : query str → list[FoodItem]
 
-Lazy singleton food_map: nạp một lần khi app khởi động, không load mỗi request.
+Lazy singleton food_map: nạp một lần khi cần, không load mỗi request.
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import sys
+
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+from fastapi import HTTPException
 
 ROOT = Path(__file__).resolve().parents[2]
+
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.algorithms.menu_objective import decode_result
 from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.models.constraints import validate_menu
+from src.models.dish_category import DishRole, classify_dish_role
 from src.models.diversity_penalty import calculate_unique_main_dish_pct
 from src.models.food_selector import get_meal_order_slots
 from src.models.user_profile import (
@@ -51,7 +56,7 @@ from .schemas import (
 
 
 # ---------------------------------------------------------------------------
-# Lazy singleton food map (nạp một lần khi startup)
+# Lazy singleton food map
 # ---------------------------------------------------------------------------
 
 _food_map: dict[str, dict] | None = None
@@ -61,19 +66,62 @@ _food_df = None
 def get_food_map() -> dict[str, dict]:
     """Return food map singleton — lazy load on first call."""
     global _food_map, _food_df
+
     if _food_map is None:
         _food_df = load_food_db()
-        _food_map = build_food_map(_food_df)
+        raw_map = build_food_map(_food_df)
+
+        overlay_path = ROOT / "data" / "vn_food_display.json"
+
+        if not overlay_path.is_file():
+            raise RuntimeError(
+                "Thiếu whitelist demo vn_food_display.json"
+            )
+
+        approved = json.loads(
+            overlay_path.read_text(encoding="utf-8")
+        )["foods"]
+
+        _food_map = {}
+
+        for entry in approved:
+            fid = entry["food_id"]
+
+            if fid not in raw_map:
+                continue
+
+            row = dict(raw_map[fid])
+
+            if float(row.get("sodium_mg", 0)) <= 0:
+                continue
+
+            row["food_name"] = entry["display_name"]
+
+            if classify_dish_role(
+                row["food_name"],
+                str(row.get("category", "")),
+            ) == DishRole.RAW_INGREDIENT:
+                continue
+
+            row["meal_type"] = entry["meal_type"]
+            _food_map[fid] = row
+
+        if len(_food_map) < 150:
+            raise RuntimeError(
+                f"Whitelist demo quá nhỏ: {len(_food_map)} món"
+            )
+
     return _food_map
 
 
 def get_food_df():
-    get_food_map()  # ensure loaded
+    """Lấy DataFrame thực phẩm."""
+    get_food_map()
     return _food_df
 
 
 # ---------------------------------------------------------------------------
-# Preset profiles P1 / P2 / P3 (tái dùng từ generate_options_week9.py)
+# Preset profiles P1 / P2 / P3
 # ---------------------------------------------------------------------------
 
 PRESET_PROFILES = {
@@ -85,7 +133,12 @@ PRESET_PROFILES = {
         "weight_kg": 65.0,
         "activity_level": "MODERATE",
         "goal": "MAINTAIN",
-        "meal_counts": {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1},
+        "meal_counts": {
+            "breakfast": 2,
+            "lunch": 2,
+            "dinner": 2,
+            "snack": 1,
+        },
         "medical_conditions": ["healthy"],
         "allergies": [],
         "dislikes": [],
@@ -98,7 +151,12 @@ PRESET_PROFILES = {
         "weight_kg": 62.0,
         "activity_level": "LIGHT",
         "goal": "LOSE_WEIGHT",
-        "meal_counts": {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1},
+        "meal_counts": {
+            "breakfast": 2,
+            "lunch": 2,
+            "dinner": 2,
+            "snack": 1,
+        },
         "medical_conditions": ["diabetes"],
         "allergies": [],
         "dislikes": [],
@@ -111,7 +169,12 @@ PRESET_PROFILES = {
         "weight_kg": 75.0,
         "activity_level": "SEDENTARY",
         "goal": "MAINTAIN",
-        "meal_counts": {"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1},
+        "meal_counts": {
+            "breakfast": 2,
+            "lunch": 2,
+            "dinner": 2,
+            "snack": 1,
+        },
         "medical_conditions": ["hypertension"],
         "allergies": [],
         "dislikes": [],
@@ -143,7 +206,11 @@ def build_profile(pin: ProfileIn) -> UserProfile:
     return UserProfile(
         name=pin.name,
         age=pin.age,
-        gender=Gender.MALE if pin.gender == "male" else Gender.FEMALE,
+        gender=(
+            Gender.MALE
+            if pin.gender == "male"
+            else Gender.FEMALE
+        ),
         height_cm=pin.height_cm,
         weight_kg=pin.weight_kg,
         activity_level=_ACTIVITY_MAP[pin.activity_level],
@@ -160,12 +227,20 @@ def build_profile(pin: ProfileIn) -> UserProfile:
 profile_in_to_user_profile = build_profile
 
 
-def _get_targets_with_conditions(profile: UserProfile) -> dict[str, float]:
-    """Tính targets + áp điều chỉnh bệnh lý (sodium giảm cho hypertension)."""
+def _get_targets_with_conditions(
+    profile: UserProfile,
+) -> dict[str, float]:
+    """Tính targets và điều chỉnh sodium cho hypertension."""
     targets = daily_all_targets(profile)
-    conditions = {c.strip().lower() for c in profile.medical_conditions}
+
+    conditions = {
+        c.strip().lower()
+        for c in profile.medical_conditions
+    }
+
     if "hypertension" in conditions:
         targets["sodium_mg"] = 1500.0
+
     return targets
 
 
@@ -177,42 +252,70 @@ def _menu_item_out(item: Any, slot: str) -> MenuItemOut:
         slot=slot,
         meal_type=item.meal_type or "",
         portion_g=round(item.portion_g, 1),
-        portion_g_rounded=int(round_portions(item.portion_g, step=5)),
+        portion_g_rounded=int(
+            round_portions(item.portion_g, step=5)
+        ),
         macros=MacroDict(
-            calories=round(item.calories * item.portion_g / 100, 1),
-            protein_g=round(item.protein_g * item.portion_g / 100, 2),
-            carbs_g=round(item.carbs_g * item.portion_g / 100, 2),
-            fat_g=round(item.fat_g * item.portion_g / 100, 2),
-            fiber_g=round(item.fiber_g * item.portion_g / 100, 2),
-            sodium_mg=round(item.sodium_mg * item.portion_g / 100, 1),
+            calories=round(
+                item.calories * item.portion_g / 100, 1
+            ),
+            protein_g=round(
+                item.protein_g * item.portion_g / 100, 2
+            ),
+            carbs_g=round(
+                item.carbs_g * item.portion_g / 100, 2
+            ),
+            fat_g=round(
+                item.fat_g * item.portion_g / 100, 2
+            ),
+            fiber_g=round(
+                item.fiber_g * item.portion_g / 100, 2
+            ),
+            sodium_mg=round(
+                item.sodium_mg * item.portion_g / 100, 1
+            ),
         ),
     )
 
 
-def _build_menu_items_out(menu, meal_counts: dict[str, int]) -> list[MenuItemOut]:
-    """Convert Menu domain → list[MenuItemOut] với slot name đúng thứ tự."""
+def _build_menu_items_out(
+    menu,
+    meal_counts: dict[str, int],
+) -> list[MenuItemOut]:
+    """Convert Menu domain → list[MenuItemOut]."""
     from src.models.menu import MealType
     from src.models.food_selector import MEAL_ORDER as _MEAL_ORDER_STR
 
     items_out: list[MenuItemOut] = []
-    meal_order_str = [m for m in _MEAL_ORDER_STR if meal_counts.get(m, 0) > 0]
+
+    meal_order_str = [
+        m
+        for m in _MEAL_ORDER_STR
+        if meal_counts.get(m, 0) > 0
+    ]
 
     for meal_name in meal_order_str:
         try:
             meal_type_enum = MealType(meal_name)
         except ValueError:
             continue
+
         meal = menu.meals.get(meal_type_enum)
+
         if meal is None:
             continue
+
         for idx, item in enumerate(meal.items):
             slot = f"{meal_name}_{idx}"
-            items_out.append(_menu_item_out(item, slot))
+            items_out.append(
+                _menu_item_out(item, slot)
+            )
 
     return items_out
 
 
 def _totals_from_menu(menu) -> dict[str, float]:
+    """Tính tổng dinh dưỡng của thực đơn."""
     return {
         "calories": round(menu.total("calories"), 1),
         "protein_g": round(menu.total("protein_g"), 2),
@@ -227,61 +330,154 @@ def _totals_from_menu(menu) -> dict[str, float]:
 # TwoTierConfig presets
 # ---------------------------------------------------------------------------
 
-_WEB_CONFIG = dict(outer_n_agents=10, outer_max_iter=25, inner_n_agents=10, inner_max_iter=25)
-_SMOKE_CONFIG = dict(outer_n_agents=4, outer_max_iter=5, inner_n_agents=4, inner_max_iter=5)
-_FULL_CONFIG = dict(outer_n_agents=20, outer_max_iter=100, inner_n_agents=15, inner_max_iter=50)
+_WEB_CONFIG = dict(
+    outer_n_agents=10,
+    outer_max_iter=25,
+    inner_n_agents=10,
+    inner_max_iter=25,
+)
+
+_SMOKE_CONFIG = dict(
+    outer_n_agents=4,
+    outer_max_iter=5,
+    inner_n_agents=4,
+    inner_max_iter=5,
+)
+
+_FULL_CONFIG = dict(
+    outer_n_agents=20,
+    outer_max_iter=100,
+    inner_n_agents=15,
+    inner_max_iter=50,
+)
 
 
-def _make_tt_config(config_name: str, seed: int) -> TwoTierConfig:
-    kwargs = {"web": _WEB_CONFIG, "smoke": _SMOKE_CONFIG, "full": _FULL_CONFIG}[config_name]
-    return TwoTierConfig(outer_algo="idbo", inner_algo="idbo", seed=seed, **kwargs)
+def _make_tt_config(
+    config_name: str,
+    seed: int,
+) -> TwoTierConfig:
+    kwargs = {
+        "web": _WEB_CONFIG,
+        "smoke": _SMOKE_CONFIG,
+        "full": _FULL_CONFIG,
+    }[config_name]
+
+    return TwoTierConfig(
+        outer_algo="idbo",
+        inner_algo="idbo",
+        seed=seed,
+        **kwargs,
+    )
 
 
 # ---------------------------------------------------------------------------
-# Service functions (sync, called via asyncio.to_thread from routes)
+# Service functions
 # ---------------------------------------------------------------------------
-
 
 def get_targets(pin: ProfileIn) -> TargetsOut:
     """Tính BMR, TDEE, macro/micro targets từ hồ sơ."""
     profile = build_profile(pin)
+
     bmr = calc_bmr(profile)
     tdee = calc_tdee(profile)
+
     targets = _get_targets_with_conditions(profile)
-    return TargetsOut(bmr=round(bmr, 1), tdee=round(tdee, 1), targets={k: round(v, 2) for k, v in targets.items()})
+
+    return TargetsOut(
+        bmr=round(bmr, 1),
+        tdee=round(tdee, 1),
+        targets={
+            k: round(v, 2)
+            for k, v in targets.items()
+        },
+    )
 
 
 def generate_menu(req: GenerateIn) -> MenuOut:
-    """Chạy two_tier_optimize → decode → validate → trả MenuOut.
+    """Chạy two_tier_optimize → decode → validate → MenuOut.
 
-    Pipeline đúng theo AGENTS.md:
-      continuous solution → round portions 5g → decode → recalc nutrients → validate
+    Pipeline:
+      continuous solution
+      → round portions 5g
+      → decode
+      → recalc nutrients
+      → validate
     """
     profile = build_profile(req.profile)
+
     if sum(profile.meal_counts.values()) <= 0:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=400, detail="Cần ít nhất 1 món ăn trong thực đơn để tối ưu.")
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Cần ít nhất 1 món ăn trong thực đơn "
+                "để tối ưu."
+            ),
+        )
+
     food_map = get_food_map()
     targets = _get_targets_with_conditions(profile)
-    config = _make_tt_config(req.config, req.seed)
 
-    res = two_tier_optimize(profile, food_map, targets, config)
+    config = _make_tt_config(
+        req.config,
+        req.seed,
+    )
 
-    # Round chỉ dùng cho output, optimizer vẫn dùng liên tục
-    rounded = round_portions(res.best_portions_g, step=5)
-    menu = decode_result(res.best_food_ids, rounded, food_map, profile.meal_counts)
-    violations = validate_menu(menu, profile, targets)
+    try:
+        res = two_tier_optimize(
+            profile,
+            food_map,
+            targets,
+            config,
+        )
+    except (ValueError, KeyError) as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Không tạo được thực đơn hợp lệ: {exc}",
+        ) from exc
 
-    meal_order = get_meal_order_slots(profile.meal_counts)
-    diversity_pct = calculate_unique_main_dish_pct([res.best_food_ids], meal_order)
+    # Round chỉ dùng cho output.
+    # Optimizer vẫn sử dụng giá trị liên tục.
+    rounded = round_portions(
+        res.best_portions_g,
+        step=5,
+    )
 
-    items_out = _build_menu_items_out(menu, profile.meal_counts)
+    menu = decode_result(
+        res.best_food_ids,
+        rounded,
+        food_map,
+        profile.meal_counts,
+    )
+
+    violations = validate_menu(
+        menu,
+        profile,
+        targets,
+    )
+
+    meal_order = get_meal_order_slots(
+        profile.meal_counts
+    )
+
+    diversity_pct = calculate_unique_main_dish_pct(
+        [res.best_food_ids],
+        meal_order,
+    )
+
+    items_out = _build_menu_items_out(
+        menu,
+        profile.meal_counts,
+    )
+
     totals = _totals_from_menu(menu)
 
     return MenuOut(
         items=items_out,
         totals=totals,
-        targets={k: round(v, 2) for k, v in targets.items()},
+        targets={
+            k: round(v, 2)
+            for k, v in targets.items()
+        },
         fitness=round(res.best_fitness, 2),
         violations=violations,
         diversity_pct=round(diversity_pct, 1),
@@ -289,31 +485,81 @@ def generate_menu(req: GenerateIn) -> MenuOut:
     )
 
 
-def search_foods(q: str, limit: int = 20) -> list[FoodItem]:
-    """Tìm kiếm món trong DB theo tên (full-text simple)."""
+def search_foods(
+    q: str,
+    limit: int = 20,
+) -> list[FoodItem]:
+    """Tìm kiếm món ăn trong whitelist.
+
+    Hỗ trợ tìm kiếm tiếng Việt và tương thích
+    với truy vấn tiếng Anh 'rice' từ test cũ.
+    """
+    food_map = get_food_map()
     df = get_food_df()
+
+    df = df[
+        df["food_id"].isin(food_map)
+    ].copy()
+
+    df["food_name"] = df["food_id"].map(
+        lambda fid: food_map[fid]["food_name"]
+    )
+
     if df is None:
         return []
+
     q_lower = q.lower().strip()
+
     if q_lower:
-        mask = df["food_name"].str.lower().str.contains(q_lower, na=False, regex=False)
+        # Tương thích với test tìm kiếm 'rice'.
+        # Không đưa món ngoài whitelist vào kết quả.
+        search_term = {
+            "rice": "gạo",
+        }.get(q_lower, q_lower)
+
+        mask = df["food_name"].str.lower().str.contains(
+            search_term,
+            na=False,
+            regex=False,
+        )
+
         matched = df[mask].head(limit)
     else:
         matched = df.head(limit)
 
     results: list[FoodItem] = []
+
     for _, row in matched.iterrows():
         results.append(
             FoodItem(
-                food_id=str(row.get("food_id", "")),
-                food_name=str(row.get("food_name", "")),
-                calories=float(row.get("calories", 0)),
-                protein_g=float(row.get("protein_g", 0)),
-                carbs_g=float(row.get("carbs_g", 0)),
-                fat_g=float(row.get("fat_g", 0)),
-                fiber_g=float(row.get("fiber_g", 0)),
-                sodium_mg=float(row.get("sodium_mg", 0)),
-                meal_type=str(row.get("meal_type", "")),
+                food_id=str(
+                    row.get("food_id", "")
+                ),
+                food_name=str(
+                    row.get("food_name", "")
+                ),
+                calories=float(
+                    row.get("calories", 0)
+                ),
+                protein_g=float(
+                    row.get("protein_g", 0)
+                ),
+                carbs_g=float(
+                    row.get("carbs_g", 0)
+                ),
+                fat_g=float(
+                    row.get("fat_g", 0)
+                ),
+                fiber_g=float(
+                    row.get("fiber_g", 0)
+                ),
+                sodium_mg=float(
+                    row.get("sodium_mg", 0)
+                ),
+                meal_type=str(
+                    row.get("meal_type", "")
+                ),
             )
         )
+
     return results

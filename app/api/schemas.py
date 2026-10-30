@@ -10,6 +10,7 @@ Hợp đồng API (TASK_WEEK10.md):
 from __future__ import annotations
 
 from typing import Literal
+import math
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -30,9 +31,16 @@ class ProfileIn(BaseModel):
     meal_counts: dict[str, int] = Field(
         default={"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1}
     )
-    medical_conditions: list[str] = []
-    allergies: list[str] = []
-    dislikes: list[str] = []
+    medical_conditions: list[str] = Field(default_factory=list)
+    allergies: list[str] = Field(default_factory=list)
+    dislikes: list[str] = Field(default_factory=list)
+
+    @field_validator("allergies", "dislikes", "medical_conditions")
+    @classmethod
+    def validate_tokens(cls, tokens: list[str]) -> list[str]:
+        if any(not token.strip() or len(token.strip()) < 2 for token in tokens):
+            raise ValueError("Mỗi mục dị ứng/bệnh lý/không thích phải có ít nhất 2 ký tự")
+        return [token.strip() for token in tokens]
 
     @field_validator("meal_counts")
     @classmethod
@@ -49,7 +57,7 @@ class ProfileIn(BaseModel):
 
 class GenerateIn(BaseModel):
     profile: ProfileIn
-    seed: int = 9001
+    seed: int = Field(default=9001, ge=0, le=2147483647)
     config: Literal["smoke", "web", "full"] = "web"
 
 
@@ -58,8 +66,17 @@ class SwapIn(BaseModel):
     food_ids: list[str]
     slot: str          # vd "lunch_0"
     new_food_id: str | None = None   # None → tự chọn món khác cùng pool
-    seed: int = 9001
+    seed: int = Field(default=9001, ge=0, le=2147483647)
     old_portions_g: list[float] | None = None
+
+    @model_validator(mode="after")
+    def check_portions(self):
+        if self.old_portions_g is not None:
+            if len(self.old_portions_g) != len(self.food_ids):
+                raise ValueError("old_portions_g phải có cùng độ dài với food_ids")
+            if any(not math.isfinite(p) or p <= 0 or p > 1000 for p in self.old_portions_g):
+                raise ValueError("old_portions_g phải là số hữu hạn trong (0, 1000]")
+        return self
 
 
 # ---------------------------------------------------------------------------

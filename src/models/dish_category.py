@@ -54,6 +54,8 @@ RAW_JUNK_PATTERNS = [
     r"\bindustrial\b",
     r"\bgrain,.*raw\b",
     r"\bflour\b",
+    r"\b(dầu|mỡ)\b",
+    r"\b(oil|lard|margarine|butter oil)\b",
 ]
 
 RAW_JUNK_REGEX = re.compile("|".join(RAW_JUNK_PATTERNS), re.IGNORECASE)
@@ -67,12 +69,12 @@ def is_raw_or_industrial_junk(food_name: str, category: str = "") -> bool:
 
 # Keyword mappings for Vietnamese dishes & USDA
 STAPLE_PATTERNS = re.compile(
-    r"\b(cơm|gạo|bún|phở|mì|miến|bánh mì|khoai|ngô|yến mạch|oatmeal|rice, cooked|noodles, cooked|pasta, cooked|bread)\b",
+    r"\b(cơm|gạo|bún|phở|mì|miến|bánh mì|khoai|ngô|kê|đậu xanh|đậu tương|yến mạch|oatmeal|rice, cooked|noodles, cooked|pasta, cooked|bread)\b",
     re.IGNORECASE,
 )
 
 PROTEIN_PATTERNS = re.compile(
-    r"\b(thịt|bò|heo|lợn|gà|vịt|cá|tôm|cua|mực|trứng|đậu phụ|chả|giò|xúc xích|sườn|beef|chicken|pork|fish|salmon|tuna|turkey|egg|tofu|shrimp)\b",
+    r"\b(thịt|bò|heo|lợn|gà|vịt|cá|tép|ghẹ|tôm|cua|mực|trứng|đậu phụ|chả|giò|xúc xích|sườn|beef|chicken|pork|fish|salmon|tuna|turkey|egg|tofu|shrimp)\b",
     re.IGNORECASE,
 )
 
@@ -82,12 +84,12 @@ SOUP_PATTERNS = re.compile(
 )
 
 VEGETABLE_PATTERNS = re.compile(
-    r"\b(rau|cải|muống|ngót|dền|mồng tơi|xà lách|dưa leo|cà chua|bí|bầu|mướp|súp lơ|bông cải|nấm|đậu cô ve|vegetable|salad|spinach|broccoli|cucumber)\b",
+    r"\b(rau|cải|muống|ngót|dền|mồng tơi|xà lách|dưa leo|cà chua|bí|bầu|mướp|súp lơ|bông cải|nấm|đậu cô ve|cà|cần|củ|măng|giá đậu|su hào|vegetable|salad|spinach|broccoli|cucumber)\b",
     re.IGNORECASE,
 )
 
 SNACK_PATTERNS = re.compile(
-    r"\b(quả|trái|chuối|táo|cam|bưởi|xoài|dưa|nho|ổi|sữa chua|sữa chua|sữa tươi|hạt|fruit|yogurt|apple|banana|orange|milk|almond|walnut)\b",
+    r"\b(quả|trái|chuối|táo|cam|bưởi|xoài|dưa|nho|ổi|sữa chua|sữa tươi|sữa dê|sữa đậu|dứa|hồng|chanh|dâu|đu đủ|lê|lựu|mãng cầu|mít|mơ|na|nhãn|quít|sầu riêng|vải|bơ|khế|hạt|fruit|yogurt|apple|banana|orange|milk|almond|walnut)\b",
     re.IGNORECASE,
 )
 
@@ -99,6 +101,10 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
 
     if is_raw_or_industrial_junk(name_clean, cat_clean):
         return DishRole.RAW_INGREDIENT
+
+    # Snack overrides bread/cereal in cookie and waffle product names.
+    if re.search(r"\b(cookie|cookies|waffle|waffles|biscuit|biscuits|bánh quy|bánh xốp)\b", name_clean):
+        return DishRole.FRUIT_SNACK
 
     # 1. Soup / Canh
     if SOUP_PATTERNS.search(name_clean) or "soup" in cat_clean:
