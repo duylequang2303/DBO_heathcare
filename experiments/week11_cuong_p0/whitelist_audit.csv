@@ -1,0 +1,166 @@
+﻿food_id,name,sodium_mg,vn_id,sodium_positive,meal_type
+VN_10001,Sữa bò tươi,380.0,True,True,breakfast
+VN_10002,Sữa dê tươi,50.0,True,True,breakfast
+VN_10004,Sữa chua (từ sữa bò),46.0,True,True,breakfast
+VN_10005,Sữa chua vớt béo,135.0,True,True,breakfast
+VN_1001,Gạo nếp cái,3.0,True,True,all
+VN_1002,Gạo nếp máy (loại thường),3.0,True,True,all
+VN_1003,Gạo tẻ giã,5.0,True,True,all
+VN_1004,Gạo tẻ máy,5.0,True,True,all
+VN_1005,Gạo lứt,5.0,True,True,all
+VN_1006,Kê,7.0,True,True,all
+VN_1007,Ngô bắp tươi,3.0,True,True,all
+VN_1013,Bánh phở,3.0,True,True,breakfast
+VN_11002,Dưa chuột hộp,1208.0,True,True,snack
+VN_11003,Dứa hộp,1.0,True,True,all
+VN_11013,Nước dứa hộp,2.0,True,True,all
+VN_13004,Hạt tiêu,44.0,True,True,all
+VN_14005,Nước cam tươi,1.0,True,True,snack
+VN_14007,Nước ép cà chua,269.0,True,True,snack
+VN_14009,Nước quít tươi,1.0,True,True,snack
+VN_2002,Củ cái,12.0,True,True,all
+VN_2004,Củ sắn,2.0,True,True,all
+VN_2008,Khoai lang,31.0,True,True,breakfast
+VN_2013,Khoai sọ,10.0,True,True,breakfast
+VN_2014,Khoai tây,7.0,True,True,breakfast
+VN_3006,Đậu hà lan (hạt),9.0,True,True,breakfast
+VN_3007,Đậu tương (đậu nành),2.0,True,True,breakfast
+VN_3010,Đậu xanh (đậu tắt),6.0,True,True,breakfast
+VN_3012,Hạt dẻ tươi,3.0,True,True,snack
+VN_3015,Hạt điều,12.0,True,True,snack
+VN_3017,Lạc hạt,4.0,True,True,snack
+VN_3025,Đậu phụ,7.0,True,True,breakfast
+VN_3032,Sữa đậu nành (100g đậu/lít),55.0,True,True,breakfast
+VN_4001,Bầu,2.0,True,True,all
+VN_4002,Bí đao (bí xanh),13.0,True,True,all
+VN_4003,Bí ngô,8.0,True,True,all
+VN_4004,Cà bát,2.0,True,True,all
+VN_4005,Cà chua,12.0,True,True,all
+VN_4006,Cà pháo,7.0,True,True,all
+VN_4007,"Cà rốt (củ đỏ, vàng)",52.0,True,True,all
+VN_4010,Cải bắp,28.0,True,True,all
+VN_4011,Cải bắp đỏ,27.0,True,True,all
+VN_4013,Cải cúc,33.0,True,True,all
+VN_4014,Cải soong,85.0,True,True,all
+VN_4015,Cải thìa (cải trắng),25.0,True,True,all
+VN_4016,Cải xanh,29.0,True,True,all
+VN_4018,Cần tây,96.0,True,True,all
+VN_4019,Chuối xanh,13.0,True,True,snack
+VN_4021,Củ cải trắng,10.0,True,True,all
+VN_4027,Dưa chuột,13.0,True,True,snack
+VN_4029,Đậu cô ve,96.0,True,True,breakfast
+VN_4033,Đu đủ xanh,7.0,True,True,all
+VN_4035,Giá đậu tương,14.0,True,True,breakfast
+VN_4036,Giá đậu xanh,23.0,True,True,breakfast
+VN_4037,Hành củ tươi,17.0,True,True,all
+VN_4040,Hạt sen tươi,1.0,True,True,all
+VN_4045,Khế,2.0,True,True,all
+VN_4050,Măng chua,9.0,True,True,all
+VN_4052,Măng tây,2.0,True,True,all
+VN_4053,Măng tre,4.0,True,True,all
+VN_4054,Mướp,3.0,True,True,all
+VN_4055,Mướp đắng,5.0,True,True,all
+VN_4066,Rau bí,17.0,True,True,all
+VN_4068,Rau câu tươi,9.0,True,True,all
+VN_4069,Rau diếp,14.0,True,True,all
+VN_4070,Rau đay,16.0,True,True,all
+VN_4072,Rau giền cơm,20.0,True,True,breakfast
+VN_4073,Rau giền đỏ,56.0,True,True,all
+VN_4075,Rau húng,91.0,True,True,all
+VN_4076,Rau khoai lang,19.0,True,True,breakfast
+VN_4077,Rau kinh giới,2.0,True,True,all
+VN_4080,Rau mồng tơi,38.0,True,True,all
+VN_4081,Rau mùi,46.0,True,True,all
+VN_4082,Rau mùi tàu,39.0,True,True,all
+VN_4083,Rau muống,37.0,True,True,all
+VN_4085,Rau ngố,5.0,True,True,all
+VN_4086,Rau ngót,25.0,True,True,all
+VN_4088,Rau răm,5.0,True,True,all
+VN_4090,Rau sà lách,59.0,True,True,all
+VN_4094,Rau thơm,6.0,True,True,all
+VN_4096,Su hào,53.0,True,True,all
+VN_4098,"Su su, quả",2.0,True,True,snack
+VN_4099,Súp lơ trắng,20.0,True,True,all
+VN_4100,Súp lơ xanh,23.0,True,True,all
+VN_4126,Nấm thường tươi,5.0,True,True,all
+VN_5001,Bưởi,3.0,True,True,snack
+VN_5002,Cam,4.0,True,True,snack
+VN_5003,Chanh,3.0,True,True,snack
+VN_5006,Chuối tây,17.0,True,True,snack
+VN_5007,Chuối tiêu,19.0,True,True,snack
+VN_5009,Dâu tây,37.0,True,True,snack
+VN_5011,Dưa hấu,5.0,True,True,snack
+VN_5012,Dưa hồng,18.0,True,True,snack
+VN_5014,Dứa ta,24.0,True,True,snack
+VN_5015,Dứa tây,1.0,True,True,snack
+VN_5017,Đu đủ chín,4.0,True,True,snack
+VN_5020,Hồng đỏ,4.0,True,True,snack
+VN_5021,Hồng ngâm,3.0,True,True,snack
+VN_5022,Hồng xiêm,12.0,True,True,snack
+VN_5023,Lê,5.0,True,True,snack
+VN_5024,Lựu,3.0,True,True,snack
+VN_5025,Mãng cầu xiêm,4.0,True,True,snack
+VN_5028,Mít dai,3.0,True,True,snack
+VN_5031,Mơ,1.0,True,True,snack
+VN_5034,Na,22.0,True,True,snack
+VN_5035,Nhãn,26.0,True,True,snack
+VN_5037,Nho ngọt,2.0,True,True,all
+VN_5038,Nho ta (nho chua),11.0,True,True,snack
+VN_5047,Quít,4.0,True,True,all
+VN_5048,Sầu riêng,1.0,True,True,all
+VN_5050,Táo ta,3.0,True,True,all
+VN_5051,Táo tây,15.0,True,True,all
+VN_5052,Vải,1.0,True,True,all
+VN_5055,Xoài chín,2.0,True,True,all
+VN_5056,Quả kiwi,3.0,True,True,all
+VN_7002,Thịt bê nạc,80.0,True,True,all
+VN_7003,Thịt bò loại i,83.0,True,True,all
+VN_7005,"Thịt bò, lưng, nạc",57.0,True,True,all
+VN_7007,Thịt bồ câu ra ràng,54.0,True,True,all
+VN_7010,"Thịt cừu, nạc",91.0,True,True,all
+VN_7011,"Thịt dê, nạc",82.0,True,True,all
+VN_7013,Thịt gà ta,70.0,True,True,all
+VN_7014,Thịt gà tây,66.0,True,True,all
+VN_7015,Thịt hươu,51.0,True,True,all
+VN_7017,Thịt lợn nạc,76.0,True,True,all
+VN_7019,Thịt ngỗng,73.0,True,True,all
+VN_7020,Thịt ngựa,62.0,True,True,all
+VN_7021,Thịt thỏ nhà,41.0,True,True,all
+VN_7022,Thịt thỏ rừng,50.0,True,True,all
+VN_7023,Thịt trâu,53.0,True,True,all
+VN_7028,Thịt vịt,63.0,True,True,all
+VN_7029,Bầu dục bò,200.0,True,True,all
+VN_7030,Bầu dục lợn,121.0,True,True,all
+VN_7032,Chân giò lợn,47.0,True,True,all
+VN_7033,Dạ dày bò,97.0,True,True,all
+VN_7034,Dạ dày lợn,75.0,True,True,all
+VN_7038,Đuôi lợn,63.0,True,True,all
+VN_7044,Lưỡi bò,69.0,True,True,all
+VN_7045,Lưỡi lợn,110.0,True,True,all
+VN_7048,Mề gà,69.0,True,True,all
+VN_7049,Óc bò,126.0,True,True,all
+VN_7050,Óc lợn,120.0,True,True,all
+VN_7051,Phối bò,198.0,True,True,all
+VN_7052,Phối lợn,153.0,True,True,all
+VN_7053,Sườn lợn,60.0,True,True,all
+VN_7054,Tai lợn,191.0,True,True,all
+VN_7080,Ếch (thịt đùi),58.0,True,True,all
+VN_8003,Cá chép,49.0,True,True,all
+VN_8009,Cá đối,65.0,True,True,all
+VN_8011,Cá hồi,46.0,True,True,all
+VN_8015,Cá mòi,100.0,True,True,all
+VN_8019,Cá ngừ,78.0,True,True,all
+VN_8020,Cá nục,104.0,True,True,all
+VN_8026,Cá thu,110.0,True,True,all
+VN_8027,Cá thu đao,86.0,True,True,all
+VN_8030,Cá trê,53.0,True,True,all
+VN_8031,Cá trích,160.0,True,True,all
+VN_8033,Cua bể,316.0,True,True,all
+VN_8034,Cua đồng,453.0,True,True,all
+VN_8035,Ghẹ,293.0,True,True,all
+VN_8040,Mực tươi,44.0,True,True,all
+VN_8051,Tôm biến,148.0,True,True,all
+VN_8052,Tôm đồng,418.0,True,True,all
+VN_9001,Trứng gà,158.0,True,True,breakfast
+VN_9004,Trứng vịt,191.0,True,True,breakfast
+VN_9007,Trứng chim cút,141.0,True,True,breakfast
