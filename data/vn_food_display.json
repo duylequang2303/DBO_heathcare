@@ -112,11 +112,6 @@
       "meal_type": "breakfast"
     },
     {
-      "food_id": "VN_10003",
-      "display_name": "Sữa mẹ (sữa người)",
-      "meal_type": "breakfast"
-    },
-    {
       "food_id": "VN_10004",
       "display_name": "Sữa chua (từ sữa bò)",
       "meal_type": "breakfast"
@@ -144,11 +139,6 @@
     {
       "food_id": "VN_1003",
       "display_name": "Gạo tẻ giã",
-      "meal_type": "all"
-    },
-    {
-      "food_id": "VN_1004",
-      "display_name": "Gạo tẻ máy",
       "meal_type": "all"
     },
     {

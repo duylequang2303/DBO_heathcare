@@ -349,14 +349,20 @@ const MEAL_ICONS = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: 
 const MEAL_LABELS = { breakfast: 'Sáng', lunch: 'Trưa', dinner: 'Tối', snack: 'Phụ' };
 
 function renderMenu(menuData) {
-  // Stats
-  if (fitnessEl) fitnessEl.innerHTML = `
-    <span class="fitness-score">
-      <span class="fitness-num">${menuData.fitness.toFixed(1)}</span>
-      <span class="fitness-label">/ 100</span>
-    </span>`;
-  if (diversityEl) diversityEl.textContent = `Đa dạng: ${menuData.diversity_pct}%`;
-  if (runtimeEl) runtimeEl.textContent = `⏱ ${menuData.runtime_s}s`;
+  // Stats (SwapOut may not provide fitness/diversity/runtime)
+  if (fitnessEl && typeof menuData.fitness === 'number') {
+    fitnessEl.innerHTML = `
+      <span class="fitness-score">
+        <span class="fitness-num">${menuData.fitness.toFixed(1)}</span>
+        <span class="fitness-label">/ 100</span>
+      </span>`;
+  }
+  if (diversityEl && menuData.diversity_pct !== undefined && menuData.diversity_pct !== null) {
+    diversityEl.textContent = `Đa dạng: ${menuData.diversity_pct}%`;
+  }
+  if (runtimeEl && menuData.runtime_s !== undefined && menuData.runtime_s !== null) {
+    runtimeEl.textContent = `⏱ ${menuData.runtime_s}s`;
+  }
 
   // Table rows
   menuTableBody.innerHTML = '';
@@ -428,14 +434,20 @@ async function handleSwap(slot, btn) {
     toast('Chưa có thực đơn để đổi món', 'error');
     return;
   }
+  const allSwapBtns = document.querySelectorAll('.btn-swap');
+  allSwapBtns.forEach(b => { b.disabled = true; });
   const originalText = btn.innerHTML;
-  btn.disabled = true;
   btn.innerHTML = '⏳ Đang đổi...';
 
   try {
     const foodIds = state.menu.items.map(i => i.food_id);
     const oldPortionsG = state.menu.items.map(i => i.portion_g);
     const res = await apiSwapMenu(state.profile, foodIds, slot, null, state.seed, oldPortionsG);
+
+    // Bảo toàn metadata từ menu trước nếu SwapOut không có
+    res.fitness = res.fitness ?? state.menu?.fitness;
+    res.diversity_pct = res.diversity_pct ?? state.menu?.diversity_pct;
+    res.runtime_s = res.runtime_s ?? state.menu?.runtime_s;
 
     state.menu = res;
     state.foodIds = res.items.map(i => i.food_id);
@@ -452,7 +464,7 @@ async function handleSwap(slot, btn) {
   } catch (err) {
     toast(`Lỗi đổi món: ${err.message}`, 'error');
   } finally {
-    btn.disabled = false;
+    allSwapBtns.forEach(b => { b.disabled = false; });
     btn.innerHTML = originalText;
   }
 }

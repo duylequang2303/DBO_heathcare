@@ -114,7 +114,7 @@ def main() -> int:
                                                 portion_g=item.portion_g,
                                                 invalid_id=bad_id, sodium_zero_or_missing=zero_na,
                                                 display_name_mismatch=name_mismatch))
-                    if bad_id_count or zero_na_count or wrong_display_count or item_count != sum(profile_data['meal_counts'].values()):
+                    if bad_id_count or zero_na_count or wrong_display_count or item_count != sum(profile_data['meal_counts'].values()) or (fitness is not None and fitness < 85):
                         status = 'fail'
                 except Exception as exc:
                     status = 'error'
