@@ -1,0 +1,421 @@
+﻿profile,seed,slot,food_id,name,source_sodium_mg,portion_g,invalid_id,sodium_zero_or_missing,display_name_mismatch
+p1,9001,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,250.0,False,False,False
+p1,9001,breakfast_1,VN_9007,Trứng chim cút,141.0,110.0,False,False,False
+p1,9001,lunch_0,VN_4090,Rau sà lách,59.0,220.0,False,False,False
+p1,9001,lunch_1,VN_8051,Tôm biến,148.0,135.0,False,False,False
+p1,9001,dinner_0,VN_4100,Súp lơ xanh,23.0,160.0,False,False,False
+p1,9001,dinner_1,VN_7044,Lưỡi bò,69.0,60.0,False,False,False
+p1,9001,snack_0,VN_5009,Dâu tây,37.0,200.0,False,False,False
+p1,9002,breakfast_0,VN_9007,Trứng chim cút,141.0,120.0,False,False,False
+p1,9002,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,210.0,False,False,False
+p1,9002,lunch_0,VN_4090,Rau sà lách,59.0,130.0,False,False,False
+p1,9002,lunch_1,VN_7028,Thịt vịt,63.0,160.0,False,False,False
+p1,9002,dinner_0,VN_4088,Rau răm,5.0,220.0,False,False,False
+p1,9002,dinner_1,VN_4021,Củ cải trắng,10.0,220.0,False,False,False
+p1,9002,snack_0,VN_5020,Hồng đỏ,4.0,200.0,False,False,False
+p1,9003,breakfast_0,VN_3010,Đậu xanh (đậu tắt),6.0,250.0,False,False,False
+p1,9003,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,130.0,False,False,False
+p1,9003,lunch_0,VN_8009,Cá đối,65.0,60.0,False,False,False
+p1,9003,lunch_1,VN_4054,Mướp,3.0,130.0,False,False,False
+p1,9003,dinner_0,VN_7030,Bầu dục lợn,121.0,155.0,False,False,False
+p1,9003,dinner_1,VN_4073,Rau giền đỏ,56.0,130.0,False,False,False
+p1,9003,snack_0,VN_4019,Chuối xanh,13.0,130.0,False,False,False
+p1,9004,breakfast_0,VN_10002,Sữa dê tươi,50.0,80.0,False,False,False
+p1,9004,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,175.0,False,False,False
+p1,9004,lunch_0,VN_8019,Cá ngừ,78.0,180.0,False,False,False
+p1,9004,lunch_1,VN_8009,Cá đối,65.0,140.0,False,False,False
+p1,9004,dinner_0,VN_7007,Thịt bồ câu ra ràng,54.0,130.0,False,False,False
+p1,9004,dinner_1,VN_8052,Tôm đồng,418.0,180.0,False,False,False
+p1,9004,snack_0,VN_3017,Lạc hạt,4.0,160.0,False,False,False
+p1,9005,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,205.0,False,False,False
+p1,9005,breakfast_1,VN_4072,Rau giền cơm,20.0,220.0,False,False,False
+p1,9005,lunch_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p1,9005,lunch_1,VN_4082,Rau mùi tàu,39.0,220.0,False,False,False
+p1,9005,dinner_0,VN_8052,Tôm đồng,418.0,180.0,False,False,False
+p1,9005,dinner_1,VN_4015,Cải thìa (cải trắng),25.0,170.0,False,False,False
+p1,9005,snack_0,VN_4019,Chuối xanh,13.0,200.0,False,False,False
+p1,9006,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,190.0,False,False,False
+p1,9006,breakfast_1,VN_3032,Sữa đậu nành (100g đậu/lít),55.0,100.0,False,False,False
+p1,9006,lunch_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p1,9006,lunch_1,VN_4094,Rau thơm,6.0,165.0,False,False,False
+p1,9006,dinner_0,VN_4088,Rau răm,5.0,120.0,False,False,False
+p1,9006,dinner_1,VN_7007,Thịt bồ câu ra ràng,54.0,110.0,False,False,False
+p1,9006,snack_0,VN_5038,Nho ta (nho chua),11.0,200.0,False,False,False
+p1,9007,breakfast_0,VN_10001,Sữa bò tươi,380.0,180.0,False,False,False
+p1,9007,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,250.0,False,False,False
+p1,9007,lunch_0,VN_4055,Mướp đắng,5.0,170.0,False,False,False
+p1,9007,lunch_1,VN_2002,Củ cái,12.0,160.0,False,False,False
+p1,9007,dinner_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p1,9007,dinner_1,VN_7049,Óc bò,126.0,140.0,False,False,False
+p1,9007,snack_0,VN_5025,Mãng cầu xiêm,4.0,200.0,False,False,False
+p1,9008,breakfast_0,VN_9007,Trứng chim cút,141.0,140.0,False,False,False
+p1,9008,breakfast_1,VN_10001,Sữa bò tươi,380.0,180.0,False,False,False
+p1,9008,lunch_0,VN_1001,Gạo nếp cái,3.0,240.0,False,False,False
+p1,9008,lunch_1,VN_8040,Mực tươi,44.0,175.0,False,False,False
+p1,9008,dinner_0,VN_8052,Tôm đồng,418.0,160.0,False,False,False
+p1,9008,dinner_1,VN_2002,Củ cái,12.0,220.0,False,False,False
+p1,9008,snack_0,VN_3017,Lạc hạt,4.0,135.0,False,False,False
+p1,9009,breakfast_0,VN_10001,Sữa bò tươi,380.0,60.0,False,False,False
+p1,9009,breakfast_1,VN_3006,Đậu hà lan (hạt),9.0,195.0,False,False,False
+p1,9009,lunch_0,VN_1004,Gạo tẻ máy,5.0,240.0,False,False,False
+p1,9009,lunch_1,VN_4096,Su hào,53.0,80.0,False,False,False
+p1,9009,dinner_0,VN_8033,Cua bể,316.0,115.0,False,False,False
+p1,9009,dinner_1,VN_8030,Cá trê,53.0,125.0,False,False,False
+p1,9009,snack_0,VN_5009,Dâu tây,37.0,90.0,False,False,False
+p1,9010,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,200.0,False,False,False
+p1,9010,breakfast_1,VN_9001,Trứng gà,158.0,60.0,False,False,False
+p1,9010,lunch_0,VN_7032,Chân giò lợn,47.0,180.0,False,False,False
+p1,9010,lunch_1,VN_2002,Củ cái,12.0,85.0,False,False,False
+p1,9010,dinner_0,VN_7044,Lưỡi bò,69.0,180.0,False,False,False
+p1,9010,dinner_1,VN_7011,"Thịt dê, nạc",82.0,115.0,False,False,False
+p1,9010,snack_0,VN_5038,Nho ta (nho chua),11.0,200.0,False,False,False
+p1,9011,breakfast_0,VN_10001,Sữa bò tươi,380.0,130.0,False,False,False
+p1,9011,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,170.0,False,False,False
+p1,9011,lunch_0,VN_1001,Gạo nếp cái,3.0,240.0,False,False,False
+p1,9011,lunch_1,VN_4054,Mướp,3.0,220.0,False,False,False
+p1,9011,dinner_0,VN_4053,Măng tre,4.0,205.0,False,False,False
+p1,9011,dinner_1,VN_8003,Cá chép,49.0,180.0,False,False,False
+p1,9011,snack_0,VN_5025,Mãng cầu xiêm,4.0,190.0,False,False,False
+p1,9012,breakfast_0,VN_1013,Bánh phở,3.0,100.0,False,False,False
+p1,9012,breakfast_1,VN_2014,Khoai tây,7.0,140.0,False,False,False
+p1,9012,lunch_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p1,9012,lunch_1,VN_2002,Củ cái,12.0,120.0,False,False,False
+p1,9012,dinner_0,VN_4005,Cà chua,12.0,155.0,False,False,False
+p1,9012,dinner_1,VN_2002,Củ cái,12.0,90.0,False,False,False
+p1,9012,snack_0,VN_3017,Lạc hạt,4.0,185.0,False,False,False
+p1,9013,breakfast_0,VN_4036,Giá đậu xanh,23.0,220.0,False,False,False
+p1,9013,breakfast_1,VN_9001,Trứng gà,158.0,170.0,False,False,False
+p1,9013,lunch_0,VN_1001,Gạo nếp cái,3.0,235.0,False,False,False
+p1,9013,lunch_1,VN_8026,Cá thu,110.0,180.0,False,False,False
+p1,9013,dinner_0,VN_7038,Đuôi lợn,63.0,180.0,False,False,False
+p1,9013,dinner_1,VN_4053,Măng tre,4.0,220.0,False,False,False
+p1,9013,snack_0,VN_5028,Mít dai,3.0,95.0,False,False,False
+p1,9014,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,160.0,False,False,False
+p1,9014,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,130.0,False,False,False
+p1,9014,lunch_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p1,9014,lunch_1,VN_2002,Củ cái,12.0,115.0,False,False,False
+p1,9014,dinner_0,VN_7005,"Thịt bò, lưng, nạc",57.0,60.0,False,False,False
+p1,9014,dinner_1,VN_7052,Phối lợn,153.0,115.0,False,False,False
+p1,9014,snack_0,VN_5038,Nho ta (nho chua),11.0,200.0,False,False,False
+p1,9015,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,220.0,False,False,False
+p1,9015,breakfast_1,VN_1013,Bánh phở,3.0,150.0,False,False,False
+p1,9015,lunch_0,VN_1002,Gạo nếp máy (loại thường),3.0,100.0,False,False,False
+p1,9015,lunch_1,VN_8019,Cá ngừ,78.0,120.0,False,False,False
+p1,9015,dinner_0,VN_1001,Gạo nếp cái,3.0,135.0,False,False,False
+p1,9015,dinner_1,VN_7019,Thịt ngỗng,73.0,95.0,False,False,False
+p1,9015,snack_0,VN_5028,Mít dai,3.0,100.0,False,False,False
+p1,9016,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,245.0,False,False,False
+p1,9016,breakfast_1,VN_10001,Sữa bò tươi,380.0,180.0,False,False,False
+p1,9016,lunch_0,VN_4082,Rau mùi tàu,39.0,215.0,False,False,False
+p1,9016,lunch_1,VN_2002,Củ cái,12.0,220.0,False,False,False
+p1,9016,dinner_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p1,9016,dinner_1,VN_8040,Mực tươi,44.0,85.0,False,False,False
+p1,9016,snack_0,VN_5007,Chuối tiêu,19.0,90.0,False,False,False
+p1,9017,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,250.0,False,False,False
+p1,9017,breakfast_1,VN_9001,Trứng gà,158.0,180.0,False,False,False
+p1,9017,lunch_0,VN_7049,Óc bò,126.0,165.0,False,False,False
+p1,9017,lunch_1,VN_4068,Rau câu tươi,9.0,140.0,False,False,False
+p1,9017,dinner_0,VN_8011,Cá hồi,46.0,180.0,False,False,False
+p1,9017,dinner_1,VN_8033,Cua bể,316.0,180.0,False,False,False
+p1,9017,snack_0,VN_5038,Nho ta (nho chua),11.0,200.0,False,False,False
+p1,9018,breakfast_0,VN_3025,Đậu phụ,7.0,180.0,False,False,False
+p1,9018,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,250.0,False,False,False
+p1,9018,lunch_0,VN_7049,Óc bò,126.0,180.0,False,False,False
+p1,9018,lunch_1,VN_4088,Rau răm,5.0,220.0,False,False,False
+p1,9018,dinner_0,VN_7007,Thịt bồ câu ra ràng,54.0,180.0,False,False,False
+p1,9018,dinner_1,VN_7011,"Thịt dê, nạc",82.0,180.0,False,False,False
+p1,9018,snack_0,VN_5024,Lựu,3.0,200.0,False,False,False
+p1,9019,breakfast_0,VN_4029,Đậu cô ve,96.0,215.0,False,False,False
+p1,9019,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,245.0,False,False,False
+p1,9019,lunch_0,VN_1003,Gạo tẻ giã,5.0,110.0,False,False,False
+p1,9019,lunch_1,VN_8052,Tôm đồng,418.0,175.0,False,False,False
+p1,9019,dinner_0,VN_8015,Cá mòi,100.0,175.0,False,False,False
+p1,9019,dinner_1,VN_7011,"Thịt dê, nạc",82.0,130.0,False,False,False
+p1,9019,snack_0,VN_3015,Hạt điều,12.0,95.0,False,False,False
+p1,9020,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,250.0,False,False,False
+p1,9020,breakfast_1,VN_10002,Sữa dê tươi,50.0,140.0,False,False,False
+p1,9020,lunch_0,VN_1003,Gạo tẻ giã,5.0,250.0,False,False,False
+p1,9020,lunch_1,VN_7002,Thịt bê nạc,80.0,125.0,False,False,False
+p1,9020,dinner_0,VN_7045,Lưỡi lợn,110.0,180.0,False,False,False
+p1,9020,dinner_1,VN_4075,Rau húng,91.0,220.0,False,False,False
+p1,9020,snack_0,VN_5028,Mít dai,3.0,190.0,False,False,False
+p2,9001,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,145.0,False,False,False
+p2,9001,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,130.0,False,False,False
+p2,9001,lunch_0,VN_8052,Tôm đồng,418.0,110.0,False,False,False
+p2,9001,lunch_1,VN_7080,Ếch (thịt đùi),58.0,180.0,False,False,False
+p2,9001,dinner_0,VN_4052,Măng tây,2.0,165.0,False,False,False
+p2,9001,dinner_1,VN_8031,Cá trích,160.0,60.0,False,False,False
+p2,9001,snack_0,VN_5035,Nhãn,26.0,50.0,False,False,False
+p2,9002,breakfast_0,VN_9001,Trứng gà,158.0,155.0,False,False,False
+p2,9002,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,155.0,False,False,False
+p2,9002,lunch_0,VN_4077,Rau kinh giới,2.0,215.0,False,False,False
+p2,9002,lunch_1,VN_4126,Nấm thường tươi,5.0,220.0,False,False,False
+p2,9002,dinner_0,VN_4018,Cần tây,96.0,165.0,False,False,False
+p2,9002,dinner_1,VN_7029,Bầu dục bò,200.0,60.0,False,False,False
+p2,9002,snack_0,VN_3012,Hạt dẻ tươi,3.0,50.0,False,False,False
+p2,9003,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,185.0,False,False,False
+p2,9003,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,100.0,False,False,False
+p2,9003,lunch_0,VN_7053,Sườn lợn,60.0,60.0,False,False,False
+p2,9003,lunch_1,VN_4081,Rau mùi,46.0,135.0,False,False,False
+p2,9003,dinner_0,VN_7015,Thịt hươu,51.0,180.0,False,False,False
+p2,9003,dinner_1,VN_4086,Rau ngót,25.0,165.0,False,False,False
+p2,9003,snack_0,VN_4098,"Su su, quả",2.0,135.0,False,False,False
+p2,9004,breakfast_0,VN_1013,Bánh phở,3.0,200.0,False,False,False
+p2,9004,breakfast_1,VN_4072,Rau giền cơm,20.0,140.0,False,False,False
+p2,9004,lunch_0,VN_4094,Rau thơm,6.0,115.0,False,False,False
+p2,9004,lunch_1,VN_7007,Thịt bồ câu ra ràng,54.0,180.0,False,False,False
+p2,9004,dinner_0,VN_4096,Su hào,53.0,80.0,False,False,False
+p2,9004,dinner_1,VN_4100,Súp lơ xanh,23.0,350.0,False,False,False
+p2,9004,snack_0,VN_3012,Hạt dẻ tươi,3.0,50.0,False,False,False
+p2,9005,breakfast_0,VN_3010,Đậu xanh (đậu tắt),6.0,160.0,False,False,False
+p2,9005,breakfast_1,VN_2014,Khoai tây,7.0,170.0,False,False,False
+p2,9005,lunch_0,VN_7019,Thịt ngỗng,73.0,60.0,False,False,False
+p2,9005,lunch_1,VN_4088,Rau răm,5.0,220.0,False,False,False
+p2,9005,dinner_0,VN_7052,Phối lợn,153.0,180.0,False,False,False
+p2,9005,dinner_1,VN_4050,Măng chua,9.0,90.0,False,False,False
+p2,9005,snack_0,VN_11002,Dưa chuột hộp,1208.0,50.0,False,False,False
+p2,9006,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,140.0,False,False,False
+p2,9006,breakfast_1,VN_4036,Giá đậu xanh,23.0,220.0,False,False,False
+p2,9006,lunch_0,VN_8040,Mực tươi,44.0,180.0,False,False,False
+p2,9006,lunch_1,VN_4083,Rau muống,37.0,120.0,False,False,False
+p2,9006,dinner_0,VN_7054,Tai lợn,191.0,180.0,False,False,False
+p2,9006,dinner_1,VN_4050,Măng chua,9.0,80.0,False,False,False
+p2,9006,snack_0,VN_3015,Hạt điều,12.0,50.0,False,False,False
+p2,9007,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,90.0,False,False,False
+p2,9007,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,125.0,False,False,False
+p2,9007,lunch_0,VN_4082,Rau mùi tàu,39.0,140.0,False,False,False
+p2,9007,lunch_1,VN_4004,Cà bát,2.0,175.0,False,False,False
+p2,9007,dinner_0,VN_11003,Dứa hộp,1.0,70.0,False,False,False
+p2,9007,dinner_1,VN_8011,Cá hồi,46.0,145.0,False,False,False
+p2,9007,snack_0,VN_5038,Nho ta (nho chua),11.0,140.0,False,False,False
+p2,9008,breakfast_0,VN_9007,Trứng chim cút,141.0,180.0,False,False,False
+p2,9008,breakfast_1,VN_3032,Sữa đậu nành (100g đậu/lít),55.0,50.0,False,False,False
+p2,9008,lunch_0,VN_1001,Gạo nếp cái,3.0,155.0,False,False,False
+p2,9008,lunch_1,VN_8052,Tôm đồng,418.0,180.0,False,False,False
+p2,9008,dinner_0,VN_11003,Dứa hộp,1.0,145.0,False,False,False
+p2,9008,dinner_1,VN_4066,Rau bí,17.0,130.0,False,False,False
+p2,9008,snack_0,VN_5003,Chanh,3.0,115.0,False,False,False
+p2,9009,breakfast_0,VN_10001,Sữa bò tươi,380.0,85.0,False,False,False
+p2,9009,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,185.0,False,False,False
+p2,9009,lunch_0,VN_4007,"Cà rốt (củ đỏ, vàng)",52.0,110.0,False,False,False
+p2,9009,lunch_1,VN_4054,Mướp,3.0,170.0,False,False,False
+p2,9009,dinner_0,VN_7011,"Thịt dê, nạc",82.0,65.0,False,False,False
+p2,9009,dinner_1,VN_4126,Nấm thường tươi,5.0,95.0,False,False,False
+p2,9009,snack_0,VN_3012,Hạt dẻ tươi,3.0,75.0,False,False,False
+p2,9010,breakfast_0,VN_3010,Đậu xanh (đậu tắt),6.0,145.0,False,False,False
+p2,9010,breakfast_1,VN_3032,Sữa đậu nành (100g đậu/lít),55.0,115.0,False,False,False
+p2,9010,lunch_0,VN_4053,Măng tre,4.0,215.0,False,False,False
+p2,9010,lunch_1,VN_8015,Cá mòi,100.0,65.0,False,False,False
+p2,9010,dinner_0,VN_7032,Chân giò lợn,47.0,155.0,False,False,False
+p2,9010,dinner_1,VN_7048,Mề gà,69.0,95.0,False,False,False
+p2,9010,snack_0,VN_4019,Chuối xanh,13.0,200.0,False,False,False
+p2,9011,breakfast_0,VN_9007,Trứng chim cút,141.0,110.0,False,False,False
+p2,9011,breakfast_1,VN_3006,Đậu hà lan (hạt),9.0,85.0,False,False,False
+p2,9011,lunch_0,VN_7014,Thịt gà tây,66.0,60.0,False,False,False
+p2,9011,lunch_1,VN_2002,Củ cái,12.0,220.0,False,False,False
+p2,9011,dinner_0,VN_7013,Thịt gà ta,70.0,110.0,False,False,False
+p2,9011,dinner_1,VN_4100,Súp lơ xanh,23.0,350.0,False,False,False
+p2,9011,snack_0,VN_11002,Dưa chuột hộp,1208.0,145.0,False,False,False
+p2,9012,breakfast_0,VN_2013,Khoai sọ,10.0,205.0,False,False,False
+p2,9012,breakfast_1,VN_10001,Sữa bò tươi,380.0,155.0,False,False,False
+p2,9012,lunch_0,VN_7030,Bầu dục lợn,121.0,105.0,False,False,False
+p2,9012,lunch_1,VN_7002,Thịt bê nạc,80.0,165.0,False,False,False
+p2,9012,dinner_0,VN_4073,Rau giền đỏ,56.0,150.0,False,False,False
+p2,9012,dinner_1,VN_7020,Thịt ngựa,62.0,115.0,False,False,False
+p2,9012,snack_0,VN_3012,Hạt dẻ tươi,3.0,125.0,False,False,False
+p2,9013,breakfast_0,VN_3025,Đậu phụ,7.0,170.0,False,False,False
+p2,9013,breakfast_1,VN_9001,Trứng gà,158.0,180.0,False,False,False
+p2,9013,lunch_0,VN_4094,Rau thơm,6.0,130.0,False,False,False
+p2,9013,lunch_1,VN_2002,Củ cái,12.0,220.0,False,False,False
+p2,9013,dinner_0,VN_4050,Măng chua,9.0,220.0,False,False,False
+p2,9013,dinner_1,VN_8009,Cá đối,65.0,160.0,False,False,False
+p2,9013,snack_0,VN_5024,Lựu,3.0,200.0,False,False,False
+p2,9014,breakfast_0,VN_9007,Trứng chim cút,141.0,60.0,False,False,False
+p2,9014,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,175.0,False,False,False
+p2,9014,lunch_0,VN_7010,"Thịt cừu, nạc",91.0,180.0,False,False,False
+p2,9014,lunch_1,VN_4082,Rau mùi tàu,39.0,185.0,False,False,False
+p2,9014,dinner_0,VN_4081,Rau mùi,46.0,140.0,False,False,False
+p2,9014,dinner_1,VN_4075,Rau húng,91.0,95.0,False,False,False
+p2,9014,snack_0,VN_5001,Bưởi,3.0,175.0,False,False,False
+p2,9015,breakfast_0,VN_4036,Giá đậu xanh,23.0,220.0,False,False,False
+p2,9015,breakfast_1,VN_1013,Bánh phở,3.0,155.0,False,False,False
+p2,9015,lunch_0,VN_13004,Hạt tiêu,44.0,50.0,False,False,False
+p2,9015,lunch_1,VN_8026,Cá thu,110.0,180.0,False,False,False
+p2,9015,dinner_0,VN_4075,Rau húng,91.0,175.0,False,False,False
+p2,9015,dinner_1,VN_7045,Lưỡi lợn,110.0,165.0,False,False,False
+p2,9015,snack_0,VN_5020,Hồng đỏ,4.0,130.0,False,False,False
+p2,9016,breakfast_0,VN_4036,Giá đậu xanh,23.0,175.0,False,False,False
+p2,9016,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,100.0,False,False,False
+p2,9016,lunch_0,VN_4094,Rau thơm,6.0,80.0,False,False,False
+p2,9016,lunch_1,VN_8026,Cá thu,110.0,90.0,False,False,False
+p2,9016,dinner_0,VN_7053,Sườn lợn,60.0,115.0,False,False,False
+p2,9016,dinner_1,VN_8034,Cua đồng,453.0,180.0,False,False,False
+p2,9016,snack_0,VN_3012,Hạt dẻ tươi,3.0,70.0,False,False,False
+p2,9017,breakfast_0,VN_4029,Đậu cô ve,96.0,80.0,False,False,False
+p2,9017,breakfast_1,VN_3006,Đậu hà lan (hạt),9.0,190.0,False,False,False
+p2,9017,lunch_0,VN_8052,Tôm đồng,418.0,135.0,False,False,False
+p2,9017,lunch_1,VN_4075,Rau húng,91.0,115.0,False,False,False
+p2,9017,dinner_0,VN_7015,Thịt hươu,51.0,145.0,False,False,False
+p2,9017,dinner_1,VN_7014,Thịt gà tây,66.0,155.0,False,False,False
+p2,9017,snack_0,VN_11002,Dưa chuột hộp,1208.0,110.0,False,False,False
+p2,9018,breakfast_0,VN_4035,Giá đậu tương,14.0,220.0,False,False,False
+p2,9018,breakfast_1,VN_3007,Đậu tương (đậu nành),2.0,140.0,False,False,False
+p2,9018,lunch_0,VN_7015,Thịt hươu,51.0,95.0,False,False,False
+p2,9018,lunch_1,VN_4096,Su hào,53.0,220.0,False,False,False
+p2,9018,dinner_0,VN_5056,Quả kiwi,3.0,200.0,False,False,False
+p2,9018,dinner_1,VN_4094,Rau thơm,6.0,195.0,False,False,False
+p2,9018,snack_0,VN_5023,Lê,5.0,200.0,False,False,False
+p2,9019,breakfast_0,VN_3025,Đậu phụ,7.0,165.0,False,False,False
+p2,9019,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,150.0,False,False,False
+p2,9019,lunch_0,VN_4004,Cà bát,2.0,140.0,False,False,False
+p2,9019,lunch_1,VN_8052,Tôm đồng,418.0,125.0,False,False,False
+p2,9019,dinner_0,VN_7028,Thịt vịt,63.0,95.0,False,False,False
+p2,9019,dinner_1,VN_4096,Su hào,53.0,205.0,False,False,False
+p2,9019,snack_0,VN_14009,Nước quít tươi,1.0,65.0,False,False,False
+p2,9020,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,170.0,False,False,False
+p2,9020,breakfast_1,VN_10005,Sữa chua vớt béo,135.0,125.0,False,False,False
+p2,9020,lunch_0,VN_11003,Dứa hộp,1.0,200.0,False,False,False
+p2,9020,lunch_1,VN_4070,Rau đay,16.0,135.0,False,False,False
+p2,9020,dinner_0,VN_8052,Tôm đồng,418.0,180.0,False,False,False
+p2,9020,dinner_1,VN_4016,Cải xanh,29.0,220.0,False,False,False
+p2,9020,snack_0,VN_5003,Chanh,3.0,200.0,False,False,False
+p3,9001,breakfast_0,VN_1013,Bánh phở,3.0,245.0,False,False,False
+p3,9001,breakfast_1,VN_2013,Khoai sọ,10.0,250.0,False,False,False
+p3,9001,lunch_0,VN_7050,Óc lợn,120.0,145.0,False,False,False
+p3,9001,lunch_1,VN_7044,Lưỡi bò,69.0,180.0,False,False,False
+p3,9001,dinner_0,VN_7013,Thịt gà ta,70.0,130.0,False,False,False
+p3,9001,dinner_1,VN_2002,Củ cái,12.0,185.0,False,False,False
+p3,9001,snack_0,VN_5011,Dưa hấu,5.0,170.0,False,False,False
+p3,9002,breakfast_0,VN_1013,Bánh phở,3.0,250.0,False,False,False
+p3,9002,breakfast_1,VN_10001,Sữa bò tươi,380.0,140.0,False,False,False
+p3,9002,lunch_0,VN_7038,Đuôi lợn,63.0,80.0,False,False,False
+p3,9002,lunch_1,VN_7022,Thịt thỏ rừng,50.0,170.0,False,False,False
+p3,9002,dinner_0,VN_1001,Gạo nếp cái,3.0,215.0,False,False,False
+p3,9002,dinner_1,VN_4018,Cần tây,96.0,145.0,False,False,False
+p3,9002,snack_0,VN_11002,Dưa chuột hộp,1208.0,85.0,False,False,False
+p3,9003,breakfast_0,VN_9007,Trứng chim cút,141.0,180.0,False,False,False
+p3,9003,breakfast_1,VN_2014,Khoai tây,7.0,130.0,False,False,False
+p3,9003,lunch_0,VN_7023,Thịt trâu,53.0,115.0,False,False,False
+p3,9003,lunch_1,VN_2004,Củ sắn,2.0,115.0,False,False,False
+p3,9003,dinner_0,VN_4040,Hạt sen tươi,1.0,200.0,False,False,False
+p3,9003,dinner_1,VN_7028,Thịt vịt,63.0,150.0,False,False,False
+p3,9003,snack_0,VN_5014,Dứa ta,24.0,125.0,False,False,False
+p3,9004,breakfast_0,VN_1013,Bánh phở,3.0,125.0,False,False,False
+p3,9004,breakfast_1,VN_9004,Trứng vịt,191.0,155.0,False,False,False
+p3,9004,lunch_0,VN_7021,Thịt thỏ nhà,41.0,180.0,False,False,False
+p3,9004,lunch_1,VN_7032,Chân giò lợn,47.0,140.0,False,False,False
+p3,9004,dinner_0,VN_5037,Nho ngọt,2.0,155.0,False,False,False
+p3,9004,dinner_1,VN_4086,Rau ngót,25.0,220.0,False,False,False
+p3,9004,snack_0,VN_3012,Hạt dẻ tươi,3.0,185.0,False,False,False
+p3,9005,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,70.0,False,False,False
+p3,9005,breakfast_1,VN_9001,Trứng gà,158.0,130.0,False,False,False
+p3,9005,lunch_0,VN_1003,Gạo tẻ giã,5.0,205.0,False,False,False
+p3,9005,lunch_1,VN_8040,Mực tươi,44.0,130.0,False,False,False
+p3,9005,dinner_0,VN_7028,Thịt vịt,63.0,110.0,False,False,False
+p3,9005,dinner_1,VN_4066,Rau bí,17.0,85.0,False,False,False
+p3,9005,snack_0,VN_3012,Hạt dẻ tươi,3.0,125.0,False,False,False
+p3,9006,breakfast_0,VN_3006,Đậu hà lan (hạt),9.0,200.0,False,False,False
+p3,9006,breakfast_1,VN_2008,Khoai lang,31.0,175.0,False,False,False
+p3,9006,lunch_0,VN_7017,Thịt lợn nạc,76.0,80.0,False,False,False
+p3,9006,lunch_1,VN_4068,Rau câu tươi,9.0,220.0,False,False,False
+p3,9006,dinner_0,VN_4055,Mướp đắng,5.0,80.0,False,False,False
+p3,9006,dinner_1,VN_4005,Cà chua,12.0,170.0,False,False,False
+p3,9006,snack_0,VN_5023,Lê,5.0,200.0,False,False,False
+p3,9007,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,145.0,False,False,False
+p3,9007,breakfast_1,VN_10001,Sữa bò tươi,380.0,60.0,False,False,False
+p3,9007,lunch_0,VN_4068,Rau câu tươi,9.0,180.0,False,False,False
+p3,9007,lunch_1,VN_4088,Rau răm,5.0,85.0,False,False,False
+p3,9007,dinner_0,VN_1006,Kê,7.0,250.0,False,False,False
+p3,9007,dinner_1,VN_7045,Lưỡi lợn,110.0,180.0,False,False,False
+p3,9007,snack_0,VN_5038,Nho ta (nho chua),11.0,105.0,False,False,False
+p3,9008,breakfast_0,VN_9007,Trứng chim cút,141.0,60.0,False,False,False
+p3,9008,breakfast_1,VN_10001,Sữa bò tươi,380.0,130.0,False,False,False
+p3,9008,lunch_0,VN_1001,Gạo nếp cái,3.0,145.0,False,False,False
+p3,9008,lunch_1,VN_8052,Tôm đồng,418.0,125.0,False,False,False
+p3,9008,dinner_0,VN_8051,Tôm biến,148.0,140.0,False,False,False
+p3,9008,dinner_1,VN_2002,Củ cái,12.0,220.0,False,False,False
+p3,9008,snack_0,VN_3017,Lạc hạt,4.0,105.0,False,False,False
+p3,9009,breakfast_0,VN_2014,Khoai tây,7.0,110.0,False,False,False
+p3,9009,breakfast_1,VN_3006,Đậu hà lan (hạt),9.0,110.0,False,False,False
+p3,9009,lunch_0,VN_4011,Cải bắp đỏ,27.0,85.0,False,False,False
+p3,9009,lunch_1,VN_8011,Cá hồi,46.0,90.0,False,False,False
+p3,9009,dinner_0,VN_1004,Gạo tẻ máy,5.0,185.0,False,False,False
+p3,9009,dinner_1,VN_4013,Cải cúc,33.0,155.0,False,False,False
+p3,9009,snack_0,VN_3017,Lạc hạt,4.0,90.0,False,False,False
+p3,9010,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,165.0,False,False,False
+p3,9010,breakfast_1,VN_9001,Trứng gà,158.0,165.0,False,False,False
+p3,9010,lunch_0,VN_4096,Su hào,53.0,190.0,False,False,False
+p3,9010,lunch_1,VN_8052,Tôm đồng,418.0,60.0,False,False,False
+p3,9010,dinner_0,VN_7050,Óc lợn,120.0,155.0,False,False,False
+p3,9010,dinner_1,VN_7034,Dạ dày lợn,75.0,120.0,False,False,False
+p3,9010,snack_0,VN_3012,Hạt dẻ tươi,3.0,200.0,False,False,False
+p3,9011,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,250.0,False,False,False
+p3,9011,breakfast_1,VN_10001,Sữa bò tươi,380.0,100.0,False,False,False
+p3,9011,lunch_0,VN_4005,Cà chua,12.0,165.0,False,False,False
+p3,9011,lunch_1,VN_2002,Củ cái,12.0,80.0,False,False,False
+p3,9011,dinner_0,VN_1002,Gạo nếp máy (loại thường),3.0,160.0,False,False,False
+p3,9011,dinner_1,VN_4096,Su hào,53.0,160.0,False,False,False
+p3,9011,snack_0,VN_11002,Dưa chuột hộp,1208.0,50.0,False,False,False
+p3,9012,breakfast_0,VN_1013,Bánh phở,3.0,245.0,False,False,False
+p3,9012,breakfast_1,VN_10005,Sữa chua vớt béo,135.0,195.0,False,False,False
+p3,9012,lunch_0,VN_4018,Cần tây,96.0,165.0,False,False,False
+p3,9012,lunch_1,VN_7020,Thịt ngựa,62.0,180.0,False,False,False
+p3,9012,dinner_0,VN_4040,Hạt sen tươi,1.0,140.0,False,False,False
+p3,9012,dinner_1,VN_7014,Thịt gà tây,66.0,135.0,False,False,False
+p3,9012,snack_0,VN_5006,Chuối tây,17.0,145.0,False,False,False
+p3,9013,breakfast_0,VN_4029,Đậu cô ve,96.0,205.0,False,False,False
+p3,9013,breakfast_1,VN_9004,Trứng vịt,191.0,180.0,False,False,False
+p3,9013,lunch_0,VN_4080,Rau mồng tơi,38.0,155.0,False,False,False
+p3,9013,lunch_1,VN_2002,Củ cái,12.0,170.0,False,False,False
+p3,9013,dinner_0,VN_1001,Gạo nếp cái,3.0,225.0,False,False,False
+p3,9013,dinner_1,VN_7053,Sườn lợn,60.0,180.0,False,False,False
+p3,9013,snack_0,VN_5038,Nho ta (nho chua),11.0,50.0,False,False,False
+p3,9014,breakfast_0,VN_9001,Trứng gà,158.0,180.0,False,False,False
+p3,9014,breakfast_1,VN_4035,Giá đậu tương,14.0,155.0,False,False,False
+p3,9014,lunch_0,VN_1001,Gạo nếp cái,3.0,250.0,False,False,False
+p3,9014,lunch_1,VN_2002,Củ cái,12.0,150.0,False,False,False
+p3,9014,dinner_0,VN_7029,Bầu dục bò,200.0,160.0,False,False,False
+p3,9014,dinner_1,VN_8052,Tôm đồng,418.0,180.0,False,False,False
+p3,9014,snack_0,VN_5020,Hồng đỏ,4.0,200.0,False,False,False
+p3,9015,breakfast_0,VN_4036,Giá đậu xanh,23.0,220.0,False,False,False
+p3,9015,breakfast_1,VN_2008,Khoai lang,31.0,250.0,False,False,False
+p3,9015,lunch_0,VN_13004,Hạt tiêu,44.0,200.0,False,False,False
+p3,9015,lunch_1,VN_8011,Cá hồi,46.0,180.0,False,False,False
+p3,9015,dinner_0,VN_4040,Hạt sen tươi,1.0,185.0,False,False,False
+p3,9015,dinner_1,VN_7019,Thịt ngỗng,73.0,60.0,False,False,False
+p3,9015,snack_0,VN_5025,Mãng cầu xiêm,4.0,120.0,False,False,False
+p3,9016,breakfast_0,VN_4036,Giá đậu xanh,23.0,220.0,False,False,False
+p3,9016,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,250.0,False,False,False
+p3,9016,lunch_0,VN_4094,Rau thơm,6.0,220.0,False,False,False
+p3,9016,lunch_1,VN_8030,Cá trê,53.0,180.0,False,False,False
+p3,9016,dinner_0,VN_7051,Phối bò,198.0,180.0,False,False,False
+p3,9016,dinner_1,VN_8031,Cá trích,160.0,115.0,False,False,False
+p3,9016,snack_0,VN_3012,Hạt dẻ tươi,3.0,100.0,False,False,False
+p3,9017,breakfast_0,VN_2014,Khoai tây,7.0,250.0,False,False,False
+p3,9017,breakfast_1,VN_3006,Đậu hà lan (hạt),9.0,185.0,False,False,False
+p3,9017,lunch_0,VN_4001,Bầu,2.0,170.0,False,False,False
+p3,9017,lunch_1,VN_4073,Rau giền đỏ,56.0,125.0,False,False,False
+p3,9017,dinner_0,VN_5052,Vải,1.0,150.0,False,False,False
+p3,9017,dinner_1,VN_4094,Rau thơm,6.0,220.0,False,False,False
+p3,9017,snack_0,VN_3015,Hạt điều,12.0,145.0,False,False,False
+p3,9018,breakfast_0,VN_4029,Đậu cô ve,96.0,220.0,False,False,False
+p3,9018,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,145.0,False,False,False
+p3,9018,lunch_0,VN_7054,Tai lợn,191.0,70.0,False,False,False
+p3,9018,lunch_1,VN_2002,Củ cái,12.0,175.0,False,False,False
+p3,9018,dinner_0,VN_7038,Đuôi lợn,63.0,155.0,False,False,False
+p3,9018,dinner_1,VN_4100,Súp lơ xanh,23.0,350.0,False,False,False
+p3,9018,snack_0,VN_5024,Lựu,3.0,200.0,False,False,False
+p3,9019,breakfast_0,VN_4029,Đậu cô ve,96.0,200.0,False,False,False
+p3,9019,breakfast_1,VN_3010,Đậu xanh (đậu tắt),6.0,120.0,False,False,False
+p3,9019,lunch_0,VN_1003,Gạo tẻ giã,5.0,175.0,False,False,False
+p3,9019,lunch_1,VN_8052,Tôm đồng,418.0,60.0,False,False,False
+p3,9019,dinner_0,VN_8015,Cá mòi,100.0,65.0,False,False,False
+p3,9019,dinner_1,VN_7011,"Thịt dê, nạc",82.0,160.0,False,False,False
+p3,9019,snack_0,VN_3015,Hạt điều,12.0,70.0,False,False,False
+p3,9020,breakfast_0,VN_3007,Đậu tương (đậu nành),2.0,135.0,False,False,False
+p3,9020,breakfast_1,VN_10002,Sữa dê tươi,50.0,125.0,False,False,False
+p3,9020,lunch_0,VN_1003,Gạo tẻ giã,5.0,235.0,False,False,False
+p3,9020,lunch_1,VN_7002,Thịt bê nạc,80.0,60.0,False,False,False
+p3,9020,dinner_0,VN_7045,Lưỡi lợn,110.0,180.0,False,False,False
+p3,9020,dinner_1,VN_4075,Rau húng,91.0,90.0,False,False,False
+p3,9020,snack_0,VN_5028,Mít dai,3.0,65.0,False,False,False

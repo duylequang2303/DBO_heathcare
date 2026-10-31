@@ -6,7 +6,7 @@
  *   (2) Tạo thực đơn → POST /api/menu/generate → bảng món + radar
  */
 
-import { apiTargets, apiGenerateMenu, apiProfiles } from './api.js';
+import { apiTargets, apiGenerateMenu, apiProfiles, apiSwapMenu } from './api.js';
 import { initCharts, updateRadar, updateProgressBars } from './charts.js';
 
 // ---------------------------------------------------------------------------
@@ -45,8 +45,8 @@ const mcLunch     = $('mcLunch');
 const mcDinner    = $('mcDinner');
 const mcSnack     = $('mcSnack');
 
-// Tags
-const conditionsTags = $('conditionsTags');
+// Tags & Medical
+const selMedicalCondition = $('medicalCondition');
 const allergyTags    = $('allergyTags');
 const dislikeTags    = $('dislikeTags');
 
@@ -155,6 +155,7 @@ function parseCount(input) {
 }
 
 function readProfile() {
+  const condVal = selMedicalCondition ? selMedicalCondition.value : '';
   return {
     name:        inpName.value.trim() || 'Người dùng',
     age:         parseInt(inpAge.value, 10) || 25,
@@ -169,9 +170,9 @@ function readProfile() {
       dinner:    parseCount(mcDinner),
       snack:     parseCount(mcSnack),
     },
-    medical_conditions: condCtrl.getValues(),
-    allergies:          allergyCtrl.getValues(),
-    dislikes:           dislikeCtrl.getValues(),
+    medical_conditions: condVal ? [condVal] : [],
+    allergies:          allergyCtrl ? allergyCtrl.getValues() : [],
+    dislikes:           dislikeCtrl ? dislikeCtrl.getValues() : [],
   };
 }
 
@@ -189,9 +190,20 @@ function fillForm(preset) {
   mcLunch.value     = mc.lunch ?? 2;
   mcDinner.value    = mc.dinner ?? 2;
   mcSnack.value     = mc.snack ?? 1;
-  condCtrl.setValues(preset.medical_conditions || []);
-  allergyCtrl.setValues(preset.allergies || []);
-  dislikeCtrl.setValues(preset.dislikes || []);
+
+  if (selMedicalCondition) {
+    const conds = preset.medical_conditions || [];
+    if (conds.includes('hypertension') || conds.includes('tăng huyết áp')) {
+      selMedicalCondition.value = 'hypertension';
+    } else if (conds.includes('diabetes') || conds.includes('tiểu đường') || conds.includes('đái tháo đường')) {
+      selMedicalCondition.value = 'diabetes';
+    } else {
+      selMedicalCondition.value = '';
+    }
+  }
+
+  if (allergyCtrl) allergyCtrl.setValues(preset.allergies || []);
+  if (dislikeCtrl) dislikeCtrl.setValues(preset.dislikes || []);
 }
 
 // ---------------------------------------------------------------------------
@@ -334,6 +346,7 @@ async function generateMenu() {
 // ---------------------------------------------------------------------------
 
 const MEAL_ICONS = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
+const MEAL_LABELS = { breakfast: 'Sáng', lunch: 'Trưa', dinner: 'Tối', snack: 'Phụ' };
 
 function renderMenu(menuData) {
   // Stats
@@ -359,12 +372,11 @@ function renderMenu(menuData) {
     tr.innerHTML = `
       <td>
         <span class="meal-badge ${mealName}">
-          ${icon} ${mealName}
+          ${icon} ${MEAL_LABELS[mealName] || mealName}
         </span>
       </td>
       <td class="food-name-cell">
-        <div class="food-name">${escHtml(item.name)}</div>
-        <div class="food-id">${item.food_id}</div>
+        <div class="food-name">${escHtml(item.name_vi || item.name)}</div>
       </td>
       <td class="portion-col">
         <span class="portion-raw">${item.portion_g.toFixed(1)}g</span>
@@ -377,6 +389,9 @@ function renderMenu(menuData) {
       <td class="num-cell">${item.macros.fat_g.toFixed(1)}</td>
       <td class="num-cell">${item.macros.fiber_g.toFixed(1)}</td>
       <td class="num-cell">${item.macros.sodium_mg.toFixed(0)}</td>
+      <td style="text-align:center">
+        <button class="btn-swap" data-slot="${item.slot}" type="button">🔄 Đổi món</button>
+      </td>
     `;
     menuTableBody.appendChild(tr);
   });
@@ -392,10 +407,54 @@ function renderMenu(menuData) {
     <td class="num-cell">${t.fat_g.toFixed(1)}</td>
     <td class="num-cell">${t.fiber_g.toFixed(1)}</td>
     <td class="num-cell">${t.sodium_mg.toFixed(0)}</td>
+    <td>—</td>
   `;
 
   // Violations
   renderViolations(menuData.violations);
+
+  // Attach swap handlers
+  menuTableBody.querySelectorAll('.btn-swap').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const slot = btn.dataset.slot;
+      await handleSwap(slot, btn);
+    });
+  });
+}
+
+async function handleSwap(slot, btn) {
+  if (!state.menu || !state.profile) {
+    toast('Chưa có thực đơn để đổi món', 'error');
+    return;
+  }
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Đang đổi...';
+
+  try {
+    const foodIds = state.menu.items.map(i => i.food_id);
+    const oldPortionsG = state.menu.items.map(i => i.portion_g);
+    const res = await apiSwapMenu(state.profile, foodIds, slot, null, state.seed, oldPortionsG);
+
+    state.menu = res;
+    state.foodIds = res.items.map(i => i.food_id);
+
+    renderMenu(res);
+    if (state.targets) {
+      updateRadar(res.totals, state.targets);
+      updateProgressBars(res.totals, state.targets, 'progressBars');
+    }
+
+    const dCal = res.delta?.calories ?? 0;
+    const sign = dCal >= 0 ? '+' : '';
+    toast(`Đã đổi món tại slot ${slot} (Δ Calo: ${sign}${dCal.toFixed(0)} kcal)`, 'success');
+  } catch (err) {
+    toast(`Lỗi đổi món: ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
 }
 
 function renderViolations(violations) {
@@ -469,10 +528,9 @@ inpSeed.addEventListener('change', () => { state.seed = parseInt(inpSeed.value, 
 // Init
 // ---------------------------------------------------------------------------
 
-let condCtrl, allergyCtrl, dislikeCtrl;
+let allergyCtrl, dislikeCtrl;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  condCtrl    = createTagsInput(conditionsTags);
   allergyCtrl = createTagsInput(allergyTags);
   dislikeCtrl = createTagsInput(dislikeTags);
 

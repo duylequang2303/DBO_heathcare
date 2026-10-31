@@ -1,0 +1,20 @@
+{
+  "whitelist_count": 165,
+  "whitelist_valid": true,
+  "min_slot_pool": 21,
+  "pools_valid": true,
+  "profiles": [
+    "p1",
+    "p2",
+    "p3"
+  ],
+  "seeds_per_profile": 20,
+  "expected_runs": 60,
+  "actual_runs": 60,
+  "run_status": {
+    "pass": 60
+  },
+  "config": "smoke",
+  "technical_checks_pass": true,
+  "disclaimer": "Positive sodium and a technical pass do NOT imply clinical safety or a realistic meal. Manually review selected_foods.csv and violations."
+}

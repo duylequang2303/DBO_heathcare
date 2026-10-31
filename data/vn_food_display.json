@@ -1,0 +1,930 @@
+{
+  "note": "Demo whitelist. Original CSV not changed. Positive sodium in source is not proof of medical safety.",
+  "foods": [
+    {
+      "food_id": "VN_3012",
+      "display_name": "Hạt dẻ tươi",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_3017",
+      "display_name": "Lạc hạt",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_4002",
+      "display_name": "Bí đao (bí xanh)",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4006",
+      "display_name": "Cà pháo",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4013",
+      "display_name": "Cải cúc",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4029",
+      "display_name": "Đậu cô ve",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4033",
+      "display_name": "Đu đủ xanh",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4050",
+      "display_name": "Măng chua",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4066",
+      "display_name": "Rau bí",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4077",
+      "display_name": "Rau kinh giới",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4080",
+      "display_name": "Rau mồng tơi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4085",
+      "display_name": "Rau ngố",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4086",
+      "display_name": "Rau ngót",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4088",
+      "display_name": "Rau răm",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4094",
+      "display_name": "Rau thơm",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4102",
+      "display_name": "Tía tô",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5014",
+      "display_name": "Dứa ta",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5021",
+      "display_name": "Hồng ngâm",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5038",
+      "display_name": "Nho ta (nho chua)",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_7022",
+      "display_name": "Thịt thỏ rừng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_10001",
+      "display_name": "Sữa bò tươi",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_10002",
+      "display_name": "Sữa dê tươi",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_10003",
+      "display_name": "Sữa mẹ (sữa người)",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_10004",
+      "display_name": "Sữa chua (từ sữa bò)",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_10005",
+      "display_name": "Sữa chua vớt béo",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_10009",
+      "display_name": "Pho mát",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1001",
+      "display_name": "Gạo nếp cái",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1002",
+      "display_name": "Gạo nếp máy (loại thường)",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1003",
+      "display_name": "Gạo tẻ giã",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1004",
+      "display_name": "Gạo tẻ máy",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1005",
+      "display_name": "Gạo lứt",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1006",
+      "display_name": "Kê",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1007",
+      "display_name": "Ngô bắp tươi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_1013",
+      "display_name": "Bánh phở",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_11002",
+      "display_name": "Dưa chuột hộp",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_11003",
+      "display_name": "Dứa hộp",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_11013",
+      "display_name": "Nước dứa hộp",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_12026",
+      "display_name": "Mật ong",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_14005",
+      "display_name": "Nước cam tươi",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_14007",
+      "display_name": "Nước ép cà chua",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_14009",
+      "display_name": "Nước quít tươi",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_2002",
+      "display_name": "Củ cái",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_2004",
+      "display_name": "Củ sắn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_2008",
+      "display_name": "Khoai lang",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_2013",
+      "display_name": "Khoai sọ",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_2014",
+      "display_name": "Khoai tây",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_3001",
+      "display_name": "Cùi dừa già",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_3006",
+      "display_name": "Đậu hà lan (hạt)",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_3007",
+      "display_name": "Đậu tương (đậu nành)",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_3010",
+      "display_name": "Đậu xanh (đậu tắt)",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_3015",
+      "display_name": "Hạt điều",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_3020",
+      "display_name": "Vừng (đen, trắng)",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_3025",
+      "display_name": "Đậu phụ",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_3032",
+      "display_name": "Sữa đậu nành (100g đậu/lít)",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4001",
+      "display_name": "Bầu",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4003",
+      "display_name": "Bí ngô",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4004",
+      "display_name": "Cà bát",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4005",
+      "display_name": "Cà chua",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4007",
+      "display_name": "Cà rốt (củ đỏ, vàng)",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4010",
+      "display_name": "Cải bắp",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4011",
+      "display_name": "Cải bắp đỏ",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4014",
+      "display_name": "Cải soong",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4015",
+      "display_name": "Cải thìa (cải trắng)",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4016",
+      "display_name": "Cải xanh",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4018",
+      "display_name": "Cần tây",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4019",
+      "display_name": "Chuối xanh",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_4021",
+      "display_name": "Củ cải trắng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4027",
+      "display_name": "Dưa chuột",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_4030",
+      "display_name": "Đậu đũa",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4031",
+      "display_name": "Đậu hà lan",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4035",
+      "display_name": "Giá đậu tương",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4036",
+      "display_name": "Giá đậu xanh",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4037",
+      "display_name": "Hành củ tươi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4039",
+      "display_name": "Hành tây",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4040",
+      "display_name": "Hạt sen tươi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4045",
+      "display_name": "Khế",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4052",
+      "display_name": "Măng tây",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4053",
+      "display_name": "Măng tre",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4054",
+      "display_name": "Mướp",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4055",
+      "display_name": "Mướp đắng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4059",
+      "display_name": "Ngó sen",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4061",
+      "display_name": "Ớt đỏ to",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4062",
+      "display_name": "Ớt vàng to",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4063",
+      "display_name": "Ớt xanh to",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4068",
+      "display_name": "Rau câu tươi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4069",
+      "display_name": "Rau diếp",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4070",
+      "display_name": "Rau đay",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4072",
+      "display_name": "Rau giền cơm",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4073",
+      "display_name": "Rau giền đỏ",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4075",
+      "display_name": "Rau húng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4076",
+      "display_name": "Rau khoai lang",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_4081",
+      "display_name": "Rau mùi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4082",
+      "display_name": "Rau mùi tàu",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4083",
+      "display_name": "Rau muống",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4090",
+      "display_name": "Rau sà lách",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4096",
+      "display_name": "Su hào",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4098",
+      "display_name": "Su su, quả",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_4099",
+      "display_name": "Súp lơ trắng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4100",
+      "display_name": "Súp lơ xanh",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4101",
+      "display_name": "Thìa là",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4103",
+      "display_name": "Tỏi ta",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4121",
+      "display_name": "Mộc nhĩ",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_4126",
+      "display_name": "Nấm thường tươi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5001",
+      "display_name": "Bưởi",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5002",
+      "display_name": "Cam",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5003",
+      "display_name": "Chanh",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5006",
+      "display_name": "Chuối tây",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5007",
+      "display_name": "Chuối tiêu",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5009",
+      "display_name": "Dâu tây",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5011",
+      "display_name": "Dưa hấu",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5012",
+      "display_name": "Dưa hồng",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5015",
+      "display_name": "Dứa tây",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5017",
+      "display_name": "Đu đủ chín",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5020",
+      "display_name": "Hồng đỏ",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5022",
+      "display_name": "Hồng xiêm",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5023",
+      "display_name": "Lê",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5024",
+      "display_name": "Lựu",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5025",
+      "display_name": "Mãng cầu xiêm",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5028",
+      "display_name": "Mít dai",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5031",
+      "display_name": "Mơ",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5034",
+      "display_name": "Na",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5035",
+      "display_name": "Nhãn",
+      "meal_type": "snack"
+    },
+    {
+      "food_id": "VN_5037",
+      "display_name": "Nho ngọt",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5040",
+      "display_name": "Ối",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5047",
+      "display_name": "Quít",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5048",
+      "display_name": "Sầu riêng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5050",
+      "display_name": "Táo ta",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5051",
+      "display_name": "Táo tây",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5052",
+      "display_name": "Vải",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5055",
+      "display_name": "Xoài chín",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_5056",
+      "display_name": "Quả kiwi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_6001",
+      "display_name": "Bơ",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7002",
+      "display_name": "Thịt bê nạc",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7003",
+      "display_name": "Thịt bò loại i",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7005",
+      "display_name": "Thịt bò, lưng, nạc",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7007",
+      "display_name": "Thịt bồ câu ra ràng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7010",
+      "display_name": "Thịt cừu, nạc",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7011",
+      "display_name": "Thịt dê, nạc",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7013",
+      "display_name": "Thịt gà ta",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7014",
+      "display_name": "Thịt gà tây",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7015",
+      "display_name": "Thịt hươu",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7017",
+      "display_name": "Thịt lợn nạc",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7019",
+      "display_name": "Thịt ngỗng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7020",
+      "display_name": "Thịt ngựa",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7021",
+      "display_name": "Thịt thỏ nhà",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7023",
+      "display_name": "Thịt trâu",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7028",
+      "display_name": "Thịt vịt",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7029",
+      "display_name": "Bầu dục bò",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7030",
+      "display_name": "Bầu dục lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7032",
+      "display_name": "Chân giò lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7033",
+      "display_name": "Dạ dày bò",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7034",
+      "display_name": "Dạ dày lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7038",
+      "display_name": "Đuôi lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7044",
+      "display_name": "Lưỡi bò",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7045",
+      "display_name": "Lưỡi lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7048",
+      "display_name": "Mề gà",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7049",
+      "display_name": "Óc bò",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7050",
+      "display_name": "Óc lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7051",
+      "display_name": "Phối bò",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7052",
+      "display_name": "Phối lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7053",
+      "display_name": "Sườn lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7054",
+      "display_name": "Tai lợn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_7080",
+      "display_name": "Ếch (thịt đùi)",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8003",
+      "display_name": "Cá chép",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8009",
+      "display_name": "Cá đối",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8011",
+      "display_name": "Cá hồi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8015",
+      "display_name": "Cá mòi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8019",
+      "display_name": "Cá ngừ",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8020",
+      "display_name": "Cá nục",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8026",
+      "display_name": "Cá thu",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8027",
+      "display_name": "Cá thu đao",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8030",
+      "display_name": "Cá trê",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8031",
+      "display_name": "Cá trích",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8033",
+      "display_name": "Cua bể",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8034",
+      "display_name": "Cua đồng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8035",
+      "display_name": "Ghẹ",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8038",
+      "display_name": "Lươn",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8040",
+      "display_name": "Mực tươi",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8048",
+      "display_name": "Sò",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8051",
+      "display_name": "Tôm biến",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8052",
+      "display_name": "Tôm đồng",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_8054",
+      "display_name": "Trai",
+      "meal_type": "all"
+    },
+    {
+      "food_id": "VN_9001",
+      "display_name": "Trứng gà",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_9004",
+      "display_name": "Trứng vịt",
+      "meal_type": "breakfast"
+    },
+    {
+      "food_id": "VN_9007",
+      "display_name": "Trứng chim cút",
+      "meal_type": "breakfast"
+    }
+  ]
+}

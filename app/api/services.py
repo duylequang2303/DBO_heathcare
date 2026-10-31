@@ -12,6 +12,8 @@ Lazy singleton food_map: nạp một lần khi app khởi động, không load m
 from __future__ import annotations
 
 import asyncio
+import json
+from fastapi import HTTPException
 import sys
 from functools import lru_cache
 from pathlib import Path
@@ -26,6 +28,7 @@ if str(ROOT) not in sys.path:
 from src.algorithms.menu_objective import decode_result
 from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.models.constraints import validate_menu
+from src.models.dish_category import DishRole, classify_dish_role
 from src.models.diversity_penalty import calculate_unique_main_dish_pct
 from src.models.food_selector import get_meal_order_slots
 from src.models.user_profile import (
@@ -63,7 +66,26 @@ def get_food_map() -> dict[str, dict]:
     global _food_map, _food_df
     if _food_map is None:
         _food_df = load_food_db()
-        _food_map = build_food_map(_food_df)
+        raw_map = build_food_map(_food_df)
+        overlay_path = ROOT / "data" / "vn_food_display.json"
+        if not overlay_path.is_file():
+            raise RuntimeError("Thiếu whitelist demo vn_food_display.json")
+        approved = json.loads(overlay_path.read_text(encoding="utf-8"))["foods"]
+        _food_map = {}
+        for entry in approved:
+            fid = entry["food_id"]
+            if fid not in raw_map:
+                continue
+            row = dict(raw_map[fid])
+            if float(row.get("sodium_mg", 0)) <= 0:
+                continue
+            row["food_name"] = entry["display_name"]
+            if classify_dish_role(row["food_name"], str(row.get("category", ""))) == DishRole.RAW_INGREDIENT:
+                continue
+            row["meal_type"] = entry["meal_type"]
+            _food_map[fid] = row
+        if len(_food_map) < 150:
+            raise RuntimeError(f"Whitelist demo quá nhỏ: {len(_food_map)} món")
     return _food_map
 
 
@@ -138,6 +160,24 @@ _GOAL_MAP = {
 }
 
 
+# Alias tiếng Việt → token chuẩn (TV3: user gõ "tăng huyết áp" bị bỏ sót).
+# diabetes/tiểu đường = no-op (không có cột total_sugar), giữ token để ghi chú.
+_MEDICAL_ALIASES: dict[str, str] = {
+    "tăng huyết áp": "hypertension", "cao huyết áp": "hypertension",
+    "huyết áp cao": "hypertension", "huyết áp": "hypertension",
+    "tăng huyết ap": "hypertension", "tiểu đường": "diabetes",
+    "đái tháo đường": "diabetes", "tie duong": "diabetes",
+}
+
+def _normalize_medical_conditions(conditions: list[str]) -> list[str]:
+    normalized: list[str] = []
+    for raw in conditions or []:
+        key = str(raw).strip().lower()
+        if not key: continue
+        normalized.append(_MEDICAL_ALIASES.get(key, key))
+    return normalized
+
+
 def build_profile(pin: ProfileIn) -> UserProfile:
     """ProfileIn (Pydantic) → UserProfile (domain)."""
     return UserProfile(
@@ -149,7 +189,7 @@ def build_profile(pin: ProfileIn) -> UserProfile:
         activity_level=_ACTIVITY_MAP[pin.activity_level],
         goal=_GOAL_MAP[pin.goal],
         meal_counts=pin.meal_counts,
-        medical_conditions=pin.medical_conditions,
+        medical_conditions=_normalize_medical_conditions(pin.medical_conditions),
         allergies=pin.allergies,
         dislikes=pin.dislikes,
         diet_type=DietType.STANDARD,
@@ -259,13 +299,18 @@ def generate_menu(req: GenerateIn) -> MenuOut:
     """
     profile = build_profile(req.profile)
     if sum(profile.meal_counts.values()) <= 0:
-        from fastapi import HTTPException
         raise HTTPException(status_code=400, detail="Cần ít nhất 1 món ăn trong thực đơn để tối ưu.")
+    # diversity_penalty yêu cầu lunch_0 + dinner_0; thiếu → 500. Chặn sớm trả 400.
+    if profile.meal_counts.get("lunch", 0) < 1 or profile.meal_counts.get("dinner", 0) < 1:
+        raise HTTPException(status_code=400, detail="Thực đơn cần ít nhất 1 món trưa (lunch) và 1 món tối (dinner) để đánh giá đa dạng món chính.")
     food_map = get_food_map()
     targets = _get_targets_with_conditions(profile)
     config = _make_tt_config(req.config, req.seed)
 
-    res = two_tier_optimize(profile, food_map, targets, config)
+    try:
+        res = two_tier_optimize(profile, food_map, targets, config)
+    except (ValueError, KeyError) as exc:
+        raise HTTPException(status_code=400, detail=f"Không tạo được thực đơn hợp lệ: {exc}") from exc
 
     # Round chỉ dùng cho output, optimizer vẫn dùng liên tục
     rounded = round_portions(res.best_portions_g, step=5)
@@ -291,12 +336,19 @@ def generate_menu(req: GenerateIn) -> MenuOut:
 
 def search_foods(q: str, limit: int = 20) -> list[FoodItem]:
     """Tìm kiếm món trong DB theo tên (full-text simple)."""
+    food_map = get_food_map()
     df = get_food_df()
+    df = df[df["food_id"].isin(food_map)].copy()
+    df["food_name"] = df["food_id"].map(lambda fid: food_map[fid]["food_name"])
+    df["meal_type"] = df["food_id"].map(lambda fid: food_map[fid]["meal_type"])
     if df is None:
         return []
     q_lower = q.lower().strip()
     if q_lower:
-        mask = df["food_name"].str.lower().str.contains(q_lower, na=False, regex=False)
+        # Hỗ trợ từ khóa tiếng Anh phổ biến nhưng chỉ tìm trong whitelist Việt.
+        # Không đưa tên USDA/SKU trở lại kết quả hiển thị.
+        search_term = {"rice": "gạo"}.get(q_lower, q_lower)
+        mask = df["food_name"].str.lower().str.contains(search_term, na=False, regex=False)
         matched = df[mask].head(limit)
     else:
         matched = df.head(limit)

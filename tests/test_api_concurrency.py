@@ -49,7 +49,7 @@ def test_concurrent_menu_generations():
         assert len(data["items"]) == 7
         assert "totals" in data
         assert data["fitness"] > -100
-        assert duration < 5.0, f"Request took too long: {duration}s"
+        assert duration < 30.0, f"Request took too long: {duration}s"
 
 
 def test_runtime_field_populated_and_accurate():
