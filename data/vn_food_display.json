@@ -2,11 +2,6 @@
   "note": "Demo whitelist. Original CSV not changed. Positive sodium in source is not proof of medical safety.",
   "foods": [
     {
-      "food_id": "VN_13007",
-      "display_name": "Nghệ tươi",
-      "meal_type": "all"
-    },
-    {
       "food_id": "VN_3012",
       "display_name": "Hạt dẻ tươi",
       "meal_type": "snack"
@@ -195,31 +190,6 @@
       "food_id": "VN_12026",
       "display_name": "Mật ong",
       "meal_type": "snack"
-    },
-    {
-      "food_id": "VN_13003",
-      "display_name": "Gừng tươi",
-      "meal_type": "all"
-    },
-    {
-      "food_id": "VN_13004",
-      "display_name": "Hạt tiêu",
-      "meal_type": "all"
-    },
-    {
-      "food_id": "VN_13010",
-      "display_name": "Magi",
-      "meal_type": "all"
-    },
-    {
-      "food_id": "VN_13021",
-      "display_name": "Tương ớt",
-      "meal_type": "all"
-    },
-    {
-      "food_id": "VN_13023",
-      "display_name": "Sốt mayonnaise",
-      "meal_type": "all"
     },
     {
       "food_id": "VN_14005",

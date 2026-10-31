@@ -26,10 +26,12 @@ from app.api.services import PRESET_PROFILES, build_profile, generate_menu, get_
 from src.models.food_selector import build_meal_pools
 
 
-def csv_write(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
-    with path.open('w', newline='', encoding='utf-8-sig') as f:
+def csv_write(path: Path, rows: list[dict], fieldnames: list[str], append: bool = False) -> None:
+    mode = 'a' if append else 'w'
+    with path.open(mode, newline='', encoding='utf-8-sig' if not append else 'utf-8') as f:
         w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
-        w.writeheader()
+        if not append or path.stat().st_size == 0:
+            w.writeheader()
         w.writerows(rows)
 
 
@@ -41,8 +43,8 @@ def main() -> int:
     p.add_argument('--pool-only', action='store_true', help='Check whitelist and pools without optimizer runs')
     p.add_argument('--output', default='experiments/week11_cuong_p0')
     args = p.parse_args()
-    if not 1 <= args.seeds <= 10000 or args.seed_start < 0:
-        p.error('Require 1<=seeds<=10000 and seed-start>=0')
+    if not 1 <= args.seeds <= 10000 or args.seed_start < 0 or args.seed_start + args.seeds - 1 > 2147483647:
+        p.error('Require 1<=seeds<=10000, seed-start>=0, and last seed<=2147483647')
 
     out = ROOT / args.output
     out.mkdir(parents=True, exist_ok=True)
@@ -73,6 +75,12 @@ def main() -> int:
     run_rows = []
     chosen_rows = []
     if not args.pool_only:
+        run_fields = ['profile','seed','status','elapsed_s','item_count','invalid_id_count',
+                      'sodium_zero_or_missing_count','display_name_mismatch_count','fitness','violations','error']
+        chosen_fields = ['profile','seed','slot','food_id','name','source_sodium_mg','portion_g',
+                         'invalid_id','sodium_zero_or_missing','display_name_mismatch']
+        csv_write(out / 'runs.csv', [], run_fields)
+        csv_write(out / 'selected_foods.csv', [], chosen_fields)
         for key, profile_data in PRESET_PROFILES.items():
             for seed in range(args.seed_start, args.seed_start + args.seeds):
                 print(f'[RUN] {key} seed={seed}', flush=True)
@@ -85,6 +93,7 @@ def main() -> int:
                 bad_id_count = 0
                 zero_na_count = 0
                 wrong_display_count = 0
+                chosen_start = len(chosen_rows)
                 try:
                     req = GenerateIn(profile=ProfileIn(**profile_data), seed=seed, config=args.config)
                     result = generate_menu(req)
@@ -118,13 +127,9 @@ def main() -> int:
                                      sodium_zero_or_missing_count=zero_na_count,
                                      display_name_mismatch_count=wrong_display_count,
                                      fitness=fitness, violations=violations, error=error))
-                # Incremental persistence even if a later run fails/interrupted.
-                csv_write(out / 'runs.csv', run_rows,
-                          ['profile','seed','status','elapsed_s','item_count','invalid_id_count',
-                           'sodium_zero_or_missing_count','display_name_mismatch_count','fitness','violations','error'])
-                csv_write(out / 'selected_foods.csv', chosen_rows,
-                          ['profile','seed','slot','food_id','name','source_sodium_mg','portion_g',
-                           'invalid_id','sodium_zero_or_missing','display_name_mismatch'])
+                # Append only this run, not the entire history; restart produces fresh files.
+                csv_write(out / 'runs.csv', [run_rows[-1]], run_fields, append=True)
+                csv_write(out / 'selected_foods.csv', chosen_rows[chosen_start:], chosen_fields, append=True)
     status_counts = dict(Counter(row['status'] for row in run_rows))
     all_pass = whitelist_valid and pool_valid and (args.pool_only or (len(run_rows) == 3*args.seeds and status_counts.get('pass', 0) == len(run_rows)))
     summary = dict(whitelist_count=len(foods), whitelist_valid=whitelist_valid,
