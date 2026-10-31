@@ -53,7 +53,7 @@
     dislikes = [d for d in pin.dislikes if len(str(d).strip()) >= 2]
 ```
 Dùng `allergies=allergies, dislikes=dislikes` thay vì `pin.allergies`/`pin.dislikes`.
-**Verify:** `allergies=["a"]` → trả 200, không phải 500.
+**Verify:** `allergies=["a"]` → trả **422** (bị chặn bởi validator token rác, không phải 500).
 
 **Tiêu chí TASK 1:** pytest ≥314 pass, KHÔNG có mã 5xx nào với edge cases trên.
 
