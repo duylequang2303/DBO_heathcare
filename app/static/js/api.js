@@ -90,18 +90,23 @@ export async function apiGenerateMenu(profileIn, seed = 9001, config = 'web') {
  * @param {string} slot      e.g. "lunch_0"
  * @param {string|null} newFoodId
  * @param {number} seed
+ * @param {number[]|null} oldPortionsG
  * @returns {Promise<SwapOut>}
  */
-export async function apiSwapMenu(profileIn, foodIds, slot, newFoodId = null, seed = 9001) {
+export async function apiSwapMenu(profileIn, foodIds, slot, newFoodId = null, seed = 9001, oldPortionsG = null) {
+  const payload = {
+    profile: profileIn,
+    food_ids: foodIds,
+    slot,
+    new_food_id: newFoodId,
+    seed,
+  };
+  if (oldPortionsG !== null && oldPortionsG !== undefined) {
+    payload.old_portions_g = oldPortionsG;
+  }
   return apiFetch('/api/menu/swap', {
     method: 'POST',
-    body: JSON.stringify({
-      profile: profileIn,
-      food_ids: foodIds,
-      slot,
-      new_food_id: newFoodId,
-      seed,
-    }),
+    body: JSON.stringify(payload),
   });
 }
 

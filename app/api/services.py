@@ -302,7 +302,6 @@ def generate_menu(req: GenerateIn) -> MenuOut:
         raise HTTPException(status_code=400, detail="Cần ít nhất 1 món ăn trong thực đơn để tối ưu.")
     # diversity_penalty yêu cầu lunch_0 + dinner_0; thiếu → 500. Chặn sớm trả 400.
     if profile.meal_counts.get("lunch", 0) < 1 or profile.meal_counts.get("dinner", 0) < 1:
-        from fastapi import HTTPException
         raise HTTPException(status_code=400, detail="Thực đơn cần ít nhất 1 món trưa (lunch) và 1 món tối (dinner) để đánh giá đa dạng món chính.")
     food_map = get_food_map()
     targets = _get_targets_with_conditions(profile)
