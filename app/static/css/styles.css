@@ -441,6 +441,23 @@ body::before {
 }
 .btn-swap:hover { background: rgba(139,92,246,0.22); }
 
+.advanced-settings {
+  margin: 8px 0 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+}
+.advanced-settings summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-2);
+  list-style: none;
+}
+.advanced-settings summary::-webkit-details-marker { display: none; }
+.advanced-settings[open] summary { margin-bottom: 10px; color: var(--text-1); }
+
 /* ---- Seed input ---- */
 .seed-row {
   display: flex; align-items: center; gap: 10px;

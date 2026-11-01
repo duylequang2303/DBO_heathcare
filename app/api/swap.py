@@ -23,6 +23,7 @@ from src.algorithms.menu_objective import (
     make_menu_objective,
 )
 from src.models.constraints import validate_menu
+from src.models.objective import evaluate
 from src.models.food_selector import (
     build_meal_pools,
     get_meal_order_slots,
@@ -36,6 +37,7 @@ from .services import (
     _totals_from_menu,
     build_profile,
     get_food_map,
+    menu_notices,
 )
 
 
@@ -274,6 +276,8 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
     )
 
     totals_new = _totals_from_menu(menu_new)
+    fitness = round(float(evaluate(menu_new, profile, targets)), 2)
+    warnings, data_limitations = menu_notices(profile)
 
     # 10. Tính delta dinh dưỡng
     delta = {
@@ -293,4 +297,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         },
         violations=violations,
         delta=delta,
+        fitness=fitness,
+        warnings=warnings,
+        data_limitations=data_limitations,
     )
