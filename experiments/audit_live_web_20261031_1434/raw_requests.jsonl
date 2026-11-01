@@ -1,0 +1,422 @@
+{"phase": "bootstrap", "label": "root", "method": "GET", "path": "/", "status": 200, "latency_ms": 2.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "health", "method": "GET", "path": "/api/health", "status": 200, "latency_ms": 0.8, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "profiles", "method": "GET", "path": "/api/profiles", "status": 200, "latency_ms": 0.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_all", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 7.1, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_cơm", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.7, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_rau", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_canh", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_thịt", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.5, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_cá", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.3, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_gà", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.2, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_bò", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 15.2, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_sữa", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 15.6, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_chuối", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 7.4, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_gạo", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.1, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_khoai", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.4, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_đậu", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.8, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_măng", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_tôm", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.5, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_trứng", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.0, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_bánh", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.8, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_mắm", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.4, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_dầu", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.6, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_muối", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.5, "config": null, "note": ""}
+{"phase": "clinical", "label": "hyp_seed100", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8482.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed101", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8268.4, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed102", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8570.8, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed103", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11345.2, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed104", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10460.9, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed105", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10672.5, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed106", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10032.2, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed107", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10022.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed108", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10236.7, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed109", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10238.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed110", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10450.1, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed111", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10644.1, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed112", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11155.8, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed113", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9364.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed114", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9225.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed115", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 128.4, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed116", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 121.7, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed117", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 122.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed118", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 122.0, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed119", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 126.5, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed120", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 124.1, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed121", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 124.3, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed122", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 112.9, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed123", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 112.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed124", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 119.5, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed125", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 112.8, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed126", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 130.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed127", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 124.4, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed128", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 136.0, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed129", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 118.8, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "targets_hypertension", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_tăng huyết áp", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.1, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_cao huyết áp", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_huyết áp cao", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.1, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_HYPERTENSION", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.0, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_tiểu đường", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_diabetes", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_đái tháo đường", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.1, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_gout", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_suy thận", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.8, "config": null, "note": ""}
+{"phase": "clinical", "label": "diabetes_seed7", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 122.8, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "diabetes_seed8", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 116.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "diabetes_seed9", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 122.3, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:tôm", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9923.3, "config": "web", "note": ""}
+{"phase": "allergy", "label": "single:tôm", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9900.7, "config": "web", "note": ""}
+{"phase": "allergy", "label": "single:cua", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 165.0, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:cua", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 140.8, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 200.6, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 175.7, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:bò", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.1, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 19, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "single:bò", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.0, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 19, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "single:heo", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 191.7, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:heo", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 245.7, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:gà", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 161.4, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:gà", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 151.7, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:trứng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.9, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 18, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "single:trứng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.6, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 18, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "single:sữa", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.4, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 16, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "single:sữa", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.3, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 16, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "single:đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 126.3, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 124.8, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:hải sản", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9461.5, "config": "web", "note": ""}
+{"phase": "allergy", "label": "single:hải sản", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11267.6, "config": "web", "note": ""}
+{"phase": "allergy", "label": "triple:tôm+cua+cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 194.8, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "triple:tôm+cua+cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 197.1, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "triple:bò+heo+gà", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.8, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 18, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "triple:bò+heo+gà", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.7, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 18, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "triple:trứng+sữa+đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.6, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 13, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "triple:trứng+sữa+đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.3, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 13, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "ten-tokens", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.7, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 13, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "ten-tokens", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.8, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 13, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "ten-tokens-web", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 3.1, "config": "web", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 13, less than min_pool_size=20.\"}"}
+{"phase": "allergy", "label": "twenty-tokens", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.2, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: User-facing pool for 'breakfast' has size 6, less than min_pool_size=20.\"}"}
+{"phase": "swap", "label": "gen_SwapA", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10503.8, "config": "web", "note": ""}
+{"phase": "swap", "label": "SwapA:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 55.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 53.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 51.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 53.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 50.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 48.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 51.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 49.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 52.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 53.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 49.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 50.3, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapB", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 156.4, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapB:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 63.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 61.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 56.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 56.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 56.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 84.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 61.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 59.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 61.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 58.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 59.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 56.7, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapC", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 153.0, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapC:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 71.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 85.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:breakfast_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 69.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 76.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 88.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:lunch_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 67.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 69.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 67.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:dinner_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 64.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 66.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:snack_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 71.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 67.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 70.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 69.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 69.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 90.1, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapD", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 147.4, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapD:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 63.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 83.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 54.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 60.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 59.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 57.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 66.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 83.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 72.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 59.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 64.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 62.5, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapE", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 130.3, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapE:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 57.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 56.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 51.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 52.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 46.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 49.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 46.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 44.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 64.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 53.8, "config": null, "note": ""}
+{"phase": "swap", "label": "race_gen", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 132.6, "config": "smoke", "note": ""}
+{"phase": "swap_concurrent", "label": "concurrent_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 535.7, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":25.0,\"portion_g_rounded\":25,\"macros\":{\"calories\":7.0,\"protein_g\":0.78,\"carb"}
+{"phase": "swap_concurrent", "label": "concurrent_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 367.0, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":105.0,\"portion_g_rounded\":105,\"macros\":{\"calories\":29.4,\"protein_g\":3.25,\"c"}
+{"phase": "swap_concurrent", "label": "concurrent_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 635.5, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":25.0,\"portion_g_rounded\":25,\"macros\":{\"calories\":7.0,\"protein_g\":0.78,\"carb"}
+{"phase": "swap_concurrent", "label": "concurrent_3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 634.5, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":345.0,\"portion_g_rounded\":345,\"macros\":{\"calories\":96.6,\"protein_g\":10.7,\"c"}
+{"phase": "swap_concurrent", "label": "concurrent_4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 668.7, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":315.0,\"portion_g_rounded\":315,\"macros\":{\"calories\":88.2,\"protein_g\":9.77,\"c"}
+{"phase": "swap_concurrent", "label": "concurrent_5", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 671.3, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":45.0,\"portion_g_rounded\":45,\"macros\":{\"calories\":12.6,\"protein_g\":1.4,\"carb"}
+{"phase": "swap_concurrent", "label": "concurrent_6", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 543.5, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":25.0,\"portion_g_rounded\":25,\"macros\":{\"calories\":7.0,\"protein_g\":0.78,\"carb"}
+{"phase": "swap_concurrent", "label": "concurrent_7", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 514.5, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":45.0,\"portion_g_rounded\":45,\"macros\":{\"calories\":12.6,\"protein_g\":1.4,\"carb"}
+{"phase": "swap_concurrent", "label": "concurrent_8", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 646.3, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":25.0,\"portion_g_rounded\":25,\"macros\":{\"calories\":7.0,\"protein_g\":0.78,\"carb"}
+{"phase": "swap_concurrent", "label": "concurrent_9", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 668.5, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3032\",\"name\":\"Sữa đậu nành (100g đậu/lít)\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":210.0,\"portion_g_rounded\":210,\"macros\":{\"calories\":58.8,\"protein_g\":6.51,\"c"}
+{"phase": "chaos", "label": "chaos_gen", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 133.4, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "age=0", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.4, "config": "smoke", "note": "{\"detail\": [{\"type\": \"greater_than_equal\", \"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Input should be greater than or equal to 18\", \"input\": 0, \"ctx\": {\"ge\": 18}}]}"}
+{"phase": "chaos", "label": "age=-10", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"type\": \"greater_than_equal\", \"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Input should be greater than or equal to 18\", \"input\": -10, \"ctx\": {\"ge\": 18}}]}"}
+{"phase": "chaos", "label": "age=200", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"type\": \"less_than_equal\", \"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Input should be less than or equal to 120\", \"input\": 200, \"ctx\": {\"le\": 120}}]}"}
+{"phase": "chaos", "label": "age='hai mươi tuổi'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"type\": \"int_parsing\", \"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Input should be a valid integer, unable to parse string as an integer\", \"input\": \"hai mươi tuổi\"}]}"}
+{"phase": "chaos", "label": "height=30cm", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 139.8, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "height=300cm", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.3, "config": "smoke", "note": "{\"detail\": [{\"type\": \"less_than_equal\", \"loc\": [\"body\", \"profile\", \"height_cm\"], \"msg\": \"Input should be less than or equal to 250\", \"input\": 300, \"ctx\": {\"le\": 250.0}}]}"}
+{"phase": "chaos", "label": "weight=5kg", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 126.2, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "weight=400kg", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 116.4, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "meal_counts toàn 0", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.5, "config": "smoke", "note": "{\"detail\": \"Cần ít nhất 1 món ăn trong thực đơn để tối ưu.\"}"}
+{"phase": "chaos", "label": "chỉ snack x3", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.9, "config": "smoke", "note": "{\"detail\": \"Thực đơn cần ít nhất 1 món trưa (lunch) và 1 món tối (dinner) để đánh giá đa dạng món chính.\"}"}
+{"phase": "chaos", "label": "snack=10", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 2.5, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Value error, Số món cho 'snack' phải từ 0 đến 3\", \"input\": {\"breakfast\": 2, \"lunch\": 2, \"dinner\": 2, \"snack\": 10}, \"ctx\": {\"error\": {}}}]}"}
+{"phase": "chaos", "label": "breakfast=-1", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Value error, Số món cho 'breakfast' phải từ 0 đến 5\", \"input\": {\"breakfast\": -1, \"lunch\": 2, \"dinner\": 2}, \"ctx\": {\"error\": {}}}]}"}
+{"phase": "chaos", "label": "meal key 'brunch'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.2, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Value error, Bữa ăn 'brunch' không hợp lệ. Chỉ chấp nhận ['breakfast', 'lunch', 'dinner', 'snack']\", \"input\": {\"breakfast\": 2, \"lunch\": 2, \"dinner\": 2, \"brunch\": 1}, \"ctx\": {\"error\": {}}}]}"}
+{"phase": "chaos", "label": "allergy rỗng", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\", \"profile\", \"allergies\"], \"msg\": \"Value error, Mỗi mục dị ứng/bệnh lý/không thích phải có ít nhất 2 ký tự\", \"input\": [\"\"], \"ctx\": {\"error\": {}}}]}"}
+{"phase": "chaos", "label": "allergy '<script>'", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 117.4, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy emoji", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 116.5, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy null byte", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 115.4, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy 10.000 ký tự", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 132.7, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy 1000 token", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 506.0, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "name SQL injection", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 113.5, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "name 10.000 ký tự", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 115.3, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "medical SQL", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 115.2, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "extra field", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 108.5, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "thiếu profile", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.5, "config": "smoke", "note": "{\"detail\": [{\"type\": \"missing\", \"loc\": [\"body\", \"profile\"], \"msg\": \"Field required\", \"input\": {\"seed\": 1, \"config\": \"smoke\"}}]}"}
+{"phase": "chaos", "label": "gender 'other'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.4, "config": "smoke", "note": "{\"detail\": [{\"type\": \"literal_error\", \"loc\": [\"body\", \"profile\", \"gender\"], \"msg\": \"Input should be 'male' or 'female'\", \"input\": \"other\", \"ctx\": {\"expected\": \"'male' or 'female'\"}}]}"}
+{"phase": "chaos", "label": "activity thường", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.6, "config": "smoke", "note": "{\"detail\": [{\"type\": \"literal_error\", \"loc\": [\"body\", \"profile\", \"activity_level\"], \"msg\": \"Input should be 'SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE' or 'VERY_ACTIVE'\", \"input\": \"sedentary\", \"ctx\": {\"expected\": \"'SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE' or 'VERY_ACTIVE'\"}}]}"}
+{"phase": "chaos", "label": "seed=-1", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": [{\"type\": \"greater_than_equal\", \"loc\": [\"body\", \"seed\"], \"msg\": \"Input should be greater than or equal to 0\", \"input\": -1, \"ctx\": {\"ge\": 0}}]}"}
+{"phase": "chaos", "label": "config='turbo'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"type\": \"literal_error\", \"loc\": [\"body\", \"config\"], \"msg\": \"Input should be 'smoke', 'web' or 'full'\", \"input\": \"turbo\", \"ctx\": {\"expected\": \"'smoke', 'web' or 'full'\"}}]}"}
+{"phase": "chaos", "label": "foods q SQL", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.8, "config": null, "note": ""}
+{"phase": "chaos", "label": "foods q 10.000", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.1, "config": null, "note": ""}
+{"phase": "chaos", "label": "foods limit=0", "method": "GET", "path": "/api/foods", "status": 422, "latency_ms": 1.0, "config": null, "note": "{\"detail\": [{\"type\": \"greater_than_equal\", \"loc\": [\"query\", \"limit\"], \"msg\": \"Input should be greater than or equal to 1\", \"input\": \"0\", \"ctx\": {\"ge\": 1}}]}"}
+{"phase": "chaos", "label": "foods limit=1000", "method": "GET", "path": "/api/foods", "status": 422, "latency_ms": 1.0, "config": null, "note": "{\"detail\": [{\"type\": \"less_than_equal\", \"loc\": [\"query\", \"limit\"], \"msg\": \"Input should be less than or equal to 100\", \"input\": \"1000\", \"ctx\": {\"le\": 100}}]}"}
+{"phase": "chaos", "label": "swap slot lạ", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": \"Slot 'lunch_9' không thuộc thực đơn (chấp nhận: ['breakfast_0', 'breakfast_1', 'lunch_0', 'lunch_1', 'dinner_0', 'dinner_1', 'snack_0'])\"}"}
+{"phase": "chaos", "label": "swap thiếu food_ids", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 0.9, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\"], \"msg\": \"Value error, old_portions_g phải có cùng độ dài với food_ids\", \"input\": {\"profile\": {\"name\": \"Audit\", \"age\": 35, \"gender\": \"male\", \"height_cm\": 168.0, \"weight_kg\": 65.0, \"activity_level\": \"MODERATE\", \"goal\": \"MAINTAIN\", \"meal_counts\": {\"br"}
+{"phase": "chaos", "label": "swap food_id lạ", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": \"food_ids không hợp lệ: ['VN_9999', 'VN_9999', 'VN_9999']\"}"}
+{"phase": "chaos", "label": "swap new_food lạ", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 7.6, "config": "smoke", "note": "{\"detail\": \"Món 'VN_9999' không tồn tại trong cơ sở dữ liệu\"}"}
+{"phase": "chaos", "label": "swap old_portions lệch", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\"], \"msg\": \"Value error, old_portions_g phải có cùng độ dài với food_ids\", \"input\": {\"profile\": {\"name\": \"Audit\", \"age\": 35, \"gender\": \"male\", \"height_cm\": 168.0, \"weight_kg\": 65.0, \"activity_level\": \"MODERATE\", \"goal\": \"MAINTAIN\", \"meal_counts\": {\"br"}
+{"phase": "chaos", "label": "swap old_portions=0", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\"], \"msg\": \"Value error, old_portions_g phải là số hữu hạn trong (0, 1000]\", \"input\": {\"profile\": {\"name\": \"Audit\", \"age\": 35, \"gender\": \"male\", \"height_cm\": 168.0, \"weight_kg\": 65.0, \"activity_level\": \"MODERATE\", \"goal\": \"MAINTAIN\", \"meal_counts\": {\""}
+{"phase": "chaos", "label": "swap old_portions=1e9", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.3, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\"], \"msg\": \"Value error, old_portions_g phải là số hữu hạn trong (0, 1000]\", \"input\": {\"profile\": {\"name\": \"Audit\", \"age\": 35, \"gender\": \"male\", \"height_cm\": 168.0, \"weight_kg\": 65.0, \"activity_level\": \"MODERATE\", \"goal\": \"MAINTAIN\", \"meal_counts\": {\""}
+{"phase": "chaos", "label": "swap food_ids rỗng", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"type\": \"value_error\", \"loc\": [\"body\"], \"msg\": \"Value error, old_portions_g phải có cùng độ dài với food_ids\", \"input\": {\"profile\": {\"name\": \"Audit\", \"age\": 35, \"gender\": \"male\", \"height_cm\": 168.0, \"weight_kg\": 65.0, \"activity_level\": \"MODERATE\", \"goal\": \"MAINTAIN\", \"meal_counts\": {\"br"}
+{"phase": "chaos", "label": "swap trùng món trong bữa", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 7.2, "config": "smoke", "note": "{\"detail\": \"Món mới 'VN_2002' bị trùng với món khác trong cùng bữa lunch\"}"}
+{"phase": "chaos", "label": "targets age=0", "method": "POST", "path": "/api/targets", "status": 422, "latency_ms": 0.9, "config": "smoke", "note": "{\"detail\": [{\"type\": \"greater_than_equal\", \"loc\": [\"body\", \"age\"], \"msg\": \"Input should be greater than or equal to 18\", \"input\": 0, \"ctx\": {\"ge\": 18}}]}"}
+{"phase": "chaos", "label": "JSON hỏng", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 0.8, "config": null, "note": "{\"detail\": [{\"type\": \"json_invalid\", \"loc\": [\"body\", 12], \"msg\": \"JSON decode error\", \"input\": {}, \"ctx\": {\"error\": \"Expecting value\"}}]}"}
+{"phase": "chaos", "label": "content-type text/plain", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.2, "config": null, "note": "{\"detail\": [{\"type\": \"json_invalid\", \"loc\": [\"body\", 0], \"msg\": \"JSON decode error\", \"input\": {}, \"ctx\": {\"error\": \"Expecting value\"}}]}"}
+{"phase": "determinism", "label": "run0", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 112.8, "config": "smoke", "note": ""}
+{"phase": "determinism", "label": "run1", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 114.6, "config": "smoke", "note": ""}
+{"phase": "determinism", "label": "run2", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 116.9, "config": "smoke", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-001", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.0, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-001", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8575.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-002", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-002", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8340.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-003", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-003", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8554.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-004", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.8, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-004", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8706.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-005", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-005", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10507.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-006", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-006", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9721.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-007", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.1, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-007", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8280.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-008", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-008", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8151.4, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-009", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-009", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7987.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-010", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-010", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7906.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-011", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-011", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9433.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-012", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-012", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9280.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-013", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-013", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9233.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-014", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-014", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9243.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-015", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-015", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9286.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-016", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-016", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7750.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-017", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-017", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7537.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-018", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-018", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7780.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-019", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-019", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9759.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-020", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.1, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-020", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9122.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-021", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-021", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10320.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-022", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.9, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-022", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9101.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-023", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-023", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9054.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-024", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-024", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10324.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-025", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.1, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-025", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8551.4, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-026", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-026", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8879.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-027", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-027", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8923.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-028", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-028", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9461.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-029", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-029", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10144.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-030", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-030", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10489.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-031", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-031", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10843.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-032", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-032", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11078.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-033", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.9, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-033", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11269.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-034", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-034", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11081.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-035", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-035", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 12963.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-036", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-036", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10222.4, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-037", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.8, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-037", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10622.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-038", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-038", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10674.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-039", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.9, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-039", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9452.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-040", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.0, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-040", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8834.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-041", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-041", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8998.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-042", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-042", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9033.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-043", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-043", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8365.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-044", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-044", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8242.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-045", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-045", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8076.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-046", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-046", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8820.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-047", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-047", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8636.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-048", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-048", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8464.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-049", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-049", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8536.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-050", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-050", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8496.5, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-051", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-051", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9950.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-052", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-052", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11220.4, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-053", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-053", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11620.5, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-054", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-054", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 13148.5, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-055", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-055", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10458.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-056", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-056", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8817.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-057", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-057", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8338.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-058", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-058", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8231.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-059", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-059", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9010.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-060", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-060", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8746.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-061", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-061", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8766.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-062", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-062", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8344.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-063", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-063", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8764.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-064", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-064", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8847.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-065", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-065", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8543.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-066", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-066", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9249.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-067", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-067", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9336.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-068", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-068", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8914.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-069", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-069", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8830.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-070", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.9, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-070", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8771.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-071", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-071", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11062.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-072", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-072", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10071.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-073", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-073", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10562.5, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-074", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-074", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10339.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-075", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-075", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10222.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-076", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-076", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8173.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-077", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-077", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8397.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-078", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-078", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8187.6, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-079", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-079", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10678.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-080", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-080", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10288.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-081", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-081", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8950.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-082", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-082", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8511.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-083", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-083", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8595.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-084", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-084", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8221.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-085", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-085", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8315.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-086", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-086", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8724.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-087", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-087", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8615.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-088", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-088", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 9005.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-089", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-089", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8636.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-090", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-090", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8954.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-091", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-091", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 11008.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-092", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-092", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10551.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-093", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-093", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10888.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-094", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-094", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10184.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-095", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-095", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 10249.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-096", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-096", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7866.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-097", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-097", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 7999.3, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-098", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-098", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8933.0, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-099", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-099", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8919.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-100", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-100", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 8408.3, "config": "web", "note": ""}

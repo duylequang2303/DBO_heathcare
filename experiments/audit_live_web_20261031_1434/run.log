@@ -1,0 +1,49 @@
+[    0.0s] Auditor start -> /home/duyle/coding/DBO_heathcare/experiments/audit_live_web_20261031_1434 (budget 1740s, min 900s)
+[    0.0s] PHASE 0 bootstrap: /, /api/health, /api/foods, /api/profiles
+[    0.1s]   inventory: 137 món, gia vị=0, nguyên liệu thô=13, tên không nêu cách chế biến=97
+[    0.1s] PHASE 1 lâm sàng: 30 seed tăng huyết áp (15 web / 15 smoke)
+[   47.3s]   hyp 5/30 — sodium max tới giờ: 1201 mg
+[   98.5s]   hyp 10/30 — sodium max tới giờ: 1201 mg
+[  149.3s]   hyp 15/30 — sodium max tới giờ: 1349 mg
+[  149.9s]   hyp 20/30 — sodium max tới giờ: 1349 mg
+[  150.5s]   hyp 25/30 — sodium max tới giờ: 1349 mg
+[  151.2s]   hyp 30/30 — sodium max tới giờ: 3280 mg
+[  151.2s]   sodium max=3280 mg, vượt 1500=1/30, vượt 2300=1
+[  151.5s]   tiểu đường: 3 truy vấn, có cảnh báo=False
+[  151.5s] PHASE 2 dị ứng / khẩu vị
+[  194.2s]   30 lượt, lọt dị ứng=0, lọt 'hải sản'=1
+[  194.2s] PHASE 3 swap chain + concurrency
+[  205.3s]   chain SwapA: gap 8.7% -> 30.3%, max portion 350g
+[  206.2s]   chain SwapB: gap 5.9% -> 39.6%, max portion 350g
+[  207.5s]   chain SwapC: gap 20.2% -> 56.1%, max portion 350g
+[  208.5s]   chain SwapD: gap 21.1% -> 23.0%, max portion 350g
+[  209.1s]   chain SwapE: gap 26.6% -> 52.9%, max portion 350g
+[  210.0s]   concurrency 10 swap: {'200': 10}, max 671.3 ms, 9 kết quả khác nhau
+[  210.0s] PHASE 4 chaos / fuzzing nhập liệu
+[  212.0s]   44 case chaos, FAIL=0, 500=0
+[  212.0s] PHASE 5 tái lập (cùng seed)
+[  212.3s]   same ids=True, same portions=True
+[  212.3s] PHASE 6 ma trận nhân khẩu 100 hồ sơ (config web)
+[  257.0s]   ma trận 5/100 — fitness TB 94.8
+[  299.1s]   ma trận 10/100 — fitness TB 95.0
+[  345.6s]   ma trận 15/100 — fitness TB 96.3
+[  387.5s]   ma trận 20/100 — fitness TB 95.8
+[  434.9s]   ma trận 25/100 — fitness TB 95.8
+[  482.8s]   ma trận 30/100 — fitness TB 96.2
+[  540.0s]   ma trận 35/100 — fitness TB 96.6
+[  589.8s]   ma trận 40/100 — fitness TB 95.3
+[  632.6s]   ma trận 45/100 — fitness TB 95.0
+[  675.5s]   ma trận 50/100 — fitness TB 95.3
+[  731.9s]   ma trận 55/100 — fitness TB 95.7
+[  775.1s]   ma trận 60/100 — fitness TB 95.4
+[  818.4s]   ma trận 65/100 — fitness TB 95.3
+[  863.5s]   ma trận 70/100 — fitness TB 95.4
+[  915.7s]   ma trận 75/100 — fitness TB 95.6
+[  961.5s]   ma trận 80/100 — fitness TB 94.4
+[ 1004.1s]   ma trận 85/100 — fitness TB 94.3
+[ 1048.0s]   ma trận 90/100 — fitness TB 94.3
+[ 1100.9s]   ma trận 95/100 — fitness TB 94.6
+[ 1143.0s]   ma trận 100/100 — fitness TB 93.6
+[ 1143.0s]   ma trận xong: 100 hồ sơ, 0 rerun seed
+[ 1143.0s] Hoàn tất thu thập: 422 request, 219 menu, elapsed 1143s
+[ 1143.1s] Đã ghi report + summary vào /home/duyle/coding/DBO_heathcare/experiments/audit_live_web_20261031_1434
