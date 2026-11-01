@@ -69,6 +69,7 @@ const menuTableBody = $('menuTableBody');
 const totalRow      = $('totalRow');
 const fitnessEl     = $('fitnessScore');
 const violationsEl  = $('violationsList');
+const warningsEl    = $('warningsList');
 const diversityEl   = $('diversityPct');
 const runtimeEl     = $('runtimeSec');
 
@@ -333,7 +334,7 @@ async function generateMenu() {
 
     menuSection.style.display = 'block';
     menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    toast(`Thực đơn đã tạo — Fitness: ${res.fitness}`, 'success');
+    toast(`Thực đơn đã tạo — Độ phù hợp mục tiêu: ${res.fitness}%`, 'success');
   } catch (err) {
     toast(`Lỗi tạo thực đơn: ${err.message}`, 'error');
   } finally {
@@ -354,7 +355,7 @@ function renderMenu(menuData) {
     fitnessEl.innerHTML = `
       <span class="fitness-score">
         <span class="fitness-num">${menuData.fitness.toFixed(1)}</span>
-        <span class="fitness-label">/ 100</span>
+        <span class="fitness-label">% Độ phù hợp mục tiêu</span>
       </span>`;
   }
   if (diversityEl && menuData.diversity_pct !== undefined && menuData.diversity_pct !== null) {
@@ -416,7 +417,7 @@ function renderMenu(menuData) {
     <td>—</td>
   `;
 
-  // Violations
+  renderWarnings(menuData.warnings, menuData.data_limitations);
   renderViolations(menuData.violations);
 
   // Attach swap handlers
@@ -444,8 +445,6 @@ async function handleSwap(slot, btn) {
     const oldPortionsG = state.menu.items.map(i => i.portion_g);
     const res = await apiSwapMenu(state.profile, foodIds, slot, null, state.seed, oldPortionsG);
 
-    // Bảo toàn metadata từ menu trước nếu SwapOut không có
-    res.fitness = res.fitness ?? state.menu?.fitness;
     res.diversity_pct = res.diversity_pct ?? state.menu?.diversity_pct;
     res.runtime_s = res.runtime_s ?? state.menu?.runtime_s;
 
@@ -467,6 +466,20 @@ async function handleSwap(slot, btn) {
     allSwapBtns.forEach(b => { b.disabled = false; });
     btn.innerHTML = originalText;
   }
+}
+
+function renderWarnings(warnings, dataLimitations) {
+  if (!warningsEl) return;
+  const notes = [...(warnings || []), ...(dataLimitations || [])];
+  if (notes.length === 0) {
+    warningsEl.innerHTML = '';
+    return;
+  }
+  warningsEl.innerHTML = notes.map(v => `
+    <div class="violation-badge">
+      <span class="v-icon">ℹ️</span>
+      <span>${escHtml(v)}</span>
+    </div>`).join('');
 }
 
 function renderViolations(violations) {

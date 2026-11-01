@@ -117,6 +117,8 @@ class MenuOut(BaseModel):
     violations: list[str]
     diversity_pct: float
     runtime_s: float
+    warnings: list[str] = Field(default_factory=list)
+    data_limitations: list[str] = Field(default_factory=list)
 
 
 class SwapOut(BaseModel):
@@ -125,6 +127,9 @@ class SwapOut(BaseModel):
     targets: dict[str, float]
     violations: list[str]
     delta: dict[str, float]     # totals_new - totals_old cho từng chỉ số
+    fitness: float
+    warnings: list[str] = Field(default_factory=list)
+    data_limitations: list[str] = Field(default_factory=list)
 
 
 class FoodItem(BaseModel):

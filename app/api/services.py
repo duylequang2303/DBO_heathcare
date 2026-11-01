@@ -169,6 +169,24 @@ _MEDICAL_ALIASES: dict[str, str] = {
     "đái tháo đường": "diabetes", "tie duong": "diabetes",
 }
 
+PROTOTYPE_DISCLAIMER = (
+    "Sản phẩm là prototype kỹ thuật hỗ trợ quyết định, không phải thiết bị y tế."
+)
+DIABETES_SUGAR_WARNING = (
+    "Dữ liệu chưa có chỉ số đường tổng (sugar), thực đơn này chỉ hỗ trợ "
+    "kiểm soát calo và tinh bột, không bảo đảm an toàn lâm sàng cho bệnh nhân tiểu đường."
+)
+
+
+def menu_notices(profile: UserProfile) -> tuple[list[str], list[str]]:
+    """Cảnh báo y tế + giới hạn dữ liệu. Không tuyên bố an toàn lâm sàng."""
+    warnings: list[str] = []
+    conditions = {str(c).strip().lower() for c in (profile.medical_conditions or [])}
+    if "diabetes" in conditions:
+        warnings.append(DIABETES_SUGAR_WARNING)
+    return warnings, [PROTOTYPE_DISCLAIMER]
+
+
 def _normalize_medical_conditions(conditions: list[str]) -> list[str]:
     normalized: list[str] = []
     for raw in conditions or []:
@@ -322,6 +340,7 @@ def generate_menu(req: GenerateIn) -> MenuOut:
 
     items_out = _build_menu_items_out(menu, profile.meal_counts)
     totals = _totals_from_menu(menu)
+    warnings, data_limitations = menu_notices(profile)
 
     return MenuOut(
         items=items_out,
@@ -331,6 +350,8 @@ def generate_menu(req: GenerateIn) -> MenuOut:
         violations=violations,
         diversity_pct=round(diversity_pct, 1),
         runtime_s=round(res.runtime_s, 2),
+        warnings=warnings,
+        data_limitations=data_limitations,
     )
 
 

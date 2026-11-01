@@ -171,28 +171,28 @@
             </div>
           </div>
 
-          <!-- Seed -->
-          <div class="form-group">
-            <label class="form-label">Seed (tái lập kết quả)</label>
-            <div class="seed-row">
-              <span class="seed-label">Seed:</span>
-              <input id="inpSeed" class="seed-input" type="number" value="9001" min="0" />
-              <span class="form-hint" style="margin-top:0">Cùng seed → cùng thực đơn</span>
+          <details class="advanced-settings">
+            <summary>Tùy chọn nâng cao</summary>
+            <div class="form-group">
+              <label class="form-label">Seed (tái lập kết quả)</label>
+              <div class="seed-row">
+                <span class="seed-label">Seed:</span>
+                <input id="inpSeed" class="seed-input" type="number" value="9001" min="0" />
+                <span class="form-hint" style="margin-top:0">Cùng seed → cùng thực đơn</span>
+              </div>
             </div>
-          </div>
-
-          <!-- Config -->
-          <div class="form-group">
-            <label class="form-label">Cấu hình solver</label>
-            <div class="config-row">
-              <button class="config-btn" id="cfgSmoke" type="button" title="Nhanh, để test">🚀 Smoke</button>
-              <button class="config-btn active" id="cfgWeb" type="button" title="Cân bằng tốc độ/chất lượng">⚡ Web</button>
-              <button class="config-btn" id="cfgFull" type="button" title="Chạy đầy đủ, chậm hơn">🎯 Full</button>
+            <div class="form-group">
+              <label class="form-label">Cấu hình solver</label>
+              <div class="config-row">
+                <button class="config-btn" id="cfgSmoke" type="button" title="Nhanh, để test">🚀 Smoke</button>
+                <button class="config-btn active" id="cfgWeb" type="button" title="Cân bằng tốc độ/chất lượng">⚡ Web</button>
+                <button class="config-btn" id="cfgFull" type="button" title="Chạy đầy đủ, chậm hơn">🎯 Full</button>
+              </div>
+              <div class="form-hint" style="margin-top:6px">
+                Smoke: iter=5 · Web: iter=25 · Full: iter=100
+              </div>
             </div>
-            <div class="form-hint" style="margin-top:6px">
-              Smoke: iter=5 · Web: iter=25 · Full: iter=100
-            </div>
-          </div>
+          </details>
 
           <div style="display:flex;gap:10px;margin-top:6px">
             <button id="btnTargets" class="btn btn-secondary" type="button" style="flex:1">
@@ -255,6 +255,14 @@
               <span id="runtimeSec" style="font-size:0.75rem;color:var(--text-3);margin-left:auto"></span>
             </div>
           </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px" id="warningsCard">
+          <div class="card-header">
+            <div class="card-icon">ℹ️</div>
+            <span class="card-title">Cảnh Báo & Giới Hạn</span>
+          </div>
+          <div id="warningsList" class="violations-list"></div>
         </div>
 
         <!-- Violations -->
