@@ -1,5 +1,6 @@
 import numpy as np
 
+from src.models.allergen_rules import is_allergen_conflict
 from src.models.user_profile import UserProfile
 
 
@@ -22,18 +23,19 @@ def _normalize_text(value) -> str:
 def _is_blocked_food(food_name: str, profile: UserProfile) -> bool:
     """
     Kiểm tra tên món có chứa từ khóa dị ứng hoặc món không thích hay không.
+
+    Dị ứng dùng bộ khớp ranh giới từ + nhóm + ngoại lệ (allergen_rules) để
+    không chặn nhầm "Củ cái" khi dị ứng hải sản.
     """
     name = _normalize_text(food_name)
 
-    blocked_tokens = [
-        token
-        for token in (profile.allergies + profile.dislikes)
-        if _normalize_text(token)
-    ]
+    if is_allergen_conflict(name, profile.allergies):
+        return True
 
     return any(
         _normalize_text(token) in name
-        for token in blocked_tokens
+        for token in profile.dislikes
+        if _normalize_text(token)
     )
 
 

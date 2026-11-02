@@ -160,3 +160,27 @@ Nên nói:
 2. **IDBO có cơ chế khác và cơ chế đó đã được kiểm tra riêng.**
 3. **Kết quả chính hiện vẫn tương đương nên chưa được nói IDBO tốt hơn.**
 4. **Nhóm tiếp tục đo và tìm điều kiện phù hợp, không ép tham số để tạo kết quả đẹp.**
+
+---
+
+## 11. Năm câu hỏi bẫy Tuần 11 (khẩu phần, dị ứng, dữ liệu đường)
+
+### Câu 1: “Hệ thống có đảm bảo an toàn cho người tiểu đường không?”
+
+> Dạ không. Dataset hiện tại không có cột đường tổng (total sugar), nên hệ thống chỉ kiểm soát được calo và tinh bột, chưa đánh giá được đường. Mọi thực đơn cho hồ sơ tiểu đường đều kèm cảnh báo nói rõ điều này, cùng tuyên bố sản phẩm là prototype hỗ trợ quyết định, không phải thiết bị y tế. Nhóm không trình bày `carbs × 0.15` như số đo đường; nếu dùng thì phải đặt tên là proxy và gắn cờ ước lượng.
+
+### Câu 2: “Vì sao trước đây thực đơn có 350 g sữa chua hoặc 350 g rau?”
+
+> Dạ vì tầng tối ưu khẩu phần và bước thẩm định đang dùng chung một khoảng kỹ thuật [25, 350] g cho mọi món. Tuần 11 nhóm thay bằng ngưỡng theo vai trò ẩm thực: tinh bột 100–250 g, đạm 60–180 g, rau 80–220 g, canh/súp 100–350 g, trái cây/tráng miệng 50–200 g. Sau khi làm tròn 5 g, khẩu phần được kẹp lại trong biên rồi mới thẩm định trên chính thực đơn đã làm tròn. Nhóm chạy hậu kiểm 30 seed × 7 món = 210 khẩu phần: 0 khẩu phần vượt biên, 0 vi phạm “portion out of range”.
+
+### Câu 3: “Người dị ứng hải sản mà menu vẫn có món ‘Củ cái’ thì có phải lọt dị ứng không?”
+
+> Dạ không. Đó chính là lỗi khớp chuỗi con: “cá” nằm trong “củ cái” và “gạo nếp cái” nhưng không phải hải sản. Nhóm chuyển sang khớp theo nhóm dị ứng với ranh giới từ và danh sách cụm ngoại lệ: dị ứng hải sản chặn tôm, cua, cá, mực, nghêu, sò, ốc, hàu, ghẹ… nhưng cho qua “củ cái”, “rau giấp cá”, “dầu cám”. Tương tự, dị ứng sữa không chặn “quả bơ”, “bơ thực vật”, “sữa đậu nành”; dị ứng đậu phộng không chặn “đậu bắp”, “đậu cô ve”. Bộ lọc này chạy ở cả ba điểm: tạo pool ứng viên, thao tác thay món và bước thẩm định.
+
+### Câu 4: “Có phải nhóm siết ràng buộc để kết quả đẹp hơn hoặc để IDBO thắng không?”
+
+> Dạ không. Ràng buộc khẩu phần là yêu cầu thực tế về khẩu phần ăn, không liên quan đến so sánh thuật toán. Với DBO và IDBO, nhóm giữ nguyên tham số, cùng seed, cùng objective và cùng ngân sách đánh giá; kết quả chính vẫn là tương đương trong phạm vi thử nghiệm và nhóm báo cáo đúng như vậy.
+
+### Câu 5: “Vậy hệ thống đã loại hết nguyên liệu thô và gia vị khỏi thực đơn chưa?”
+
+> Dạ chưa hoàn toàn. Whitelist hiện tại đã loại các món bị phân loại là nguyên liệu thô/công nghiệp, và bước kiểm tra tự động trong đợt audit gần nhất không ghi nhận món gia vị nào xuất hiện như món độc lập. Tuy nhiên, tiêu chí loại nguyên liệu thô/gia vị khỏi output người dùng và bộ culinary slots vẫn nằm trong danh mục đang hoàn thiện, nên nhóm không tuyên bố đã chặn triệt để.

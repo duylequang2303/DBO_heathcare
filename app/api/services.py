@@ -28,7 +28,11 @@ if str(ROOT) not in sys.path:
 from src.algorithms.menu_objective import decode_result
 from src.algorithms.two_tier_solver import TwoTierConfig, two_tier_optimize
 from src.models.constraints import validate_menu
-from src.models.dish_category import DishRole, classify_dish_role
+from src.models.dish_category import (
+    DishRole,
+    classify_dish_role,
+    portion_bounds_for_food_ids,
+)
 from src.models.diversity_penalty import calculate_unique_main_dish_pct
 from src.models.food_selector import get_meal_order_slots
 from src.models.user_profile import (
@@ -181,7 +185,9 @@ DIABETES_SUGAR_WARNING = (
 def menu_notices(profile: UserProfile) -> tuple[list[str], list[str]]:
     """Cảnh báo y tế + giới hạn dữ liệu. Không tuyên bố an toàn lâm sàng."""
     warnings: list[str] = []
-    conditions = {str(c).strip().lower() for c in (profile.medical_conditions or [])}
+    # Chuẩn hóa alias tiếng Việt ("tiểu đường" -> "diabetes") ngay tại đây để
+    # không phụ thuộc việc caller đã đi qua build_profile() hay chưa.
+    conditions = set(_normalize_medical_conditions(profile.medical_conditions))
     if "diabetes" in conditions:
         warnings.append(DIABETES_SUGAR_WARNING)
     return warnings, [PROTOTYPE_DISCLAIMER]
@@ -330,10 +336,13 @@ def generate_menu(req: GenerateIn) -> MenuOut:
     except (ValueError, KeyError) as exc:
         raise HTTPException(status_code=400, detail=f"Không tạo được thực đơn hợp lệ: {exc}") from exc
 
-    # Round chỉ dùng cho output, optimizer vẫn dùng liên tục
-    rounded = round_portions(res.best_portions_g, step=5)
+    # Round chỉ dùng cho output, optimizer vẫn dùng liên tục.
+    # Làm tròn 5g có thể vượt biên ±2.5g, nên kẹp lại theo bounds vai trò món
+    # trước khi decode/tính lại nutrient (AGENTS.md: báo metrics của nghiệm đã làm tròn).
+    low_bounds, high_bounds = portion_bounds_for_food_ids(res.best_food_ids, food_map)
+    rounded = np.clip(round_portions(res.best_portions_g, step=5), low_bounds, high_bounds)
     menu = decode_result(res.best_food_ids, rounded, food_map, profile.meal_counts)
-    violations = validate_menu(menu, profile, targets)
+    violations = validate_menu(menu, profile, targets, food_map=food_map)
 
     meal_order = get_meal_order_slots(profile.meal_counts)
     diversity_pct = calculate_unique_main_dish_pct([res.best_food_ids], meal_order)

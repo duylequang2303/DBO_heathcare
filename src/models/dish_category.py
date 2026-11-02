@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 from enum import Enum
-from typing import Tuple
+from typing import Iterable, Tuple
 
 
 class DishRole(str, Enum):
@@ -78,8 +78,10 @@ PROTEIN_PATTERNS = re.compile(
     re.IGNORECASE,
 )
 
+# "súp lơ" (bông cải) là rau chứ không phải canh/súp: nếu khớp "súp" ở đây,
+# món sẽ nhận trần khẩu phần của SOUP (350g) thay vì VEGETABLE (220g).
 SOUP_PATTERNS = re.compile(
-    r"\b(canh|súp|soup|broth|cháo)\b",
+    r"\b(canh|súp(?!\s*lơ)|soup|broth|cháo)\b",
     re.IGNORECASE,
 )
 
@@ -134,3 +136,35 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
 def get_role_portion_bounds(role: DishRole) -> Tuple[float, float]:
     """Retrieve natural minimum and maximum portion bounds in grams for a given role."""
     return ROLE_PORTION_BOUNDS.get(role, (50.0, 250.0))
+
+
+def portion_bounds_for_food_ids(
+    food_ids: Iterable[str], food_map: dict
+) -> tuple[list[float], list[float]]:
+    """Vector khẩu phần (lb, ub) theo vai trò ẩm thực cho từng food_id.
+
+    Dùng chung cho inner solver và cho bước làm tròn 5g, để mọi điểm vào
+    (generate, swap) tuân thủ cùng một bộ ngưỡng theo vai trò món thay vì
+    khoảng vô hướng cứng [25, 350].
+
+    Raises:
+        ValueError: nếu vai trò không có khoảng khẩu phần hợp lệ (vd RAW_INGREDIENT).
+    """
+    lows: list[float] = []
+    highs: list[float] = []
+    for food_id in food_ids:
+        row = food_map[food_id]
+        role = classify_dish_role(
+            str(row.get("food_name", "")),
+            str(row.get("category", "")),
+            str(row.get("source", "")),
+        )
+        low, high = get_role_portion_bounds(role)
+        if low >= high:
+            raise ValueError(
+                f"Món '{food_id}' (vai trò {role.value}) không có khoảng khẩu phần hợp lệ "
+                f"[{low}, {high}]"
+            )
+        lows.append(float(low))
+        highs.append(float(high))
+    return lows, highs

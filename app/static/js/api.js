@@ -8,6 +8,22 @@
 const BASE = '';  // cùng origin (một cổng)
 
 /**
+ * Backend đã Việt hóa 422 ("Thiếu trường Họ tên", "Tuổi phải từ 18 trở lên")
+ * nên không ghép thêm khóa tiếng Anh ("name: ...") vào trước nữa.
+ * Chỉ ghép nhãn khi message vẫn còn là chuỗi thuần ASCII.
+ * @param {{loc?: string[], msg?: string}} d
+ * @returns {string}
+ */
+function formatFieldError(d) {
+  const msg = String(d?.msg || '').trim();
+  const label = d?.loc?.slice(-1)[0] || '';
+  if (!msg) return label || 'Dữ liệu không hợp lệ';
+  const alreadyLocalized = /[\u00C0-\u1EF9]/.test(msg);
+  if (alreadyLocalized || !label) return msg;
+  return `${label}: ${msg}`;
+}
+
+/**
  * Tiện ích fetch JSON — throw Error với message rõ ràng khi thất bại.
  * @param {string} url
  * @param {RequestInit} options
@@ -24,7 +40,7 @@ async function apiFetch(url, options = {}) {
       const body = await res.json();
       if (Array.isArray(body.detail)) {
         detail = body.detail
-          .map(d => `${d.loc?.slice(-1)[0] || 'trường'}: ${d.msg}`)
+          .map(d => formatFieldError(d))
           .join('; ');
       } else if (typeof body.detail === 'string') {
         detail = body.detail;

@@ -61,16 +61,38 @@ def _loc_label(loc: list) -> str:
     return _FIELD_LABELS.get(last, last)
 
 
-def _translate_422_msg(msg: str, loc: list) -> str:
+def _fmt_threshold(value) -> str:
+    """Định dạng ngưỡng số: 18.0 -> '18', 250.5 -> '250.5'."""
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value)
+
+
+def _translate_422_msg(msg: str, loc: list, ctx: dict | None = None) -> str:
     label = _loc_label(loc)
     low = (msg or "").lower()
+    ctx = ctx or {}
     if "field required" in low:
         return f"Thiếu trường {label}"
     if "greater than or equal to" in low:
+        ge = ctx.get("ge")
+        if ge is not None:
+            return f"{label} phải từ {_fmt_threshold(ge)} trở lên"
         return f"{label} phải lớn hơn hoặc bằng giá trị tối thiểu"
     if "less than or equal to" in low:
+        le = ctx.get("le")
+        if le is not None:
+            return f"{label} phải nhỏ hơn hoặc bằng {_fmt_threshold(le)}"
         return f"{label} phải nhỏ hơn hoặc bằng giá trị tối đa"
+    if "less than" in low:
+        lt = ctx.get("lt")
+        if lt is not None:
+            return f"{label} phải nhỏ hơn {_fmt_threshold(lt)}"
+        return f"{label} phải nhỏ hơn giá trị tối đa"
     if "greater than" in low:
+        gt = ctx.get("gt")
+        if gt is not None:
+            return f"{label} phải lớn hơn {_fmt_threshold(gt)}"
         return f"{label} phải lớn hơn 0"
     if "valid integer" in low:
         return f"{label} phải là số nguyên"
@@ -88,7 +110,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         loc = list(err.get("loc") or [])
         details.append({
             "loc": loc,
-            "msg": _translate_422_msg(str(err.get("msg") or ""), loc),
+            "msg": _translate_422_msg(
+                str(err.get("msg") or ""), loc, err.get("ctx") or {}
+            ),
             "type": err.get("type"),
         })
     return JSONResponse(status_code=422, content={"detail": details})

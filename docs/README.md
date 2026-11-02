@@ -18,6 +18,9 @@ Chứa các bản slide thuyết trình PowerPoint và PDF xuất chính thức:
 
 ## 2. Báo Cáo Tiến Độ & Bản Thảo Word (`docs/reports/`)
 Chứa toàn bộ các báo cáo Word tổng hợp và đóng góp của các thành viên:
+* **Báo cáo vấn đề & hạn chế (bắt buộc đọc trước khi bảo vệ/viết slide)**:
+  * [`BAO_CAO_HAN_CHE_VA_VAN_DE.md`](reports/BAO_CAO_HAN_CHE_VA_VAN_DE.md) — 13 hạn chế còn tồn tại, mỗi mục có số liệu đo được + đường dẫn nguồn + điều kiện đóng, kèm danh sách câu **không được** tuyên bố.
+  * [`BAO_CAO_THAM_DINH_HOI_DONG_TUAN_11.md`](reports/BAO_CAO_THAM_DINH_HOI_DONG_TUAN_11.md) — báo cáo phản biện black-box Tuần 11 (số liệu gốc).
 * **Báo cáo tổng hợp chính thức**:
   * [`BaoCao_TongHop_Tuan_1_den_7.docx`](reports/BaoCao_TongHop_Tuan_1_den_7.docx) — Báo cáo tổng kết chặng 1 (Tuần 1–7).
   * [`BaoCao_Tuan7.docx`](reports/BaoCao_Tuan7.docx) — Báo cáo chi tiết Tuần 7.

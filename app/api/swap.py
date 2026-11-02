@@ -22,7 +22,9 @@ from src.algorithms.menu_objective import (
     decode_result,
     make_menu_objective,
 )
+from src.models.allergen_rules import conflicting_allergens
 from src.models.constraints import validate_menu
+from src.models.dish_category import portion_bounds_for_food_ids
 from src.models.objective import evaluate
 from src.models.food_selector import (
     build_meal_pools,
@@ -128,24 +130,20 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
             )
 
         # 5.2. ƯU TIÊN kiểm tra dị ứng trước kiểm tra trùng
-        food_name_lower = str(
-            target_food.get("food_name", "")
-        ).lower()
-
-        for allergy in profile.allergies:
-            allergy_str = str(allergy).strip().lower()
-
-            if (
-                allergy_str
-                and allergy_str in food_name_lower
-            ):
-                raise HTTPException(
-                    status_code=400,
-                    detail=(
-                        f"Món mới '{target_food.get('food_name')}' "
-                        f"vi phạm dị ứng '{allergy}'"
-                    ),
-                )
+        # Dùng bộ khớp ranh giới từ + nhóm dị ứng: dị ứng "hải sản" phải chặn
+        # cá/tôm/cua nhưng không chặn "Củ cái" hay "Gạo nếp cái".
+        allergen_hits = conflicting_allergens(
+            str(target_food.get("food_name", "")),
+            profile.allergies,
+        )
+        if allergen_hits:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Món mới '{target_food.get('food_name')}' "
+                    f"vi phạm dị ứng '{', '.join(allergen_hits)}'"
+                ),
+            )
 
         # 5.3. Kiểm tra trùng món trong cùng bữa
         if req.new_food_id in used_in_meal:
@@ -243,18 +241,25 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         max_iter=25,
     )
 
+    # Bounds theo vai trò ẩm thực của từng món (tránh kịch trần kỹ thuật 350g).
+    low_bounds, high_bounds = portion_bounds_for_food_ids(
+        new_food_ids,
+        food_map,
+    )
+
     inner_res = inner_solver.optimize(
         inner_obj,
         dim=len(new_food_ids),
-        lb=25.0,
-        ub=350.0,
+        lb=low_bounds,
+        ub=high_bounds,
         seed=req.seed,
     )
 
-    # 9. Làm tròn 5g và kiểm tra ràng buộc
-    new_rounded = round_portions(
-        inner_res.best_x,
-        step=5,
+    # 9. Làm tròn 5g, kẹp về bounds vai trò rồi mới kiểm tra ràng buộc
+    new_rounded = np.clip(
+        round_portions(inner_res.best_x, step=5),
+        low_bounds,
+        high_bounds,
     )
 
     menu_new = decode_result(
@@ -268,6 +273,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         menu_new,
         profile,
         targets,
+        food_map=food_map,
     )
 
     items_out = _build_menu_items_out(

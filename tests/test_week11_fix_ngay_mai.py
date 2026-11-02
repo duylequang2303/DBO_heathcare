@@ -142,3 +142,66 @@ def test_app_js_uses_vietnamese_fitness_label():
     js = (ROOT / "app" / "static" / "js" / "app.js").read_text(encoding="utf-8")
     assert "Độ phù hợp mục tiêu" in js
     assert "Fitness:" not in js
+
+
+def test_422_age_message_includes_threshold_value():
+    """1.3: lỗi 422 phải nêu ngưỡng cụ thể, không nói chung chung."""
+    profile = dict(BASE_PROFILE, age=17)
+    res = client.post("/api/targets", json=profile)
+    assert res.status_code == 422
+    msg = " ".join(d["msg"] for d in res.json()["detail"])
+    assert "Tuổi" in msg
+    assert "18" in msg
+    assert "tối thiểu" not in msg
+
+
+def test_422_height_message_includes_lower_threshold():
+    profile = dict(BASE_PROFILE, height_cm=0)
+    res = client.post("/api/targets", json=profile)
+    assert res.status_code == 422
+    msg = " ".join(d["msg"] for d in res.json()["detail"])
+    assert "Chiều cao" in msg
+    assert "0" in msg
+    assert "tối thiểu" not in msg
+
+
+def test_422_weight_message_includes_upper_threshold():
+    profile = dict(BASE_PROFILE, weight_kg=500)
+    res = client.post("/api/targets", json=profile)
+    assert res.status_code == 422
+    msg = " ".join(d["msg"] for d in res.json()["detail"])
+    assert "Cân nặng" in msg
+    assert "400" in msg
+
+
+def test_api_js_does_not_double_prefix_english_field_key():
+    """1.1: toast không được ghép 'name: ' trước câu đã Việt hóa."""
+    js = (ROOT / "app" / "static" / "js" / "api.js").read_text(encoding="utf-8")
+    assert "formatFieldError" in js
+    # Mẫu cũ luôn ghép khóa tiếng Anh vào mọi message.
+    assert "`${d.loc?.slice(-1)[0] || 'trường'}: ${d.msg}`" not in js
+
+
+def test_menu_notices_normalizes_vietnamese_diabetes_alias():
+    """1.2: menu_notices không được bỏ lọt alias 'tiểu đường'."""
+    from app.api.services import menu_notices
+    from src.models.user_profile import ActivityLevel, Gender, Goal, UserProfile
+
+    profile = UserProfile(
+        name="Lan",
+        age=45,
+        gender=Gender.FEMALE,
+        height_cm=158.0,
+        weight_kg=62.0,
+        activity_level=ActivityLevel.LIGHT,
+        goal=Goal.LOSE_WEIGHT,
+        medical_conditions=["tiểu đường"],
+        allergies=[],
+        dislikes=[],
+        likes=[],
+        meal_counts={"breakfast": 2, "lunch": 2, "dinner": 2, "snack": 1},
+    )
+    warnings, limitations = menu_notices(profile)
+    assert any("đường" in w.lower() for w in warnings)
+    assert not any("an toàn lâm sàng" in w.lower() for w in limitations)
+    assert any("prototype" in item.lower() for item in limitations)

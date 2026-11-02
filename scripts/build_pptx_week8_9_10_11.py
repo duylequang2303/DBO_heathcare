@@ -17,8 +17,9 @@ Chuỗi tiến độ gộp 4 tuần trọng tâm (14 slide chuẩn học thuật
 - Slide 10: [Tuần 11] Đánh đổi chi phí tính toán: Lượt Evaluations & Thời gian chạy (W11-F2)
 - Slide 11: [Tuần 11] Giải mã Telemetry: Tác động tầng ngoài vs tầng trong & Hiện tượng Seed 8008 (W11-F3)
 - Slide 12: [Tuần 11] Kiểm soát ngân sách tính toán chung (Budget-Matched Diagnostic, W11-F4)
-- Slide 13: [Tuần 11] Kiến trúc Ngưỡng kép (Dual Threshold) & Nghiệm thu chất lượng 265/265 Tests PASS
-- Slide 14: [Tổng kết] Toàn diện giai đoạn Tuần 8–11 & Kế hoạch nghiên cứu thực nghiệm Tuần 12
+- Slide 13: [Tuần 11] Kiến trúc Ngưỡng kép (Dual Threshold) & Nghiệm thu chất lượng 391/391 Tests PASS
+- Slide 14: [Tuần 11] Tuân thủ quy chuẩn y tế, bất biến nghiệp vụ & an toàn dị ứng
+- Slide 15: [Tổng kết] Toàn diện giai đoạn Tuần 8–11 & Kế hoạch nghiên cứu thực nghiệm Tuần 12
 """
 
 from __future__ import annotations
@@ -65,7 +66,7 @@ CREAM = RGBColor(0xFD, 0xF6, 0xEB)        # Nền kem ghi chú
 FONT = "Calibri"
 SLIDE_W = Inches(13.333)
 SLIDE_H = Inches(7.5)
-TOTAL_SLIDES = 14
+TOTAL_SLIDES = 15
 
 
 def _add_run(paragraph, text=""):
@@ -280,7 +281,7 @@ def build_slide_2(prs):
          "• Tách riêng tập hiệu chỉnh & tập kiểm định độc lập (seed 8003–8010).\n"
          "• Báo cáo trung thực: IDBO thắng 5/8 seed (+0.1659 điểm), Wilcoxon p > 0.05 (chưa có ý nghĩa thống kê).\n"
          "• Đánh đổi tài nguyên: IDBO tốn +18.6% evals và +14.6% runtime.\n"
-         "• Chốt chặn ngân sách chung (Budget-Matched) & Hoàn thiện Ngưỡng kép (Dual Threshold) · 270/270 tests PASS.",
+         "• Chốt chặn ngân sách chung (Budget-Matched) & Hoàn thiện Ngưỡng kép (Dual Threshold) · 391/391 tests PASS.",
          GREEN, LIGHT),
     ]
 
@@ -841,7 +842,7 @@ def build_slide_12(prs):
 
 
 # =========================================================================== #
-# SLIDE 13: [TUẦN 11] KIẾN TRÚC NGƯỠNG KÉP & ĐẢM BẢO CHẤT LƯỢNG 265 TESTS PASS
+# SLIDE 13: [TUẦN 11] KIẾN TRÚC NGƯỠNG KÉP & ĐẢM BẢO CHẤT LƯỢNG 390 TESTS PASS
 # =========================================================================== #
 def build_slide_13(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -879,17 +880,18 @@ def build_slide_13(prs):
     tf2 = tb2.text_frame
     tf2.word_wrap = True
     p2 = tf2.paragraphs[0]
-    r2 = _add_run(p2, "Nghiệm Thu Chất Lượng (270/270 Tests PASS)")
+    r2 = _add_run(p2, "Nghiệm Thu Chất Lượng (391/391 Tests PASS)")
     _style_run(r2, 15.0, True, INDIGO)
 
     pts2 = [
-        ("Kiểm thử tự động 100% PASS (pytest 9.1.1):",
-         "270/270 unit tests PASSED (~24s, Python 3.12). Bao phủ toàn diện:\n"
-         "• Core Solvers & Telemetry: 84 tests\n"
-         "• Ràng buộc dinh dưỡng, Trần Natri & DishRole: 88 tests\n"
-         "• Mô hình dữ liệu & Schemas: 44 tests\n"
-         "• Budget-Matched & Dual Threshold: 30 tests\n"
-         "• FastAPI REST Endpoints & Week 9 Suite: 24 tests"),
+        ("Kiểm thử tự động 100% PASS (pytest, Python 3.12):",
+         "391/391 tests PASSED (~35s) trên toàn bộ suite hiện tại.\n"
+         "• Bổ sung Tuần 11 — an toàn dị ứng theo nhóm:\n"
+         "  tests/test_safe_allergen_matching.py\n"
+         "• Bổ sung Tuần 11 — ràng buộc khẩu phần theo vai trò:\n"
+         "  tests/test_week11_role_portion_bounds.py\n"
+         "• Bổ sung Tuần 11 — 422 tiếng Việt có ngưỡng số,\n"
+         "  toast không lặp nhãn, cảnh báo y tế đúng alias"),
         ("Tính tất định tuyệt đối (Deterministic Decoding):",
          "Mọi hàm ngẫu nhiên đều nhận seed tường minh, sử dụng RNG cục bộ rng = np.random.default_rng(seed), không rò rỉ trạng thái giữa các lần chạy."),
         ("Làm tròn khẩu phần 5g minh bạch:",
@@ -909,9 +911,86 @@ def build_slide_13(prs):
 
 
 # =========================================================================== #
-# SLIDE 14: TỔNG KẾT GIAI ĐOẠN TUẦN 8–11 & ĐỊNH HƯỚNG TUẦN 12
+# SLIDE 14: [TUẦN 11] TUÂN THỦ QUY CHUẨN Y TẾ & BẤT BIẾN NGHIỆP VỤ
 # =========================================================================== #
-def build_slide_14(prs):
+def build_slide_14_compliance(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    _header(
+        slide,
+        "[Tuần 11] Tuân Thủ Quy Chuẩn Y Tế & Bất Biến Nghiệp Vụ",
+        "Minh Bạch Dữ Liệu & An Toàn Dị Ứng",
+    )
+
+    _card(slide, Inches(0.6), Inches(1.5), Inches(5.9), Inches(5.4))
+    tb1 = slide.shapes.add_textbox(Inches(0.85), Inches(1.65), Inches(5.4), Inches(5.1))
+    tf1 = tb1.text_frame
+    tf1.word_wrap = True
+    p1 = tf1.paragraphs[0]
+    r1 = _add_run(p1, "Minh Bạch Dữ Liệu & Giới Hạn Tuyên Bố")
+    _style_run(r1, 15.0, True, INDIGO)
+
+    pts1 = [
+        ("Phân định ba loại dữ liệu:",
+         "ĐO ĐƯỢC: năng lượng, protein, carbs, fat, fiber, natri (cột thật trong CSV).\n"
+         "SUY RA: khẩu phần gram sau tối ưu và làm tròn 5g.\n"
+         "PROXY: đường tổng — dataset hiện tại KHÔNG có cột total sugar."),
+        ("Proxy đường phải gọi đúng tên:",
+         "Nếu dùng, đặt sugar_proxy_g và sugar_is_estimated = True; không trình bày như số đo;\n"
+         "không dùng để kết luận “an toàn cho tiểu đường”."),
+        ("Ngưỡng đáp ứng được cấu hình (không phải chuẩn lâm sàng):",
+         "Calo ±10%; protein/carbs ±15%; fat ±20%; fiber ±30%.\n"
+         "Natri ≤ 2300 mg/ngày; riêng hồ sơ tăng huyết áp ≤ 1500 mg/ngày."),
+        ("Tuyên bố phạm vi:",
+         "Prototype kỹ thuật hỗ trợ quyết định, không phải thiết bị y tế.\n"
+         "P1/P2/P3 là hồ sơ mô phỏng cho benchmark, không phải bệnh nhân thật."),
+    ]
+    for t, d in pts1:
+        p = tf1.add_paragraph()
+        p.space_before = Pt(7)
+        rt = _add_run(p, f"★ {t}\n  ")
+        _style_run(rt, 10.5, True, TEAL)
+        rd = _add_run(p, d)
+        _style_run(rd, 9.3, False, INK)
+
+    _card(slide, Inches(6.8), Inches(1.5), Inches(5.9), Inches(5.4))
+    tb2 = slide.shapes.add_textbox(Inches(7.05), Inches(1.65), Inches(5.4), Inches(5.1))
+    tf2 = tb2.text_frame
+    tf2.word_wrap = True
+    p2 = tf2.paragraphs[0]
+    r2 = _add_run(p2, "Bất Biến Nghiệp Vụ Đã Có Test Bảo Vệ")
+    _style_run(r2, 15.0, True, INDIGO)
+
+    pts2 = [
+        ("Khẩu phần theo vai trò ẩm thực (mới):",
+         "STAPLE 100–250; MAIN_PROTEIN 60–180; VEGETABLE 80–220; SOUP 100–350;\n"
+         "FRUIT_SNACK 50–200; BEVERAGE 100–300 g. Inner solver nhận vector lb/ub theo món,\n"
+         "làm tròn 5g rồi kẹp biên và validate trên chính menu đã làm tròn."),
+        ("Hậu kiểm 30 seed (smoke, P1):",
+         "210 khẩu phần — 0 vượt biên vai trò, 0 vi phạm “portion out of range”, 0 nutrient âm/NaN\n"
+         "(scripts/check_role_bounds_impact.py, experiments/week11_role_bounds/)."),
+        ("Bộ lọc dị ứng an toàn hai tầng (mới):",
+         "4 nhóm: hải sản / đậu phộng / sữa / trứng; regex ranh giới từ + cụm ngoại lệ.\n"
+         "“Củ cái”, “Gạo nếp cái”, “Quả bơ”, “Đậu bắp” không bị chặn nhầm;\n"
+         "áp dụng đồng thời ở candidate pool, swap và validate_menu."),
+        ("Chưa ENFORCED (ROADMAP — báo cáo trung thực):",
+         "Danh mục loại nguyên liệu thô/gia vị khỏi output người dùng và culinary slots\n"
+         "vẫn đang hoàn thiện; nhóm không tuyên bố đã chặn."),
+    ]
+    for t, d in pts2:
+        p = tf2.add_paragraph()
+        p.space_before = Pt(6)
+        rt = _add_run(p, f"🛡 {t}\n  ")
+        _style_run(rt, 10.5, True, GREEN)
+        rd = _add_run(p, d)
+        _style_run(rd, 9.1, False, INK)
+
+    _footer(slide, 14)
+
+
+# =========================================================================== #
+# SLIDE 15: TỔNG KẾT GIAI ĐOẠN TUẦN 8–11 & ĐỊNH HƯỚNG TUẦN 12
+# =========================================================================== #
+def build_slide_15(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     _header(slide, "Tổng Kết Toàn Diện Giai Đoạn Tuần 8–11 & Kế Hoạch Tuần 12", "Tổng Kết & Định Hướng")
 
@@ -931,7 +1010,7 @@ def build_slide_14(prs):
         ("Tuần 10 — Hệ thống Web API & UI:",
          "Đưa solver lên nền tảng Web với kiến trúc Single-port FastAPI, 6 REST endpoints, giao diện Dark Glassmorphism, Radar chart 6 trục và bảng thực đơn 5g."),
         ("Tuần 11 — Chuẩn hóa độc lập & Budget-Matched:",
-         "Đánh giá mù trên 8 seed độc lập (IDBO thắng 5/8, Wilcoxon p>0.05), giải mã chi phí tính toán (+18.6% evals), cài đặt chốt chặn Budget-Matched, kiến trúc Dual Threshold, 270/270 tests pass.")
+         "Đánh giá mù trên 8 seed độc lập (IDBO thắng 5/8, Wilcoxon p>0.05), giải mã chi phí tính toán (+18.6% evals), cài đặt chốt chặn Budget-Matched, kiến trúc Dual Threshold, ràng buộc khẩu phần theo vai trò + bộ lọc dị ứng an toàn, 391/391 tests pass.")
     ]
     for t, d in achievements:
         p = tf1.add_paragraph()
@@ -967,7 +1046,7 @@ def build_slide_14(prs):
         rd = _add_run(p, d)
         _style_run(rd, 9.3, False, INK)
 
-    _footer(slide, 14)
+    _footer(slide, 15)
 
 
 def main():
@@ -976,7 +1055,7 @@ def main():
     prs.slide_height = SLIDE_H
 
     print("=" * 80)
-    print("XÂY DỰNG SLIDE BÁO CÁO TỔNG HỢP TUẦN 8 – 9 – 10 – 11 (14 SLIDES)")
+    print("XÂY DỰNG SLIDE BÁO CÁO TỔNG HỢP TUẦN 8 – 9 – 10 – 11 (15 SLIDES)")
     print("=" * 80)
 
     build_slide_1(prs)
@@ -992,7 +1071,8 @@ def main():
     build_slide_11(prs)
     build_slide_12(prs)
     build_slide_13(prs)
-    build_slide_14(prs)
+    build_slide_14_compliance(prs)
+    build_slide_15(prs)
 
     prs.save(str(OUT_PPTX_MERGED))
     prs.save(str(OUT_PPTX_USER_TAGGED))

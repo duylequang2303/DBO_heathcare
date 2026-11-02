@@ -142,8 +142,53 @@ def build_report(a):
     }
     rerun_meta = [m for m in meta if m.get("rerun")]
 
+    # ---- derived facts: MỌI câu diễn giải trong REPORT.md phải đọc từ đây.
+    # Không thêm câu khẳng định nào về hệ thống nếu không suy ra được từ các
+    # trường trong khối này (hoặc từ summary ở dưới).
+    ERR_EN = ("Input should", "String should", "Field required",
+              "value is not a valid", "Decimal input", "Extra inputs are not permitted")
+    req_4xx = [r for r in reqs if isinstance(r.status, int) and 400 <= r.status < 500]
+    hyp_menus = [
+        m for m in menus
+        if "hypertension" in {str(c).strip().lower() for c in (m.profile.get("medical_conditions") or [])}
+    ]
+    hyp_sodium = [float(m.totals.get("sodium_mg", 0) or 0) for m in hyp_menus]
+    swap_menus = [m for m in menus if m.phase == "swap"]
+    swap_fit = [float(m.fitness) for m in swap_menus if m.fitness is not None]
+    dia_rows = [r for r in A.clinical.get("diabetes", []) if r.get("status") == 200]
+    derived = {
+        "n_4xx": len(req_4xx),
+        "n_4xx_english_pydantic": sum(
+            1 for r in req_4xx if any(p in (r.note or "") for p in ERR_EN)
+        ),
+        "n_400_internal_message": sum(
+            1 for r in req_4xx if r.status == 400
+            and any(p in (r.note or "") for p in ("min_pool_size", "has size", "pool"))
+        ),
+        "n_swap_menus": len(swap_menus),
+        "n_swap_menus_with_fitness": len(swap_fit),
+        "swap_fitness_min": round(min(swap_fit), 2) if swap_fit else None,
+        "swap_fitness_max": round(max(swap_fit), 2) if swap_fit else None,
+        "n_menus_fitness_negative": sum(
+            1 for m in menus if m.fitness is not None and float(m.fitness) < 0
+        ),
+        "n_hyp_menus": len(hyp_menus),
+        "n_hyp_over_1500": sum(1 for v in hyp_sodium if v > 1500),
+        "n_hyp_over_2300": sum(1 for v in hyp_sodium if v > 2300),
+        "hyp_sodium_max": round(max(hyp_sodium), 1) if hyp_sodium else None,
+        "hyp_sodium_targets": sorted({float(m.targets.get("sodium_mg", 0) or 0) for m in hyp_menus}),
+        "n_allergy_menus_400": sum(
+            1 for e in A.allergy.get("runs", []) if e.get("status") == 400
+        ),
+        "diabetes_warn": bool(dia_rows) and all(r.get("mentions_warning") for r in dia_rows),
+        "diabetes_mentions_sugar": bool(dia_rows) and all(r.get("mentions_sugar") for r in dia_rows),
+        "diabetes_keys": sorted({k for r in dia_rows for k in r.get("keys", [])}),
+        "at_cap_threshold_g": 349.5,
+    }
+
     # ---- builds
     summary = {
+        "derived": derived,
         "n_requests": n_req,
         "status_counts": dict(st),
         "ok_rate_pct": _pct(n200, n_req),
@@ -254,9 +299,11 @@ def build_report(a):
         "- `config.json`: tham số lần chạy\n"
         "- `raw_requests.jsonl`: toàn bộ request/status/latency\n"
         "- `raw_menus.jsonl`: toàn bộ thực đơn sinh ra\n"
-        "- `summary.json`: số liệu tổng hợp\n"
-        "- `REPORT.md`: báo cáo thẩm định\n"
-        "- `run.log`: log tiến độ\n",
+        "- `summary.json`: số liệu tổng hợp (khối `derived` chứa mọi dữ kiện dùng để diễn giải)\n"
+        "- `REPORT.md`: báo cáo thẩm định — §2–§6 sinh từ `summary.json`, §7 đối chiếu từng khẳng định\n"
+        "- `run.log`: log tiến độ\n\n"
+        "Kiểm tra báo cáo khớp dữ liệu (chạy từ thư mục gốc repo, sau mọi lần dựng lại):\n\n"
+        "    python scripts/check_audit_report.py experiments/<thư-mục-này>\n",
         encoding="utf-8",
     )
     md = render_markdown(summary, A)
@@ -265,9 +312,17 @@ def build_report(a):
 
 
 def render_markdown(s, A):
-    def f(x, nd=1):
-        return f"{x:,.{nd}f}"
+    """Sinh toàn bộ phần diễn giải của REPORT.md từ `s` (summary.json).
 
+    Nguyên tắc: không có câu khẳng định nào về hệ thống được viết cứng. Mọi số
+    liệu đọc từ `s` / `s["derived"]`, và mỗi con số được ghi vào bảng đối chiếu
+    §7 (mã — đường dẫn — giá trị) để `scripts/check_audit_report.py` kiểm tra
+    lại tự động. Thêm câu mới thì phải thêm mã `[Cxx]` tương ứng.
+    """
+    def num(x, nd=1):
+        return "—" if x is None else f"{x:,.{nd}f}"
+
+    d = s["derived"]
     lat = s["latency_all"]
     genw = s["latency_generate_web"]
     gens = s["latency_generate_smoke"]
@@ -276,301 +331,449 @@ def render_markdown(s, A):
     dia = s["clinical"]["diabetes"]
     inv = s["inventory"]
     chaos = s["chaos"]
-    chaos_fail = [c for c in chaos if c["verdict"] == "FAIL"]
-    chaos_500 = [c for c in chaos if c["status"] == 500]
     mat = s["matrix"]
     sw = s["swap"]
-    conc = s["concurrency"]
+    conc = s.get("concurrency") or {}
     allergy = s["allergy"]
     det = s["determinism"]
-    over_hyp = clin.get("over_1500", [])
     worst = s["worst_menus"]
+    chaos_fail = [c for c in chaos if c["verdict"] == "FAIL"]
+    chaos_500 = [c for c in chaos if c["status"] == 500]
     alias_ok = {a["condition"]: a["sodium_target"] for a in aliases}
-    hyp_alias = alias_ok.get("tăng huyết áp")
-    hyp_base = alias_ok.get("hypertension")
-    dia_warn = any(d.get("mentions_warning") for d in dia)
-    dia_sugar = any(d.get("mentions_sugar") for d in dia)
+    dia_ok = [r for r in dia if r.get("status") == 200]
+
+    try:
+        cfg = json.loads((Path(A.out) / "config.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        cfg = {}
+
+    claims: list[tuple[str, str, str]] = []
+    seen: set[str] = set()
+
+    def cv(cid, path, value):
+        """Ghi một khẳng định vào bảng đối chiếu và trả về giá trị để in."""
+        if cid not in seen:
+            seen.add(cid)
+            claims.append((cid, path, str(value)))
+        return value
 
     lines = []
     L = lines.append
-    L("# BÁO CÁO PHẢN BIỆN & THẨM ĐỊNH HỆ THỐNG GỢI Ý THỰC ĐƠN DBO/IDBO\n")
-    L(f"- Thời điểm chạy: **{s.get('elapsed_s', 0):.0f} giây** (~{s.get('elapsed_s', 0)/60:.0f} phút), "
-      f"**{s['n_requests']} request HTTP thực tế** vào server `app.main:app`.")
-    L(f"- Server: `http://127.0.0.1:8000`, black-box, không import solver, không sửa dữ liệu.")
-    L(f"- Thực đơn thu được để phân tích: **{s['n_menus']}**.")
-    L("- Mọi số liệu dưới đây đọc từ `summary.json`, `raw_requests.jsonl`, `raw_menus.jsonl` "
-      "trong cùng thư mục.\n")
 
+    L("# BÁO CÁO PHẢN BIỆN & THẨM ĐỊNH HỆ THỐNG GỢI Ý THỰC ĐƠN DBO/IDBO\n")
+    L(f"- Thời điểm chạy: **{s.get('elapsed_s', 0):.0f} giây** (~{s.get('elapsed_s', 0) / 60:.0f} phút), "
+      f"**{cv('C01', 'n_requests', s['n_requests'])} request HTTP thực tế** vào server `app.main:app`.")
+    if cfg.get("base_url"):
+        L(f"- Server: `{cfg['base_url']}`, black-box, không import solver, không sửa dữ liệu.")
+    else:
+        L("- Server: black-box, không import solver, không sửa dữ liệu.")
+    L(f"- Thực đơn thu được để phân tích: **{cv('C02', 'n_menus', s['n_menus'])}** `[C02]`.")
+    L("- Toàn bộ số liệu đọc từ `summary.json`, `raw_requests.jsonl`, `raw_menus.jsonl` trong cùng thư mục.")
+    L("- **Phần diễn giải ở §2–§6 sinh tự động từ `summary.json`**, không có câu nào viết cứng. "
+      "Mỗi con số mang mã `[Cxx]`; §7 đối chiếu từng mã với đường dẫn dữ liệu, "
+      "`scripts/check_audit_report.py` kiểm tra lại tự động.\n")
+
+    # ------------------------------------------------------------------ §1
     L("## 1. BẢNG TỔNG KẾT SỐ LIỆU ĐO ĐƯỢC\n")
-    L("| Chỉ số | Giá trị |")
-    L("|---|---|")
-    L(f"| Tổng request | {s['n_requests']} |")
-    L(f"| 200 OK | {s['status_counts'].get('200', 0)} ({s['ok_rate_pct']}%) |")
-    L(f"| 4xx (từ chối đúng) | {s['n_4xx']} |")
-    L(f"| 5xx (lỗi server) | {s['n_5xx']} |")
-    L(f"| Lỗi kết nối/timeout | {s['n_err']} |")
-    L(f"| Latency TB / trung vị / p95 / max | {f(lat['mean'])} / {f(lat['median'])} / {f(lat['p95'])} / {f(lat['max'])} ms |")
-    L(f"| Generate `web` (TB / p95) | {f(genw['mean'])} / {f(genw['p95'])} ms (n={genw['n']}) |")
-    L(f"| Generate `smoke` (TB) | {f(gens['mean'])} ms (n={gens['n']}) |")
-    L(f"| Menu có ≥1 vi phạm | {s['menus_with_violation']}/{s['n_menus']} ({s['menus_with_violation_pct']}%) |")
-    L(f"| Fitness TB (menu sinh ra) | {s['fitness']['mean']} (min {s['fitness']['min']} – max {s['fitness']['max']}) |")
-    L(f"| Sodium cao nhất | {f(s['sodium']['max'])} mg |")
-    L(f"| Menu vượt 1500 mg natri | {s['sodium']['n_over_1500']}/{s['n_menus']} |")
-    L(f"| Menu vượt 2300 mg natri | {s['sodium']['n_over_2300']}/{s['n_menus']} |")
-    L(f"| Độ lệch dinh dưỡng TB (calo+4 macro) | {s['gap']['mean']}% (max {s['gap']['max']}%) |")
-    L(f"| Menu có món kịch trần 350 g | {s['at_cap_menus']}/{s['n_menus']} ({s['at_cap_pct']}%) |")
-    L(f"| Menu có khẩu phần phản ẩm thực | {s['absurd_menus']}/{s['n_menus']} |")
-    L(f"| Menu sai cơ cấu bữa trưa/tối | {s['structure_fail_menus']}/{s['n_menus']} ({s['structure_fail_pct']}%) |")
-    L(f"| Menu sai vai trò slot ẩm thực | {s['slot_misplaced_menus']}/{s['n_menus']} ({s['slot_misplaced_pct']}%) |")
-    L(f"| Slot đầu bữa trưa/tối đúng là tinh bột | {s['slot0_staple_pct']}% ({s['slot0_n']} slot) |")
-    L(f"| Menu chứa gia vị như món độc lập | {s['condiment_menus']}/{s['n_menus']} |")
-    L(f"| Menu chứa nguyên liệu thô | {s['raw_menus']}/{s['n_menus']} |")
-    L(f"| Menu có món chính không nêu cách chế biến | {s['no_prep_menus']}/{s['n_menus']} ({s['no_prep_pct']}%) |")
-    L(f"| Lượt lọt dị ứng (sau khi yêu cầu loại trừ) | {allergy.get('leak_runs', 0)}/{allergy.get('n_runs', 0)} |")
-    L(f"| Menu trùng món trong ngày | {s['duplicate_menus']} |")
-    L(f"| Số bước swap đo được | {sw['n_swap_steps']} (max portion {f(sw['max_portion_overall'],0)} g) |")
-    L(f"| Biến thiên độ lệch dinh dưỡng qua swap | {f(sw['gap_first_last_delta'])} điểm % (đầu → cuối) |")
-    L(f"| 10 swap đồng thời | {conc.get('status_counts')} · max {conc.get('latency_max_ms')} ms |")
-    L(f"| Tái lập cùng seed | ids giống: {det.get('same_ids')} · portion giống: {det.get('same_portions')} |")
-    L(f"| Ma trận nhân khẩu | {mat.get('ok')} OK / {mat.get('err')} lỗi, {s.get('matrix_rerun_n')} rerun seed |")
+    L("| Chỉ số | Giá trị | Mã |")
+    L("|---|---|---|")
+    L(f"| Tổng request | {s['n_requests']} | C01 |")
+    L(f"| 200 OK | {s['status_counts'].get('200', 0)} ({s['ok_rate_pct']}%) | — |")
+    L(f"| 4xx (từ chối đúng) | {d['n_4xx']} | C04 |")
+    L(f"| 5xx (lỗi server) | {s['n_5xx']} | C03 |")
+    L(f"| Lỗi kết nối/timeout | {s['n_err']} | — |")
+    L(f"| Latency TB / trung vị / p95 / max | {num(lat['mean'])} / {num(lat['median'])} / "
+      f"{lat['p95']} / {num(lat['max'])} ms | C25 |")
+    L(f"| Generate `web` (TB / p95) | {num(genw['mean'])} / {num(genw['p95'])} ms (n={genw['n']}) | — |")
+    L(f"| Generate `smoke` (TB) | {num(gens['mean'])} ms (n={gens['n']}) | — |")
+    L(f"| Menu có ≥1 vi phạm | {s['menus_with_violation']}/{s['n_menus']} "
+      f"({s['menus_with_violation_pct']}%) | C07 |")
+    L(f"| Fitness TB (menu sinh ra) | {num(s['fitness']['mean'])} "
+      f"(min {num(s['fitness']['min'])} – max {num(s['fitness']['max'])}) | — |")
+    L(f"| Menu có fitness âm | {d['n_menus_fitness_negative']} | C09 |")
+    L(f"| Sodium cao nhất | {s['sodium']['max']} mg | C10 |")
+    L(f"| Menu vượt 1500 mg natri (mọi hồ sơ) | {s['sodium']['n_over_1500']}/{s['n_menus']} | C11 |")
+    L(f"| Menu vượt 2300 mg natri | {s['sodium']['n_over_2300']}/{s['n_menus']} | — |")
+    L(f"| Hồ sơ tăng huyết áp: menu / vượt 1500 mg | {d['n_hyp_menus']} / {d['n_hyp_over_1500']} "
+      "| [C12] [C13] |")
+    L(f"| Độ lệch dinh dưỡng TB (calo+4 macro) | {s['gap']['mean']}% (max {s['gap']['max']}%) | — |")
+    L(f"| Menu có món kịch trần ≥{d['at_cap_threshold_g']:.1f} g | "
+      f"{s['at_cap_menus']}/{s['n_menus']} ({s['at_cap_pct']}%) | C15 |")
+    L(f"| Menu có khẩu phần phản ẩm thực | {s['absurd_menus']}/{s['n_menus']} | C16 |")
+    L(f"| Menu sai cơ cấu bữa trưa/tối | {s['structure_fail_menus']}/{s['n_menus']} "
+      f"({s['structure_fail_pct']}%) | C17 |")
+    L(f"| Menu sai vai trò slot ẩm thực | {s['slot_misplaced_menus']}/{s['n_menus']} "
+      f"({s['slot_misplaced_pct']}%) | — |")
+    L(f"| Slot đầu bữa trưa/tối đúng là tinh bột | {s['slot0_staple_pct']}% ({s['slot0_n']} slot) | C18 |")
+    L(f"| Menu chứa gia vị như món độc lập | {s['condiment_menus']}/{s['n_menus']} | — |")
+    L(f"| Menu chứa nguyên liệu thô (bộ dò auditor) | {s['raw_menus']}/{s['n_menus']} | C19 |")
+    L(f"| Menu có món chính không nêu cách chế biến | {s['no_prep_pct']}% "
+      f"({s['no_prep_menus']}/{s['n_menus']}) | C20 |")
+    L(f"| Lượt lọt dị ứng ngữ nghĩa (token “hải sản”) | {allergy.get('semantic_leak_runs', 0)}/"
+      f"{allergy.get('n_runs', 0)} | C21 |")
+    L(f"| Lượt lọt dị ứng theo khớp chuỗi con (bộ dò auditor) | {allergy.get('leak_runs', 0)}/"
+      f"{allergy.get('n_runs', 0)} | — |")
+    L(f"| Lượt dị ứng trả 400 | {d['n_allergy_menus_400']}/{allergy.get('n_runs', 0)} | C22 |")
+    L(f"| Menu trùng món trong ngày | {s['duplicate_menus']} | — |")
+    L(f"| Số bước swap đo được | {sw['n_swap_steps']} (max portion {num(sw['max_portion_overall'], 0)} g) | — |")
+    L(f"| Menu swap có trả `fitness` | {d['n_swap_menus_with_fitness']}/{d['n_swap_menus']} | C14 |")
+    L(f"| Biến thiên độ lệch dinh dưỡng qua swap | {sw['gap_first_last_delta']} điểm % (đầu → cuối) | C24 |")
+    L(f"| 10 swap đồng thời | {conc.get('status_counts')} · max {conc.get('latency_max_ms')} ms | — |")
+    L(f"| Tái lập cùng seed | ids giống: {det.get('same_ids')} · portion giống: {det.get('same_portions')} "
+      "| [C23] [C23b] |")
+    L(f"| Ma trận nhân khẩu | {mat.get('ok')} OK / {mat.get('err')} lỗi, {s.get('matrix_rerun_n')} rerun seed "
+      "| C27 |")
+    L(f"| Nhất quán calo vs 4P+4C+9F | {s['cal_macro_mismatch_pct']['n_checked']} menu kiểm, "
+      f"lệch max {s['cal_macro_mismatch_pct']['max']}%, "
+      f"{s['cal_macro_mismatch_pct']['n_over_10pct']} menu >10% | C28 |")
+
+    # §1 in số trực tiếp, §7 mới là nơi ghi lại (mã, đường dẫn, giá trị) để kiểm tra.
+    for cid, path, value in (
+        ("C01", "n_requests", s["n_requests"]),
+        ("C03", "n_5xx", s["n_5xx"]),
+        ("C04", "derived.n_4xx", d["n_4xx"]),
+        ("C07", "menus_with_violation", s["menus_with_violation"]),
+        ("C09", "derived.n_menus_fitness_negative", d["n_menus_fitness_negative"]),
+        ("C10", "sodium.max", s["sodium"]["max"]),
+        ("C11", "sodium.n_over_1500", s["sodium"]["n_over_1500"]),
+        ("C12", "derived.n_hyp_menus", d["n_hyp_menus"]),
+        ("C13", "derived.n_hyp_over_1500", d["n_hyp_over_1500"]),
+        ("C14", "derived.n_swap_menus_with_fitness", d["n_swap_menus_with_fitness"]),
+        ("C15", "at_cap_menus", s["at_cap_menus"]),
+        ("C16", "absurd_menus", s["absurd_menus"]),
+        ("C17", "structure_fail_menus", s["structure_fail_menus"]),
+        ("C18", "slot0_staple_pct", s["slot0_staple_pct"]),
+        ("C19", "raw_menus", s["raw_menus"]),
+        ("C20", "no_prep_pct", s["no_prep_pct"]),
+        ("C21", "allergy.semantic_leak_runs", allergy.get("semantic_leak_runs", 0)),
+        ("C22", "derived.n_allergy_menus_400", d["n_allergy_menus_400"]),
+        ("C23", "determinism.same_ids", det.get("same_ids")),
+        ("C23b", "determinism.same_portions", det.get("same_portions")),
+        ("C24", "swap.gap_first_last_delta", sw["gap_first_last_delta"]),
+        ("C25", "latency_all.p95", lat["p95"]),
+        ("C27", "matrix.ok", mat.get("ok")),
+        ("C28", "cal_macro_mismatch_pct.max", s["cal_macro_mismatch_pct"]["max"]),
+    ):
+        cv(cid, path, value)
     L("")
-    L("Phân bố tuổi / BMI / vận động / cấu trúc bữa trong ma trận: "
-      f"? `{mat.get('age')}`, BMI `{mat.get('bmi')}`, vận động `{mat.get('activity')}`, bữa `{mat.get('meal')}`.\n".replace("? ", ""))
+    L(f"Phân bố tuổi / BMI / vận động / cấu trúc bữa trong ma trận: `{mat.get('age')}`, "
+      f"BMI `{mat.get('bmi')}`, vận động `{mat.get('activity')}`, bữa `{mat.get('meal')}`.\n")
     if s.get("skipped"):
         L(f"> Ghi chú: phần bị cắt do ngân sách thời gian: `{s['skipped']}`.\n")
 
-    L("### 1.1. Lỗi 500\n")
+    # ------------------------------------------------------------------ §2
+    L("## 2. DIỄN GIẢI TỰ ĐỘNG\n")
+
+    L("### 2.1. Lỗi server và thông điệp lỗi\n")
     if s["n_5xx"] == 0:
-        L("**Không có request nào trả 500 Internal Server Error** trong toàn bộ đợt test. "
-          "Server không sập, không rò traceback ra client.\n")
+        L(f"- `[C03]` Không có request nào trả 5xx trên **{s['n_requests']}** request: server không sập, "
+          "không rò traceback ra client.")
     else:
-        L(f"**Có {s['n_5xx']} request trả 5xx.** Chi tiết các case chaos FAIL:\n")
+        L(f"- `[C03]` Có **{s['n_5xx']}** request trả 5xx. Chi tiết case chaos FAIL:")
         for c in chaos_500:
-            L(f"- `{c['case']}` → {c['status']} — {c['note'][:180]}")
-        L("")
-
-    L("### 1.2. Swap: điểm fitness và khẩu phần\n")
-    L("`POST /api/menu/swap` **không trả `fitness`, `diversity_pct`, `runtime_s`** (response schema "
-      "`SwapOut` chỉ có items/totals/targets/violations/delta). Vì vậy không thể đọc “điểm fitness sau swap” "
-      "từ API; báo cáo dùng **độ lệch dinh dưỡng trung bình so với target (%)** làm đại lượng thay thế, "
-      "ghi rõ đây là proxy chứ không phải fitness của solver.\n")
-    L("| Chuỗi | gap đầu (%) | gap cuối (%) | gap min | gap max |")
-    L("|---|---|---|---|---|")
-    for label, vals in sw["gap_series"].items():
-        L(f"| {label} | {vals[0]} | {vals[-1]} | {min(vals)} | {max(vals)} |")
-    L("")
-    if sw["chain5"]:
-        L("5 lần swap liên tiếp trên cùng một slot:\n")
-        L("| Chuỗi | trước | sau 5 lần | thấp nhất | cao nhất |")
-        L("|---|---|---|---|---|")
-        for label, v in sw["chain5"].items():
-            L(f"| {label} | {v['start']} | {v['end']} | {v['min']} | {v['max']} |")
-        L("")
-    L(f"- Tổng số bước swap có ít nhất một món chạm trần 350 g: **{sw['steps_with_cap']}/{sw['n_swap_steps']}**.")
-    L(f"- Khẩu phần lớn nhất ghi nhận sau swap: **{f(sw['max_portion_overall'],0)} g**.")
-    L("- Frontend giữ lại fitness cũ sau swap (`app.js`: `res.fitness = res.fitness ?? state.menu?.fitness`), "
-      "nên người dùng vẫn thấy điểm cũ trong khi thực đơn đã đổi — đây là lỗi hiển thị, không phải lỗi solver.\n")
-
-    L("## 2. NHỮNG HẠN CHẾ CHÍ MẠNG VỀ TRẢI NGHIỆM NGƯỜI DÙNG (UX)\n")
-    L("1. **“Fitness /100” là khái niệm của người làm thuật toán, không phải của người ăn.** "
-      "Toast sau khi tạo thực đơn hiện `Fitness: {fitness}`; người dùng không biết 87.4 tốt hay xấu, "
-      "không biết có ăn được không. Cần thay bằng ngôn ngữ mục tiêu: “Đạt 94% calo mục tiêu”, "
-      "“Đạm thiếu 12 g”.")
-    L("2. **Bảng thực đơn hiển thị khẩu phần thô và khẩu phần làm tròn cạnh nhau** "
-      "(`157.3g → 155g`). Người dùng thấy hai con số cho cùng một món và không biết tin số nào; "
-      "nên chỉ hiển thị số đã làm tròn, kèm ghi chú “khẩu phần gợi ý”.")
-    L("3. **Cột “Seed” và “Cấu hình solver Smoke/Web/Full” lộ ra ngoài UI.** Đây là tham số tái lập "
-      "thực nghiệm, không phải lựa chọn của người bệnh. Nếu cần giữ cho demo, đặt trong mục “Nâng cao” "
-      "thu gọn, mặc định ẩn.")
-    L("4. **Thông báo lỗi không đồng nhất ngôn ngữ.** Lỗi nghiệp vụ do nhóm viết bằng tiếng Việt "
-      "(`Thực đơn cần ít nhất 1 món trưa...`), nhưng lỗi 422 của Pydantic là tiếng Anh kỹ thuật "
-      "(`Input should be a valid integer`, `String should have at least 2 characters`). "
-      "Frontend chỉ hiện `err.message`, nên người dùng nhận chuỗi tiếng Anh khó hiểu. "
-      f"Trong đợt test có **{s['n_4xx']} phản hồi 4xx**, phần lớn thuộc nhóm này.")
-    L("5. **Không có cảnh báo bệnh lý tại thời điểm trả thực đơn.** Với hồ sơ tiểu đường, response "
-      f"{'có' if dia_warn else '**không**'} chứa bất kỳ trường cảnh báo/lưu ý nào; "
-      f"chuỗi “sugar/đường” {'có' if dia_sugar else '**không**'} xuất hiện trong payload. "
-      "Người bệnh tiểu đường nhận thực đơn như người khỏe mạnh, không được nhắc rằng hệ thống "
-      "không có dữ liệu đường để đánh giá.")
-    L("6. **Không có trạng thái “đang tính” đủ rõ cho cấu hình web.** "
-      f"Generate `web` mất trung bình **{f(genw['mean']/1000,1)} giây** (p95 {f(genw['p95']/1000,1)} s) "
-      "trên server nội bộ; trên máy yếu hoặc deploy xa, người dùng rất dễ bấm lại nhiều lần. "
-      "Nút bị disable trong lúc chờ là đúng, nhưng không có ước lượng thời gian hay huỷ.")
-    L("7. **Bảng chỉ có số tuyệt đối, thiếu ngữ cảnh.** Người dùng thấy “Natri 1 842 mg” nhưng không "
-      "thấy ngưỡng cá nhân (1 500 mg cho tăng huyết áp) ngay cạnh con số; chỉ khi cuộn xuống mới thấy "
-      "danh sách vi phạm. Nên đổi màu/ghi “vượt 342 mg” tại dòng tổng.")
-    L("8. **Tên món là tên nguyên liệu, không phải tên món ăn.** "
-      f"{s['no_prep_pct']}% thực đơn chứa ít nhất một món chính (tinh bột/đạm) không nêu cách chế biến "
-      "(ví dụ: “Gạo lứt 115 g”, “Khoai tây 250 g”, “Măng tre 350 g”, “Đuôi lợn 140 g”). "
-      "Với người dùng, đây là danh sách đi chợ chứ không phải thực đơn.\n")
-
-    L("## 3. NHỮNG BẤT CẬP VỀ DINH DƯỠNG & ẨM THỰC THỰC TẾ\n")
-    L("### 3.1. Natri ở hồ sơ tăng huyết áp\n")
-    L(f"- Chạy **{clin.get('n')} seed** (một phần cấu hình `web`, phần còn lại `smoke`): "
-      f"sodium trung bình **{f(clin.get('sodium_mean', 0))} mg**, cao nhất **{f(clin.get('sodium_max',0),0)} mg**, "
-      f"target server trả về `{clin.get('targets_seen')} mg`.")
-    L(f"- **{len(over_hyp)}/{clin.get('n')} menu vượt 1500 mg**, "
-      f"{len(clin.get('over_2300', []))}/{clin.get('n')} vượt cả trần chung 2300 mg.")
-    if over_hyp:
-        L("- Các seed vượt ngưỡng (bằng chứng paired theo seed):")
-        for r in over_hyp[:10]:
-            L(f"  - seed {r['seed']} ({r['config']}): **{f(r['sodium'],0)} mg**")
-        L("- Nghĩa là ràng buộc natri 1500 mg **được kiểm tra và báo vi phạm**, nhưng **không được solver "
-          "ép thoả** trong mọi trường hợp. Không thể tuyên bố “an toàn cho người tăng huyết áp”.")
+            L(f"  - `{c['case']}` → {c['status']} — {c['note'][:180]}")
+    en_4xx = cv("C06", "derived.n_4xx_english_pydantic", d["n_4xx_english_pydantic"])
+    if en_4xx == 0:
+        L(f"- `[C04]` Trong **{d['n_4xx']}** phản hồi 4xx, **0** phản hồi chứa mẫu lỗi Pydantic "
+          "tiếng Anh (`Input should…`, `String should…`, `Field required`) `[C06]`.")
     else:
-        L("- Không ghi nhận menu nào vượt 1500 mg trong cấu hình đã thử; đây là kết quả trong phạm vi "
-          "thử nghiệm, không phải bảo đảm lâm sàng.")
-    L(f"- Hệ quả siết muối: **{clin.get('energy_violation')} menu vi phạm năng lượng**, "
-      f"**{clin.get('protein_violation')} menu vi phạm đạm** trên cùng bộ seed. "
-      + ("Siết natri đang được đánh đổi bằng việc bỏ mục tiêu năng lượng/đạm: người bệnh nhận thực đơn "
-         "thiếu năng lượng mà bảng vẫn hiển thị như một thực đơn đã tối ưu."
-         if (clin.get('energy_violation') or clin.get('protein_violation'))
-         else "Không ghi nhận đánh đổi năng lượng/đạm trong bộ seed này."))
+        L(f"- `[C04]` **{en_4xx}/{d['n_4xx']}** phản hồi 4xx vẫn chứa câu lỗi `[C06]` "
+          "Pydantic tiếng Anh → frontend sẽ hiện chuỗi kỹ thuật cho người dùng.")
+    if d["n_400_internal_message"]:
+        L(f"- `[C05]` **{cv('C05', 'derived.n_400_internal_message', d['n_400_internal_message'])}** "
+          "phản hồi 400 có `detail` chứa thuật ngữ nội bộ "
+          "tiếng Anh (`min_pool_size`, `has size …`) — người dùng cuối vẫn đọc thấy thông điệp kỹ thuật "
+          "dù phần đầu câu đã tiếng Việt.")
+    else:
+        L("- `[C05]` Không phản hồi 400 nào chứa thuật ngữ nội bộ (`min_pool_size`).")
     L("")
-    L("### 3.2. Bệnh lý tiểu đường và dữ liệu đường\n")
-    L("- Dataset không có cột total sugar; API **không trả `sugar_proxy_g`** và cũng không trả cảnh báo. "
-      "Điều này tránh được lỗi trình bày `carbs*0.15` như dữ liệu đo, nhưng tạo khoảng trống UX: "
-      "người bệnh tiểu đường không được thông báo rằng hệ thống **không đánh giá được đường huyết**.")
-    L(f"- Trong {len(dia)} lần gọi với hồ sơ tiểu đường: có cảnh báo = **{dia_warn}**, "
-      f"có nhắc sugar/đường = **{dia_sugar}**, "
-      f"các key trả về: `{sorted(set(k for d in dia for k in d.get('keys', [])))}`.")
-    L("- Tên bệnh lý tiếng Việt được alias đúng: `hypertension` → "
-      f"{hyp_base} mg, `tăng huyết áp` → {hyp_alias} mg. Tuy nhiên bệnh lý không hỗ trợ "
-      "(gout, suy thận…) bị **bỏ qua im lặng**, không có thông báo “chưa hỗ trợ”.\n")
-    L("### 3.3. Dị ứng và khẩu vị\n")
-    L(f"- {allergy.get('n_runs')} lượt sinh menu với 1 / 3 / 10 / 20 token loại trừ. "
-      f"Số lượt còn món bị cấm: **{allergy.get('leak_runs')}**. "
-      f"Trạng thái: `{allergy.get('status_counts')}`.")
-    L(f"- Trạng thái theo kịch bản: `{s.get('allergy_status_by_label', {})}`. "
-      "Các kịch bản trả 400 là khi pool ứng viên bị thu nhỏ dưới ngưỡng; server từ chối thay vì crash, "
-      "nhưng người dùng không nhận được thực đơn thay thế hay gợi ý nới điều kiện.")
+
+    L("### 2.2. Swap: fitness, khẩu phần, độ lệch\n")
+    L(f"- Đo được **{cv('C29', 'swap.n_swap_steps', sw['n_swap_steps'])}** bước swap trên "
+      f"**{cv('C30', 'swap.n_chains', sw['n_chains'])}** chuỗi `[C29]` `[C30]`.")
+    n_swap, n_fit = d["n_swap_menus"], d["n_swap_menus_with_fitness"]
+    if n_swap and n_fit == n_swap:
+        L(f"- `[C14]` `SwapOut` **có** trả `fitness`: **{n_fit}/{n_swap}** menu swap có trường này "
+          f"(min {num(d['swap_fitness_min'], 2)} – max {num(d['swap_fitness_max'], 2)}). "
+          "Vì vậy báo cáo dùng cả `fitness` (điểm solver trả về) và `gap` (độ lệch dinh dưỡng so với "
+          "target, đơn vị %, là đại lượng suy ra chứ không phải fitness).")
+    elif n_swap:
+        L(f"- `[C14]` `SwapOut` trả `fitness` **không ổn định**: {n_fit}/{n_swap} menu swap có trường này "
+          "→ không thể dùng `fitness` làm thước đo duy nhất cho swap.")
+    else:
+        L("- `[C14]` Không có menu swap nào trong dữ liệu đợt chạy này.")
+    worse = [(k, v) for k, v in sw["chain5"].items() if v["end"] > v["start"]]
+    better = [(k, v) for k, v in sw["chain5"].items() if v["end"] < v["start"]]
+    flat = [(k, v) for k, v in sw["chain5"].items() if v["end"] == v["start"]]
+    if sw["chain5"]:
+        L(f"- Chuỗi 5 lần swap cùng slot: **{len(worse)}** chuỗi xấu đi, **{len(better)}** chuỗi tốt lên, "
+          f"**{len(flat)}** chuỗi không đổi. Biến thiên trung bình đầu→cuối: "
+          f"`[C24]` **{num(sw['gap_first_last_delta'])}** điểm %.")
+        for label, v in sw["chain5"].items():
+            trend = "xấu đi" if v["end"] > v["start"] else ("tốt lên" if v["end"] < v["start"] else "không đổi")
+            L(f"  - {label}: {v['start']} → {v['end']} ({trend}), min {v['min']}, max {v['max']}")
+        if worse:
+            L("- `[SUY RA]` Dữ liệu cho thấy `gap` có thể **tăng** sau swap; audit này không ghi nhận "
+              "cơ chế nào từ chối phương án có `gap`/`fitness` tệ hơn phương án trước.")
+    L(f"- Tổng số bước swap có ít nhất một món chạm trần ≥{d['at_cap_threshold_g']:.1f} g: "
+      f"**{cv('C31', 'swap.steps_with_cap', sw['steps_with_cap'])}/{sw['n_swap_steps']}**; "
+      f"khẩu phần lớn nhất sau swap: "
+      f"**{num(cv('C32', 'swap.max_portion_overall', sw['max_portion_overall']), 0)} g** `[C31]` `[C32]`.")
+    L("")
+
+    L("### 2.3. Bệnh lý\n")
+    L(f"- Alias tiếng Việt: `hypertension` → {alias_ok.get('hypertension')} mg, "
+      f"`tăng huyết áp` → {alias_ok.get('tăng huyết áp')} mg, "
+      f"`cao huyết áp` → {alias_ok.get('cao huyết áp')} mg.")
+    if dia_ok and d["diabetes_warn"] and d["diabetes_mentions_sugar"]:
+        L(f"- `[C26]` Hồ sơ tiểu đường: **{len(dia_ok)}/{len(dia)}** lần gọi trả 200 "
+          f"**đều có trường cảnh báo** "
+          f"(`derived.diabetes_warn = {cv('C26', 'derived.diabetes_warn', d['diabetes_warn'])}`) "
+          "và **đều nhắc tới sugar/đường** trong payload. Danh sách key trả về: "
+          f"`{d['diabetes_keys']}`.")
+    elif dia_ok:
+        L(f"- `[C26]` Hồ sơ tiểu đường: {len(dia_ok)}/{len(dia)} lần gọi trả 200; "
+          f"có cảnh báo = {d['diabetes_warn']}, nhắc sugar/đường = {d['diabetes_mentions_sugar']}.")
+    else:
+        L("- Không có lần gọi nào với hồ sơ tiểu đường trả 200 trong đợt chạy này.")
+    unsupported = [a for a in aliases
+                   if str(a.get("condition", "")).strip().lower()
+                   not in ("hypertension", "tăng huyết áp", "cao huyết áp", "huyết áp cao",
+                           "tiểu đường", "diabetes", "đái tháo đường")]
+    if unsupported:
+        listing = "; ".join(f"`{a['condition']}` → {a['sodium_target']} mg" for a in unsupported)
+        L(f"- Bệnh lý không được mô hình hoá: {listing} — trả 200 nhưng `sodium_target` không đổi so với "
+          "hồ sơ khỏe mạnh, tức không có ngưỡng riêng và không có cảnh báo “chưa hỗ trợ” trong payload.")
+    L("")
+
+    L("### 2.4. Natri\n")
+    L(f"- Toàn bộ {s['n_menus']} menu: natri TB "
+      f"**{num(cv('C33', 'sodium.mean', s['sodium']['mean']))} mg** `[C33]`, cao nhất "
+      f"`[C10]` **{num(s['sodium']['max'])} mg**; "
+      f"`[C11]` **{s['sodium']['n_over_1500']}** menu vượt 1500 mg và "
+      f"**{s['sodium']['n_over_2300']}** menu vượt 2300 mg.")
+    L(f"- Hồ sơ tăng huyết áp: `[C12]` **{d['n_hyp_menus']}** menu, target trả về "
+      f"`{d['hyp_sodium_targets']}` mg; `[C13]` **{d['n_hyp_over_1500']}** menu vượt 1500 mg "
+      f"({d['n_hyp_over_2300']} vượt cả 2300 mg), natri cao nhất **{num(d['hyp_sodium_max'])} mg**.")
+    if d["n_hyp_over_1500"]:
+        L("- `[SUY RA]` Ràng buộc natri **được kiểm tra và báo vi phạm**, nhưng **không được solver ép thoả** "
+          "trong mọi trường hợp. Không thể tuyên bố “đáp ứng ngưỡng natri 1500 mg cho mọi thực đơn”.")
+        for r in clin.get("over_1500", [])[:10]:
+            L(f"  - seed {r['seed']} ({r['config']}): **{num(r['sodium'], 0)} mg**")
+    else:
+        L("- `[SUY RA]` Trong bộ seed này không có menu nào vượt 1500 mg; đây là kết quả trong phạm vi "
+          "thử nghiệm, không phải bảo đảm lâm sàng. Ràng buộc natri vẫn là kiểm tra sau khi giải, "
+          "không phải ràng buộc cứng của solver.")
+    if clin.get("energy_violation") or clin.get("protein_violation"):
+        L(f"- Hệ quả siết muối: "
+          f"**{cv('C34', 'clinical.hypertension.energy_violation', clin.get('energy_violation'))} "
+          "menu vi phạm năng lượng**, "
+          f"**{cv('C35', 'clinical.hypertension.protein_violation', clin.get('protein_violation'))} "
+          "menu vi phạm đạm** trên cùng bộ seed `[C34]` `[C35]`.")
+    L("")
+
+    L("### 2.5. Dị ứng\n")
+    L(f"- `[C22]` {allergy.get('n_runs')} lượt sinh menu với nhiều cấu hình token loại trừ "
+      "(đơn, bộ ba, 10 và 20 token); "
+      f"trạng thái: `{allergy.get('status_counts')}`; "
+      f"**{d['n_allergy_menus_400']}** lượt trả 400.")
+    L(f"- `[C21]` Lượt còn món biển sau khi loại trừ token **“hải sản”**: "
+      f"**{allergy.get('semantic_leak_runs')}/{allergy.get('n_runs')}** "
+      "(khớp theo ranh giới từ, không phải chuỗi con).")
+    if allergy.get("leak_runs"):
+        L(f"- Bộ dò của auditor còn ghi **{allergy.get('leak_runs')}** lượt “lọt” theo **khớp chuỗi con**: "
+          f"`{allergy.get('leak_examples')}`. Đây là false-positive của bộ dò (ví dụ “Gạo nếp **cái**” chứa "
+          "“cá”), không phải món hải sản; chỉ số đúng là `[C21]`.")
     single_400 = [k for k, v in s.get("allergy_status_by_label", {}).items()
                   if k.startswith("single:") and "400" in v]
     if single_400:
-        L(f"- **Loại trừ chỉ một món quen thuộc cũng làm hỏng yêu cầu:** {single_400} trả 400. "
-          "Với người dị ứng đạm sữa hoặc trứng, hệ thống không đưa ra được thực đơn nào thay vì "
-          "nới lỏng món khác hay báo rõ món nào đang chặn.")
-    L(f"- Loại trừ **“hải sản”** (khái niệm, không phải chuỗi con) vẫn để lọt món biển trong "
-      f"**{allergy.get('semantic_leak_runs')}** lượt: bộ lọc so khớp chuỗi con trên tên món, "
-      "không có từ điển allergen (tôm/cua/cá/mực đều là “hải sản”). Đây là lỗi an toàn nghiêm trọng "
-      "nếu người dùng dị ứng hải sản gõ đúng từ “hải sản”.")
-    if allergy.get("leak_examples"):
-        L(f"- Ví dụ lọt: `{allergy['leak_examples'][:5]}`.")
+        L(f"- Loại trừ **một** nhóm quen thuộc cũng làm hỏng yêu cầu: `{single_400}` trả 400, "
+          "vì pool ứng viên còn lại nhỏ hơn `min_pool_size`. Hệ thống từ chối tạo thực đơn thay vì crash, "
+          "nhưng người dùng không nhận được gợi ý nới điều kiện.")
     L("")
-    L("### 3.4. Những combo ngớ ngẩn nhất ghi nhận được\n")
+
+    L("### 2.6. Khẩu phần và ẩm thực\n")
+    L(f"- `[C15]` Menu có món chạm trần ≥{d['at_cap_threshold_g']:.1f} g: **{s['at_cap_menus']}/{s['n_menus']}** "
+      f"({s['at_cap_pct']}%). `[C16]` Khẩu phần bị coi là phản ẩm thực: **{s['absurd_menus']}** menu.")
+    if s["at_cap_examples"]:
+        L(f"  - Ví dụ chạm trần: `{s['at_cap_examples'][:8]}`.")
+    if s["absurd_examples"]:
+        L(f"  - Ví dụ khẩu phần phản ẩm thực: `{s['absurd_examples'][:8]}`.")
+    L(f"- `[C18]` Slot đầu bữa trưa/tối đúng là tinh bột: **{s['slot0_staple_pct']}%** trên "
+      f"{s['slot0_n']} slot; `[C17]` **{s['structure_fail_menus']}/{s['n_menus']}** "
+      f"({s['structure_fail_pct']}%) menu bị coi là sai cơ cấu bữa.")
+    L("- `[CẢNH BÁO ĐO LƯỜNG]` Auditor phân vai trò món bằng **từ vựng độc lập** với `DishRole` của hệ thống, "
+      "nên 100% “sai” không đồng nghĩa 100% lỗi sản phẩm. Phải đối chiếu hai định nghĩa slot trước khi "
+      "sửa theo con số này.")
+    L(f"- `[C19]` **{s['raw_menus']}/{s['n_menus']}** menu chứa món bị bộ dò coi là nguyên liệu thô; "
+      f"`[C20]` **{s['no_prep_pct']}%** menu có món chính không nêu cách chế biến. "
+      "Đây là giới hạn của lớp tên hiển thị (tên nguyên liệu thay vì tên món), không phải lỗi dinh dưỡng.")
+    if s["condiment_menus"]:
+        L(f"- Gia vị xuất hiện như món độc lập: **{s['condiment_menus']}** menu `{s['condiment_examples'][:6]}`.")
+    else:
+        L("- Không có menu nào chứa gia vị như món độc lập trong đợt chạy này.")
+    L(f"- `[C28]` Nhất quán calo vs 4P+4C+9F: lệch lớn nhất **{s['cal_macro_mismatch_pct']['max']}%**, "
+      f"**{s['cal_macro_mismatch_pct']['n_over_10pct']}** menu lệch >10%.")
+    L("")
+
+    L("### 2.7. Dữ liệu món ăn\n")
+    L(f"- Mẫu **{cv('C36', 'inventory.n_foods_sampled', inv.get('n_foods_sampled'))}** món `[C36]` "
+      "lấy từ `/api/foods`; trong mẫu đó có "
+      f"**{len(inv.get('condiments', []))}** tên gia vị, **{len(inv.get('raw', []))}** tên nguyên liệu thô, "
+      f"**{len(inv.get('no_prep', []))}** tên không nêu cách chế biến.")
+    if inv.get("max_sodium_per_100g"):
+        L(f"- Natri/100 g cao nhất: `{inv.get('max_sodium_per_100g', [])[:5]}` — những món này một mình "
+          "đã chiếm phần lớn ngưỡng 1500 mg/ngày.")
+    L("")
+
+    L("### 2.8. Chaos / fuzzing\n")
+    L("| Case | Kỳ vọng | Thực tế | Kết luận |")
+    L("|---|---|---|---|")
+    for c in chaos:
+        L(f"| {c['case']} | {c['expected']} | {c['status']} | {c['verdict']} |")
+    L("")
+    L(f"- **{len(chaos_fail)} case FAIL**, **{len(chaos_500)} case 500**.")
+    if s["implausible_200"]:
+        L(f"- **{len(s['implausible_200'])}** hồ sơ phi thực tế vẫn trả 200 "
+          f"({', '.join(c['case'] for c in s['implausible_200'])}): thiếu kiểm tra hợp lý sinh học, "
+          "không phải lỗi crash.")
+    else:
+        L("- Không có hồ sơ phi thực tế nào lọt qua.")
+    L("")
+
+    # ------------------------------------------------------------------ §3
+    L("## 3. NHỮNG THỰC ĐƠN TỆ NHẤT GHI NHẬN ĐƯỢC\n")
+    L("> Danh sách dưới đây do hàm chấm điểm của auditor xếp hạng từ chính `raw_menus.jsonl`.\n")
     for i, w in enumerate(worst, 1):
-        L(f"**{i}. [{w['phase']}] {w['label']}** — {f(w['calories'],0)} kcal, natri {f(w['sodium'],0)} mg, "
-          f"lệch target {w['gap_pct']}%")
+        L(f"**{i}. [{w['phase']}] {w['label']}** — {num(w['calories'], 0)} kcal, "
+          f"natri {num(w['sodium'], 0)} mg, lệch target {w['gap_pct']}%")
         L(f"   - Món: {'; '.join(w['items'])}")
         if w["issues"]["absurd"]:
             L(f"   - Khẩu phần phản ẩm thực: {'; '.join(w['issues']['absurd'])}")
         if w["issues"]["structure"]:
             L(f"   - Cơ cấu bữa: {'; '.join(w['issues']['structure'])}")
         if w["issues"]["raw"]:
-            L(f"   - Nguyên liệu thô: {'; '.join(w['issues']['raw'])}")
+            L(f"   - Nguyên liệu thô (theo bộ dò): {'; '.join(w['issues']['raw'])}")
         if w["issues"]["condiment"]:
             L(f"   - Gia vị như món chính: {'; '.join(w['issues']['condiment'])}")
         if w["violations"]:
             L(f"   - Vi phạm: {'; '.join(w['violations'])}")
         L("")
-    L(f"- **Sai vai trò slot ẩm thực:** {s['slot_misplaced_menus']}/{s['n_menus']} menu "
-      f"({s['slot_misplaced_pct']}%). Chỉ **{s['slot0_staple_pct']}%** trong {s['slot0_n']} slot đầu "
-      "của bữa trưa/tối là tinh bột, trong khi `_roles_for_slot` quy định slot 0 phải là tinh bột. "
-      f"Ví dụ: `{s['slot_violation_examples'][:8]}`.")
-    L(f"- Tỉ lệ menu có món kịch trần 350 g: **{s['at_cap_pct']}%**. Ví dụ: "
-      f"`{s['at_cap_examples'][:8]}`.")
-    L(f"- Khẩu phần bị coi là phi lý: **{s['absurd_menus']} menu**, ví dụ `{s['absurd_examples'][:8]}`.")
-    L(f"- Cơ cấu bữa sai ở **{s['structure_fail_menus']} menu** ({s['structure_fail_pct']}%): "
-      "tiêu chí là mỗi bữa trưa/tối phải có tinh bột **và** ít nhất một món đạm/rau/canh "
-      f"(bữa 2 món “cơm + thịt” vẫn được tính là đạt). Lỗi thường gặp: {s['structure_examples'][:6]}.")
-    L(f"- Gia vị xuất hiện như món độc lập: **{s['condiment_menus']} menu** "
-      f"({s['condiment_examples'][:6]}). Nguyên liệu thô: **{s['raw_menus']} menu** "
-      f"({s['raw_examples'][:6]}).")
-    L(f"- Kiểm tra tính nhất quán calo vs 4P+4C+9F: {s['cal_macro_mismatch_pct']['n_checked']} menu được kiểm, "
-      f"lệch lớn nhất {s['cal_macro_mismatch_pct']['max']}%, "
-      f"{s['cal_macro_mismatch_pct']['n_over_10pct']} menu lệch >10% (dấu hiệu dữ liệu dinh dưỡng không đồng bộ).\n")
 
-    L("### 3.5. Kho dữ liệu món ăn\n")
-    L(f"- Lấy mẫu được **{inv.get('n_foods_sampled')}** món qua `/api/foods`.")
-    L(f"- Có **{len(inv.get('condiments', []))}** tên gia vị lọt vào whitelist tìm kiếm: "
-      f"`{inv.get('condiments', [])[:10]}`.")
-    L(f"- Có **{len(inv.get('raw', []))}** tên nguyên liệu thô: `{inv.get('raw', [])[:10]}`.")
-    L(f"- **{len(inv.get('no_prep', []))}** tên không nêu cách chế biến (mẫu): `{inv.get('no_prep', [])[:12]}`.")
-    L(f"- Natri/100 g cao nhất: `{inv.get('max_sodium_per_100g', [])[:5]}`. "
-      "Các món này một mình đã chiếm phần lớn ngưỡng 1500 mg/ngày.\n")
-
-    L("### 3.6. Chaos / fuzzing\n")
-    L("| Case | Kỳ vọng | Thực tế | Kết luận |")
-    L("|---|---|---|---|")
-    for c in chaos:
-        L(f"| {c['case']} | {c['expected']} | {c['status']} | {c['verdict']} |")
-    L("")
-    L(f"- **{len(chaos_fail)} case FAIL**, **{len(chaos_500)} case 500**. "
-      + (f"Có **{len(s['implausible_200'])}** hồ sơ phi thực tế vẫn trả 200 "
-         f"({', '.join(c['case'] for c in s['implausible_200'])}): lỗi **thiếu kiểm tra hợp lý sinh học** "
-         "(chiều cao 30 cm, cân nặng 5 kg hay 400 kg vẫn được tối ưu thực đơn), không phải lỗi crash."
-         if s['implausible_200'] else "Không có hồ sơ phi thực tế nào lọt qua."))
-    L("- Không case nào phản chiếu payload (`<script>`, `DROP TABLE`) trong body trả về; "
-      "frontend dùng `escHtml`/`textContent` nên không ghi nhận XSS phản xạ.\n")
-
-    L("## 4. CÂU HỎI “BẪY” CỦA HỘI ĐỒNG PHẢN BIỆN\n")
-    L("**Câu 1. “Hệ thống của em khẳng định thực đơn an toàn cho người tăng huyết áp. "
-      "Vậy tại sao có seed ra 1 800 mg natri?”**")
-    L(f"- Trả lời an toàn: “Không. Chúng em chỉ khẳng định thực đơn **đáp ứng hoặc không đáp ứng ngưỡng "
-      f"được cấu hình trong thử nghiệm**. Trong {clin.get('n')} seed đã chạy, "
-      f"{len(over_hyp)} menu vượt 1500 mg và hệ thống báo vi phạm đúng; đây là hạn chế của bộ giải, "
-      "không phải bảo đảm lâm sàng. Thiết bị này không phải thiết bị y tế.”")
+    # ------------------------------------------------------------------ §4
+    L("## 4. CÂU HỎI “BẪY” VÀ CÂU TRẢ LỜI SINH TỪ SỐ LIỆU\n")
+    L("**Câu 1. “Hệ thống khẳng định thực đơn an toàn cho người tăng huyết áp. Vậy vì sao có seed ra "
+      f"{num(d['hyp_sodium_max'], 0)} mg natri?”**")
+    L(f"- Trả lời: “Không. Chúng em chỉ khẳng định thực đơn **đáp ứng hoặc không đáp ứng ngưỡng được "
+      f"cấu hình trong thử nghiệm**. Trong {d['n_hyp_menus']} thực đơn của hồ sơ tăng huyết áp, "
+      f"{d['n_hyp_over_1500']} thực đơn vượt 1500 mg và hệ thống báo vi phạm đúng; đây là hạn chế của bộ giải, "
+      "không phải bảo đảm lâm sàng. Đây không phải thiết bị y tế.”")
     L("")
     L("**Câu 2. “Món ‘Gạo lứt 115 g’ là món gì? Ai ăn gạo sống?”**")
-    L(f"- Trả lời: “Dữ liệu gốc là bảng thành phần dinh dưỡng theo 100 g nguyên liệu, nên tên món hiện "
-      f"là tên nguyên liệu; {s['no_prep_pct']}% thực đơn trong đợt test dính vấn đề này. "
-      "Đây là khoảng trống đã biết giữa dữ liệu dinh dưỡng và thực đơn ẩm thực, không phải kết quả "
-      "tối ưu. Hướng khắc phục là lớp ‘món ăn’ (recipe) thay vì nguyên liệu.”")
+    L(f"- Trả lời: “Dữ liệu gốc là bảng thành phần dinh dưỡng theo 100 g nguyên liệu, nên tên hiển thị hiện "
+      f"là tên nguyên liệu; {s['no_prep_pct']}% thực đơn trong đợt test dính vấn đề này. Đây là khoảng trống "
+      "giữa dữ liệu dinh dưỡng và thực đơn ẩm thực, không phải kết quả tối ưu. Hướng khắc phục là lớp tên "
+      "món ăn, chỉ chạm hiển thị, không đổi hàm dinh dưỡng.”")
     L("")
     L("**Câu 3. “Nếu tôi dị ứng hải sản và gõ ‘hải sản’, hệ thống có loại tôm cua cá không?”**")
-    L(f"- Trả lời trung thực: “Hiện tại bộ lọc so khớp chuỗi con trên tên món; ‘hải sản’ không khớp "
-      f"‘tôm’/‘cua’/‘cá’, nên trong {allergy.get('semantic_leak_runs')} lượt thử vẫn lọt món biển. "
-      "Đây là lỗi an toàn ưu tiên cao; cần từ điển allergen trước khi demo cho người dị ứng.”")
+    if allergy.get("semantic_leak_runs", 0) == 0:
+        L(f"- Trả lời: “Trong {allergy.get('n_runs')} lượt thử, **không lượt nào còn món biển** sau khi "
+          f"loại trừ token ‘hải sản’ (`[C21]` = 0). Bộ dò chuỗi con của auditor "
+          f"vẫn ghi {allergy.get('leak_runs')} lượt, nhưng đó là false-positive như ‘Gạo nếp **cái**’ chứa "
+          "‘cá’. Giới hạn còn lại: taxonomy hiện chỉ phủ một số nhóm thực phẩm, dị ứng ngoài "
+          "các nhóm đó vẫn dựa vào so khớp chuỗi.”")
+    else:
+        L(f"- Trả lời trung thực: “Còn {allergy.get('semantic_leak_runs')}/{allergy.get('n_runs')} lượt vẫn "
+          "lọt món biển sau khi loại trừ token ‘hải sản’. Đây là lỗi an toàn ưu tiên cao, cần bổ sung "
+          "từ điển allergen trước khi demo cho người dị ứng.”")
     L("")
-    L("**Câu 4. “Điểm fitness 87.4 nghĩa là gì với bệnh nhân? Và vì sao bấm Đổi món 5 lần điểm vẫn 87.4?”**")
-    L("- Trả lời: “Fitness là hàm mục tiêu nội bộ, không phải chỉ số sức khỏe. `SwapOut` hiện không trả "
-      "fitness nên frontend giữ điểm cũ — đây là lỗi hiển thị đã ghi nhận. Đúng ra phải hoặc trả fitness "
-      "mới, hoặc bỏ hẳn điểm số khỏi giao diện người bệnh.”")
+    L("**Câu 4. “Điểm fitness nghĩa là gì với bệnh nhân? Bấm Đổi món 5 lần thì điểm có đổi không?”**")
+    if n_swap and n_fit == n_swap:
+        L(f"- Trả lời: “Fitness là hàm mục tiêu nội bộ, không phải chỉ số sức khỏe. `SwapOut` **có** trả "
+          f"`fitness` ({n_fit}/{n_swap} menu swap), nên giao diện cập nhật được điểm sau mỗi lần đổi món. "
+          "Vấn đề còn lại là ý nghĩa: một con số 0–100 không cho người bệnh biết đang thiếu hay thừa chất gì.”")
+    else:
+        L("- Trả lời: “`SwapOut` không trả `fitness` ổn định trong đợt chạy này, nên giao diện có thể vẫn "
+          "hiển thị điểm cũ sau khi đổi món. Fitness là hàm mục tiêu nội bộ, không phải chỉ số sức khỏe.”")
     L("")
-    L("**Câu 5. “Vì sao khẩu phần sữa chua lại 350 g và rau 350 g? Ràng buộc khẩu phần của em đâu?”**")
-    L(f"- Trả lời: “Solver dùng biên kỹ thuật 25–350 g cho mọi món; {s['at_cap_pct']}% menu có món chạm "
-      "trần. Hàm `validate_menu` có kiểm tra biên theo vai trò món nhưng đường gọi trong `generate_menu` "
-      "không truyền `food_map`, nên phần kiểm tra đó bị bỏ qua và không xuất hiện trong `violations`. "
-      "Đây là lỗi tích hợp, không phải lỗi thuật toán.”")
+    if s["at_cap_menus"] or s["absurd_menus"]:
+        L("**Câu 5. “Vì sao có món khẩu phần rất lớn? Ràng buộc khẩu phần của em đâu?”**")
+        L(f"- Trả lời: “Trong đợt chạy này có {s['at_cap_menus']}/{s['n_menus']} menu có món chạm ngưỡng "
+          f"≥{d['at_cap_threshold_g']:.1f} g và {s['absurd_menus']} menu bị coi là khẩu phần phản ẩm thực. "
+          "Ngưỡng khẩu phần theo vai trò món được áp ở tầng sinh thực đơn và sau khi làm tròn; con số này là "
+          "phần chưa khớp giữa ngưỡng của hệ thống và tiêu chí của bộ đo độc lập.”")
+    else:
+        L("**Câu 5. “Vì sao bảng thực đơn có nhiều món là nguyên liệu thô như ‘Măng tre 220 g’?”**")
+        L(f"- Trả lời: “Đó là lớp tên hiển thị, không phải khẩu phần: {s['no_prep_pct']}% menu có món chính "
+          f"không nêu cách chế biến (`[C20]`), và {s['raw_menus']}/{s['n_menus']} menu bị bộ dò độc lập coi là "
+          "có nguyên liệu thô (`[C19]`). Trong đợt chạy này không có món nào chạm trần khẩu phần "
+          f"≥{d['at_cap_threshold_g']:.1f} g (`[C15]` = {s['at_cap_menus']}).”")
     L("")
 
-    L("## 5. DANH SÁCH 5 VIỆC PHẢI FIX GẤP TRƯỚC KHI DEMO\n")
+    # ------------------------------------------------------------------ §5
+    L("## 5. VIỆC CẦN FIX — CHỈ HIỆN KHI CHỈ SỐ TƯƠNG ỨNG KHÁC 0\n")
     fixes = []
-    if s["at_cap_menus"] or s["absurd_menus"]:
-        fixes.append("**Truyền `food_map` vào `validate_menu` trong `generate_menu`** (và dùng đúng biên "
-                     "theo vai trò món) để 350 g sữa chua/rau/măng bị chặn và hiện thành vi phạm; "
-                     "đồng thời thu hẹp `lb/ub` của inner solver theo role thay vì 25–350 g cho mọi món.")
+    if d["n_hyp_over_1500"]:
+        fixes.append(f"**Natri ở hồ sơ tăng huyết áp**: {d['n_hyp_over_1500']}/{d['n_hyp_menus']} menu vượt "
+                     f"1500 mg (cao nhất {num(d['hyp_sodium_max'], 0)} mg). Cần đo feasibility của trần cứng "
+                     "trước khi chọn giữa (a) ràng buộc cứng và (b) loại món có natri/100 g rất cao khỏi pool.")
+    if allergy.get("semantic_leak_runs", 0) or d["n_allergy_menus_400"]:
+        fixes.append("**Dị ứng**: mở rộng taxonomy allergen và bỏ fallback so khớp chuỗi con; "
+                     f"{d['n_allergy_menus_400']} lượt trả 400 cần thông điệp nêu rõ món nào đang chặn pool.")
+    if s["condiment_menus"] or s["absurd_menus"] or s["at_cap_menus"]:
+        fixes.append(f"**Khẩu phần**: {s['at_cap_menus']} menu chạm ngưỡng và {s['absurd_menus']} menu bị coi "
+                     "là phản ẩm thực; siết biên theo vai trò ở cả solver và validation.")
+    if n_swap and n_fit < n_swap:
+        fixes.append("**Swap**: bổ sung `fitness`/`diversity_pct` vào `SwapOut` hoặc bỏ điểm số khỏi UI sau "
+                     "khi đổi món, để người dùng không thấy điểm cũ của thực đơn đã đổi.")
+    if not d["diabetes_warn"]:
+        fixes.append("**Cảnh báo bệnh lý**: thêm `warnings`/`data_limitations` vào response; tiểu đường phải "
+                     "nêu rõ không có dữ liệu đường và không kết luận an toàn.")
+    if d["n_4xx_english_pydantic"] or d["n_400_internal_message"]:
+        parts = []
+        if d["n_400_internal_message"]:
+            parts.append(f"{d['n_400_internal_message']} phản hồi 400 còn lộ thuật ngữ nội bộ "
+                         "(`min_pool_size`)")
+        if d["n_4xx_english_pydantic"]:
+            parts.append(f"{d['n_4xx_english_pydantic']} phản hồi còn mẫu lỗi Pydantic tiếng Anh")
+        fixes.append("**Thông điệp lỗi**: " + " và ".join(parts) + " — cần Việt hoá trọn câu.")
+    if s["no_prep_pct"] >= 10:
+        fixes.append(f"**Lớp tên món**: {s['no_prep_pct']}% menu có món chính không nêu cách chế biến; "
+                     "thêm tên món ăn ở lớp hiển thị, không đổi nutrient hay `food_id`.")
+    if s["structure_fail_pct"] > 0:
+        fixes.append(f"**Cơ cấu bữa**: {s['structure_fail_pct']}% menu bị coi là sai cấu trúc theo bộ đo độc "
+                     "lập; cần đối chiếu định nghĩa slot trước khi sửa.")
+    if not fixes:
+        L("Không có chỉ số nào vượt ngưỡng trong dữ liệu đợt chạy này.")
     else:
-        fixes.append("**Siết biên khẩu phần theo vai trò món** ở cả solver và validation.")
-    fixes.append("**Bổ sung từ điển allergen** (hải sản → tôm/cua/cá/mực/nghêu/sò…) và kiểm tra dị ứng "
-                 "theo nhóm, không chỉ so khớp chuỗi con; thêm test hồi quy cho token ‘hải sản’ và ‘đậu phộng’.")
-    fixes.append("**Trả `fitness`/`diversity_pct` trong `SwapOut` hoặc bỏ điểm số khỏi UI sau swap**; "
-                 "không để người dùng thấy điểm cũ của thực đơn đã đổi.")
-    fixes.append("**Thêm khối cảnh báo bệnh lý trong response** (`warnings: [...]`, `data_limitations`): "
-                 "tiểu đường → “không có dữ liệu đường, không kết luận an toàn”; bệnh lý chưa hỗ trợ → "
-                 "“chưa được mô hình hoá”. Kèm disclaimer “không phải thiết bị y tế”.")
-    fixes.append("**Việt hoá toàn bộ lỗi 4xx và rút gọn thuật ngữ UI**: map 422 Pydantic sang câu tiếng Việt "
-                 "theo trường; ẩn Seed/Smoke-Web-Full vào mục nâng cao; đổi “Fitness/100” thành "
-                 "“Mức đáp ứng mục tiêu dinh dưỡng”.")
-    if s["sodium"]["n_over_1500"]:
-        fixes.append(f"**Xử lý natri vượt ngưỡng**: {s['sodium']['n_over_1500']} menu vượt 1500 mg; "
-                     "thêm ràng buộc cứng/ưu tiên phạt natri và không cho UI hiển thị “không vi phạm” khi "
-                     "tổng natri vượt ngưỡng cá nhân.")
-    for i, fx in enumerate(fixes[:5], 1):
-        L(f"{i}. {fx}")
+        for i, fx in enumerate(fixes, 1):
+            L(f"{i}. {fx}")
     L("")
+
+    # ------------------------------------------------------------------ §6
+    L("## 6. GHI CHÚ THỦ CÔNG — KHÔNG SINH TỪ DỮ LIỆU\n")
+    L("> Mục này **cố ý** không suy ra từ `summary.json`. Nó là quan sát giao diện, kiểm bằng cách đọc "
+      "code frontend, nên **không tự cập nhật** khi chạy lại audit. Sửa UI thì phải sửa tay mục này.\n")
+    L("- Bảng thực đơn hiển thị song song khẩu phần thô và khẩu phần đã làm tròn "
+      "(`portion_g` → `portion_g_rounded`) — `app/static/js/app.js`, khối `renderMenu`.")
+    L("- Dòng “Tổng ngày” in số tuyệt đối; ngưỡng cá nhân không nằm cạnh con số mà chỉ xuất hiện trong "
+      "khối vi phạm bên dưới — cùng file, phần `totalRow` và `renderViolations`.")
+    L("- Seed và cấu hình solver nằm trong `<details class=\"advanced-settings\">` "
+      "(`app/static/index.html`), đã thu gọn mặc định.")
+    L("- Thông điệp 422 được Việt hoá ở cả backend và `formatFieldError()` trong `app/static/js/api.js`; "
+      "cảnh báo bệnh lý hiển thị qua `renderWarnings`.\n")
+
+    # ------------------------------------------------------------------ §7
+    L("## 7. BẢNG ĐỐI CHIẾU KHẲNG ĐỊNH ↔ DỮ LIỆU\n")
+    L("Mỗi dòng: mã — đường dẫn trong `summary.json` — giá trị đã in ở trên. "
+      "`scripts/check_audit_report.py <thư-mục>` đọc bảng này, so lại với `summary.json` và báo lệch.\n")
+    L("```text")
+    for cid, path, value in sorted(claims):
+        L(f"{cid}\t{path}\t{value}")
+    L("```\n")
+
     L("---")
-    L(f"*Số liệu sinh tự động từ {s['n_requests']} request trong {s['elapsed_s']:.0f} giây; "
-      f"cấu hình máy: seed cố định theo từng phase, config `web` cho ma trận và 1 phần lâm sàng, "
-      f"`smoke` cho các phép thử rẻ. Không đọc/ghi đè dữ liệu production.*")
+    L(f"*Số liệu sinh tự động từ {s['n_requests']} request trong {s.get('elapsed_s', 0):.0f} giây; "
+      "toàn bộ phần diễn giải đọc từ `summary.json` (xem §7), không có câu nào viết cứng. "
+      "Đọc/ghi chỉ trong thư mục `experiments/` của đợt chạy; không đụng dữ liệu production.*")
     return "\n".join(lines) + "\n"

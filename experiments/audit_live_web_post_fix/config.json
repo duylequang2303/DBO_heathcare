@@ -1,0 +1,9 @@
+{
+  "base_url": "http://127.0.0.1:8000",
+  "profiles": 50,
+  "hypertension_web": 10,
+  "min_seconds": 0,
+  "max_seconds": 900,
+  "started": "20261101_1403",
+  "elapsed_s": 639.4
+}

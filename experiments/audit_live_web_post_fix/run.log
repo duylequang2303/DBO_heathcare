@@ -1,0 +1,39 @@
+[    0.0s] Auditor start -> experiments/audit_live_web_post_fix (budget 900s, min 0s)
+[    0.0s] PHASE 0 bootstrap: /, /api/health, /api/foods, /api/profiles
+[    0.1s]   inventory: 137 món, gia vị=0, nguyên liệu thô=13, tên không nêu cách chế biến=97
+[    0.1s] PHASE 1 lâm sàng: 30 seed tăng huyết áp (10 web / 20 smoke)
+[   45.6s]   hyp 5/30 — sodium max tới giờ: 1201 mg
+[  100.1s]   hyp 10/30 — sodium max tới giờ: 1201 mg
+[  100.8s]   hyp 15/30 — sodium max tới giờ: 1201 mg
+[  101.5s]   hyp 20/30 — sodium max tới giờ: 1328 mg
+[  102.1s]   hyp 25/30 — sodium max tới giờ: 1328 mg
+[  102.7s]   hyp 30/30 — sodium max tới giờ: 3280 mg
+[  102.7s]   sodium max=3280 mg, vượt 1500=1/30, vượt 2300=1
+[  103.0s]   tiểu đường: 3 truy vấn, có cảnh báo=True
+[  103.0s] PHASE 2 dị ứng / khẩu vị
+[  153.0s]   30 lượt, lọt dị ứng=1, lọt 'hải sản'=0
+[  153.0s] PHASE 3 swap chain + concurrency
+[  164.1s]   chain SwapA: gap 8.7% -> 55.7%, max portion 250g
+[  165.0s]   chain SwapB: gap 4.8% -> 43.1%, max portion 220g
+[  166.2s]   chain SwapC: gap 12.4% -> 52.6%, max portion 250g
+[  167.0s]   chain SwapD: gap 21.1% -> 28.0%, max portion 250g
+[  167.8s]   chain SwapE: gap 26.6% -> 52.6%, max portion 235g
+[  168.8s]   concurrency 10 swap: {'200': 10}, max 814.2 ms, 9 kết quả khác nhau
+[  168.8s] PHASE 4 chaos / fuzzing nhập liệu
+[  177.0s]   44 case chaos, FAIL=0, 500=0
+[  177.0s] PHASE 5 tái lập (cùng seed)
+[  177.4s]   same ids=True, same portions=True
+[  177.4s] PHASE 6 ma trận nhân khẩu 50 hồ sơ (config web)
+[  224.1s]   ma trận 5/50 — fitness TB 92.3
+[  267.7s]   ma trận 10/50 — fitness TB 93.8
+[  325.6s]   ma trận 15/50 — fitness TB 95.7
+[  368.5s]   ma trận 20/50 — fitness TB 95.4
+[  412.5s]   ma trận 25/50 — fitness TB 95.4
+[  458.5s]   ma trận 30/50 — fitness TB 96.0
+[  507.9s]   ma trận 35/50 — fitness TB 96.4
+[  551.2s]   ma trận 40/50 — fitness TB 95.2
+[  595.0s]   ma trận 45/50 — fitness TB 94.9
+[  639.4s]   ma trận 50/50 — fitness TB 95.3
+[  639.4s]   ma trận xong: 50 hồ sơ, 0 rerun seed
+[  639.4s] Hoàn tất thu thập: 322 request, 169 menu, elapsed 639s
+[  639.4s] Đã ghi report + summary vào experiments/audit_live_web_post_fix

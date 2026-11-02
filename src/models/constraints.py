@@ -1,3 +1,4 @@
+from .allergen_rules import is_allergen_conflict
 from .menu import MealType, Menu
 from .user_profile import UserProfile
 from .dish_category import classify_dish_role, get_role_portion_bounds
@@ -133,7 +134,13 @@ def _check_dislikes(menu: Menu, dislikes: list[str]) -> list[str]:
 
 
 def _check_allergies(menu: Menu, allergies: list[str]) -> list[str]:
-    return _match_tokens(menu, allergies, "allergen")
+    """So khớp dị ứng theo nhóm + ranh giới từ (tránh "củ cái" ~ "cá")."""
+    issues = []
+    for item in menu.all_items():
+        for token in allergies:
+            if token and is_allergen_conflict(item.food_name, [token]):
+                issues.append(f"{item.food_name}: contains allergen '{token}'")
+    return issues
 
 
 def _match_tokens(menu: Menu, tokens: list[str], label: str) -> list[str]:
