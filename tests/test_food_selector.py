@@ -182,3 +182,96 @@ def test_real_database_slots_have_expected_roles(food_map_fixture, sample_profil
             food = food_map_fixture[food_id]
             role = classify_dish_role(str(food['food_name']), str(food.get('category', '')), str(food.get('source', '')))
             assert role in roles
+
+
+def test_staple_slots_contain_only_staple(food_map_fixture, sample_profile):
+    """lunch_0, dinner_0, breakfast_0 chỉ chứa STAPLE."""
+    from src.models.dish_category import DishRole, classify_dish_role
+    pools = build_meal_pools(food_map_fixture, sample_profile.meal_counts, sample_profile)
+    for slot in ["breakfast_0", "lunch_0", "dinner_0"]:
+        assert slot in pools
+        for fid in pools[slot]:
+            food = food_map_fixture[fid]
+            role = classify_dish_role(
+                str(food.get("food_name", "")),
+                str(food.get("category", "")),
+                str(food.get("source", "vietnamese")),
+            )
+            assert role == DishRole.STAPLE, f"Slot {slot} chứa món {fid} ({food.get('food_name')}) role={role} != STAPLE"
+
+
+def test_main_slots_contain_only_protein_veg_soup(food_map_fixture, sample_profile):
+    """lunch_1, dinner_1 chỉ chứa MAIN_PROTEIN / VEGETABLE / SOUP."""
+    from src.models.dish_category import DishRole, classify_dish_role
+    pools = build_meal_pools(food_map_fixture, sample_profile.meal_counts, sample_profile)
+    allowed = {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE, DishRole.SOUP}
+    for slot in ["lunch_1", "dinner_1"]:
+        assert slot in pools
+        for fid in pools[slot]:
+            food = food_map_fixture[fid]
+            role = classify_dish_role(
+                str(food.get("food_name", "")),
+                str(food.get("category", "")),
+                str(food.get("source", "vietnamese")),
+            )
+            assert role in allowed, f"Slot {slot} chứa món {fid} ({food.get('food_name')}) role={role} not in {allowed}"
+
+
+def test_role_pool_too_small_raises_value_error():
+    """Role pool < 3 món -> raise ValueError rõ ràng."""
+    fake_map = {
+        "F1": {"food_name": "Cơm trắng", "category": "ngũ cốc", "source": "vietnamese", "meal_type": "all"},
+        "F2": {"food_name": "Cơm tấm", "category": "ngũ cốc", "source": "vietnamese", "meal_type": "all"},
+    }
+    profile = UserProfile(
+        name="Test",
+        age=25,
+        gender=Gender.FEMALE,
+        weight_kg=55.0,
+        height_cm=160.0,
+        activity_level=ActivityLevel.SEDENTARY,
+        meal_counts={"lunch": 1},
+    )
+    with pytest.raises(ValueError, match="Role pool cho slot 'lunch_0' quá nhỏ"):
+        build_meal_pools(fake_map, {"lunch": 1}, profile, min_pool_size=1)
+
+
+def test_30_seeds_p1_p2_p3_no_duplicates_no_role_violations(food_map_fixture):
+    """30 seed P1/P2/P3: 0 food_id trùng, 0 vi phạm vai trò theo định nghĩa hệ thống."""
+    from app.api.services import PRESET_PROFILES, build_profile
+    from app.api.schemas import ProfileIn
+    from src.models.dish_category import classify_dish_role
+    from src.models.food_selector import _roles_for_slot
+
+    slots_order = ["breakfast_0", "breakfast_1", "lunch_0", "lunch_1", "dinner_0", "dinner_1", "snack_0"]
+
+    for profile_key in ["p1", "p2", "p3"]:
+        profile_in = ProfileIn(**PRESET_PROFILES[profile_key])
+        profile = build_profile(profile_in)
+        pools = build_meal_pools(food_map_fixture, profile.meal_counts, profile)
+
+        for seed in range(9001, 9031):
+            rng = np.random.default_rng(seed)
+            z = rng.random(len(slots_order))
+            selected_ids = decode_food_selection(z, pools, slots_order)
+
+            # 1. Chống trùng toàn ngày
+            assert len(selected_ids) == len(set(selected_ids)), (
+                f"Duplicate food_id in profile={profile_key}, seed={seed}: {selected_ids}"
+            )
+
+            # 2. Ràng buộc vai trò slot
+            for slot_name, fid in zip(slots_order, selected_ids):
+                food = food_map_fixture[fid]
+                meal_name, idx_str = slot_name.split("_")
+                count = profile.meal_counts.get(meal_name, 0)
+                allowed = _roles_for_slot(meal_name, int(idx_str), count)
+                role = classify_dish_role(
+                    str(food.get("food_name", "")),
+                    str(food.get("category", "")),
+                    str(food.get("source", "vietnamese")),
+                )
+                assert role in allowed, (
+                    f"Role violation in profile={profile_key}, seed={seed}, slot={slot_name}: "
+                    f"food={fid} ({food.get('food_name')}) role={role} not in {allowed}"
+                )
