@@ -105,10 +105,10 @@ def decode_food_selection(
     """Decode a mixed-integer food selection vector using linear probing.
 
     For each slot i, the initial index is floor(clamp(z_i, 0, 1-eps) * N).
-    If the candidate was already selected in the same meal, scan cyclically
-    until an unused ID is found. Complexity per slot is O(N) worst case.
-    Different meals may reuse a food ID; the 7-day diversity constraint is
-    handled separately by diversity_penalty().
+    If the candidate was already selected in any earlier slot of the day, scan
+    cyclically until an unused ID is found. Complexity per slot is O(N) worst
+    case. The 7-day diversity constraint is handled separately by
+    diversity_penalty().
 
     Args:
         z: 1D array of shape (k,) with values in [0, 1).
@@ -119,7 +119,8 @@ def decode_food_selection(
         List of selected food_ids matching the order of meal_order.
 
     Raises:
-        ValueError: If len(z) != len(meal_order) or a slot has an empty pool.
+        ValueError: If len(z) != len(meal_order), a slot has an empty pool, or
+            a slot has no food_id unused earlier in the day.
     """
     z = np.asarray(z)
     if z.ndim != 1:
