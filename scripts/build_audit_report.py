@@ -129,9 +129,16 @@ def build_report(a):
             gap_series[ch["label"]] = ser
     chain5 = {}
     for ch in A.swap_chains:
-        vals = [s["gap"] for s in ch.get("steps", []) if str(s.get("step", "")).startswith("chain")]
-        if vals:
-            chain5[ch["label"]] = {"start": vals[0], "end": vals[-1],
+        baseline = None
+        vals = []
+        for step in ch.get("steps", []):
+            if str(step.get("step", "")).startswith("chain"):
+                if step.get("status", 200) == 200 and "gap" in step:
+                    vals.append(step["gap"])
+            elif not vals and "gap" in step:
+                baseline = step["gap"]
+        if vals and baseline is not None:
+            chain5[ch["label"]] = {"start": baseline, "end": vals[-1],
                                    "min": min(vals), "max": max(vals)}
     chain5_deltas = [v["end"] - v["start"] for v in chain5.values()]
     chain5_delta_signed = round(statistics.mean(chain5_deltas), 1) if chain5_deltas else 0.0
@@ -175,7 +182,7 @@ def build_report(a):
         ),
         "n_400_internal_message": sum(
             1 for r in req_4xx if r.status == 400
-            and any(p in (r.note or "") for p in ("min_pool_size", "has size", "pool"))
+            and any(p in (r.note or "").casefold() for p in ("min_pool_size", "has size", "pool"))
         ),
         "n_swap_menus": len(swap_menus),
         "n_swap_menus_with_fitness": len(swap_fit),
@@ -507,7 +514,7 @@ def render_markdown(s, A):
     if d["n_400_internal_message"]:
         L(f"- `[C05]` **{cv('C05', 'derived.n_400_internal_message', d['n_400_internal_message'])}** "
           "phản hồi 400 có `detail` chứa thuật ngữ nội bộ "
-          "tiếng Anh (`min_pool_size`, `has size …`) — người dùng cuối vẫn đọc thấy thông điệp kỹ thuật "
+          "(`pool`, `min_pool_size`, `has size …`) — người dùng cuối vẫn đọc thấy thông điệp kỹ thuật "
           "dù phần đầu câu đã tiếng Việt.")
     else:
         L("- `[C05]` Không phản hồi 400 nào chứa thuật ngữ nội bộ (`min_pool_size`).")
@@ -700,10 +707,11 @@ def render_markdown(s, A):
       "không phải bảo đảm lâm sàng. Đây không phải thiết bị y tế.”")
     L("")
     L("**Câu 2. “Món ‘Gạo lứt 115 g’ là món gì? Ai ăn gạo sống?”**")
-    L(f"- Trả lời: “Dữ liệu gốc là bảng thành phần dinh dưỡng theo 100 g nguyên liệu, nên tên hiển thị hiện "
-      f"là tên nguyên liệu; {s['no_prep_pct']}% thực đơn trong đợt test dính vấn đề này. Đây là khoảng trống "
-      "giữa dữ liệu dinh dưỡng và thực đơn ẩm thực, không phải kết quả tối ưu. Hướng khắc phục là lớp tên "
-      "món ăn, chỉ chạm hiển thị, không đổi hàm dinh dưỡng.”")
+    L(f"- Trả lời: “Bảng dinh dưỡng lưu tên nguyên liệu theo 100 g; menu hiển thị tên món đã ghép "
+      f"ở lớp trình bày. Bộ đo tên nguyên liệu thô hiển thị (`[C19b]`) ghi nhận "
+      f"{s['raw_display_menus']}/{s['n_menus']} thực đơn ({_pct(s['raw_display_menus'], s['n_menus'])}%). "
+      "Chỉ số này khác với việc thiếu mô tả cách chế biến (`[C20]`). Tên món ghép không thay đổi "
+      "dữ liệu dinh dưỡng gốc.”")
     L("")
     L("**Câu 3. “Nếu tôi dị ứng hải sản và gõ ‘hải sản’, hệ thống có loại tôm cua cá không?”**")
     if allergy.get("semantic_leak_runs", 0) == 0:
@@ -766,7 +774,7 @@ def render_markdown(s, A):
         parts = []
         if d["n_400_internal_message"]:
             parts.append(f"{d['n_400_internal_message']} phản hồi 400 còn lộ thuật ngữ nội bộ "
-                         "(`min_pool_size`)")
+                         "(`pool`, `min_pool_size`)")
         if d["n_4xx_english_pydantic"]:
             parts.append(f"{d['n_4xx_english_pydantic']} phản hồi còn mẫu lỗi Pydantic tiếng Anh")
         fixes.append("**Thông điệp lỗi**: " + " và ".join(parts) + " — cần Việt hoá trọn câu.")

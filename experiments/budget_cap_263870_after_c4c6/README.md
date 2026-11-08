@@ -1,3 +1,7 @@
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:5c380b3842f0f5f2f7391f75218adda127a08ea4f9ecebf58cd6d773db55f9f8 -->
+
 # Budget cap 263,870 — DBO vs IDBO (sau takeover C4/C6)
 
 ## Phạm vi
@@ -17,8 +21,8 @@
 
 ## Kết quả chính
 
-- `best_fitness`: DBO mean 98.803895; IDBO mean 98.746094; paired difference mean **−0.057801** (IDBO cao hơn 2, bằng 5, thấp hơn 3).
-- `final_fitness`: DBO 99.395275; IDBO 99.403751; paired difference mean **+0.008475** (cao hơn 3, bằng 5, thấp hơn 2). Đây là khác biệt rất nhỏ, không đủ cơ sở kết luận IDBO vượt trội.
+- `best_fitness` (fitness của menu được trả về): DBO mean 98.803895; IDBO mean 98.746094; paired difference mean **−0.057801** (IDBO cao hơn 2, bằng 5, thấp hơn 3).
+- `final_fitness` (điểm cuối của outer history, không phải fitness cuối của menu được trả về): DBO 99.395275; IDBO 99.403751; paired difference mean **+0.008475** (cao hơn 3, bằng 5, thấp hơn 2). Đây là khác biệt rất nhỏ, không đủ cơ sở kết luận IDBO vượt trội.
 - `function_evaluations`: DBO 68,120 mỗi seed; IDBO 68,120–77,516 (mean +1,983.6). Cap 263,870 không bị chạm.
 - `runtime_seconds`: IDBO mean +2.26 s (+8.0%); IDBO chậm hơn ở 8/10 seed.
 - Telemetry IDBO: Outer perturbation kích hoạt ở 5/10 seed (0–18 lần), inner perturbation 0 ở mọi seed; outer restart 0. Vì vậy đây là “hành vi khác nhưng chưa cải thiện có ý nghĩa”, không phải bằng chứng IDBO vượt trội.
@@ -33,3 +37,6 @@
 ## Không so trực tiếp với đợt cũ
 
 Đợt `experiments/budget_matched_263870` (PR #39) dùng `outer_max_iter=100` và `inner_diversity_threshold=0.28`, khác cấu hình này (`outer_max_iter=25`, `inner_diversity_threshold=None`). Hai đợt không phải cùng config; không được trích số của đợt cũ như kết quả của code hiện tại.
+
+
+<!-- /coderabbit-ai-generated:v1 -->

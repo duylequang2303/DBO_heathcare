@@ -2,7 +2,7 @@
   "derived": {
     "n_4xx": 44,
     "n_4xx_english_pydantic": 0,
-    "n_400_internal_message": 0,
+    "n_400_internal_message": 14,
     "n_swap_menus": 62,
     "n_swap_menus_with_fitness": 62,
     "swap_fitness_min": 34.11,
@@ -200,8 +200,10 @@
     "Đậu tương (đậu nành)",
     "Đậu xanh (đậu tắt)"
   ],
-  "raw_display_menus": 0,
-  "raw_display_examples": [],
+  "raw_display_menus": 6,
+  "raw_display_examples": [
+    "Đậu hà lan (hạt) (ăn tươi)"
+  ],
   "no_prep_menus": 0,
   "no_prep_pct": 0.0,
   "no_prep_examples": [],
@@ -375,31 +377,31 @@
     },
     "chain5": {
       "SwapA": {
-        "start": 21.6,
+        "start": 17.5,
         "end": 28.5,
         "min": 21.6,
         "max": 28.5
       },
       "SwapB": {
-        "start": 46.0,
+        "start": 36.3,
         "end": 50.1,
         "min": 38.7,
         "max": 50.8
       },
       "SwapC": {
-        "start": 19.8,
+        "start": 20.3,
         "end": 23.0,
         "min": 19.8,
         "max": 23.0
       },
       "SwapD": {
-        "start": 33.9,
+        "start": 29.9,
         "end": 32.5,
         "min": 15.7,
         "max": 33.9
       },
       "SwapE": {
-        "start": 31.2,
+        "start": 24.7,
         "end": 20.6,
         "min": 15.1,
         "max": 31.2
@@ -407,8 +409,8 @@
     },
     "gap_first_last_delta": 13.0,
     "gap_full_chain_delta": 13.0,
-    "gap_chain5_delta_signed": 0.4,
-    "gap_chain5_delta_abs": 5.2,
+    "gap_chain5_delta_signed": 5.2,
+    "gap_chain5_delta_abs": 6.8,
     "max_portion_overall": 250.0,
     "steps_with_cap": 0,
     "status_errors": []
@@ -592,15 +594,12 @@
     "condiments": [],
     "raw": [
       "Củ sắn",
-      "Giá đậu tương",
-      "Giá đậu xanh",
       "Gạo lứt",
       "Gạo nếp cái",
       "Gạo nếp máy (loại thường)",
       "Gạo tẻ giã",
       "Khoai tây",
       "Măng tre",
-      "Sữa đậu nành (100g đậu/lít)",
       "Đậu hà lan (hạt)",
       "Đậu tương (đậu nành)",
       "Đậu xanh (đậu tắt)"

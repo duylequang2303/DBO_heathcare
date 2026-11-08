@@ -343,9 +343,8 @@ class Auditor:
             "raw": [n for n in ingredient_names if RAW_RE.search(n) and not PREP_RE.search(n)
                     and not DAIRY_RE.search(n) and not n.lower().startswith("giá")],
             "raw_display": [
-                n for n, ing in zip(names, ingredient_names)
-                if n.strip().lower() == ing.strip().lower()
-                and RAW_RE.search(n)
+                n for n in names
+                if RAW_RE.search(n)
                 and not PREP_RE.search(n)
                 and not DAIRY_RE.search(n)
                 and not n.lower().startswith("giá")

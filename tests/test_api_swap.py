@@ -214,3 +214,19 @@ def test_swap_mismatched_food_ids_length_returns_400():
     res = client.post("/api/menu/swap", json=swap_payload)
     assert res.status_code == 400
 
+
+@pytest.mark.parametrize('error', [ValueError('pool failure'), KeyError('missing record')])
+def test_swap_exception_boundary(monkeypatch, error):
+    def fail(_req):
+        raise error
+
+    monkeypatch.setattr('app.api.swap.swap_menu_item', fail)
+    with TestClient(app, raise_server_exceptions=False) as boundary_client:
+        res = boundary_client.post('/api/menu/swap', json={
+            'profile': BASE_PROFILE, 'food_ids': ['test'], 'slot': 'lunch_0',
+        })
+    if isinstance(error, ValueError):
+        assert res.status_code == 400
+        assert res.json()['detail'] == 'Không thể thay món với cấu hình hiện tại: pool failure'
+    else:
+        assert res.status_code == 500

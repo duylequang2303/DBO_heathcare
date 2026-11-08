@@ -1,3 +1,7 @@
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:9725425451745b1cd4573eb02f48ee6746b96d44ef54b07d898ea9ba1de3a7ae -->
+
 # BÁO CÁO PHẢN BIỆN & THẨM ĐỊNH HỆ THỐNG GỢI Ý THỰC ĐƠN DBO/IDBO
 
 - Thời điểm chạy: **806 giây** (~13 phút), **250 request HTTP thực tế** vào server `app.main:app`.
@@ -33,7 +37,7 @@
 | Slot đầu bữa trưa/tối đúng là tinh bột | 100.0% (266 slot) | C18 |
 | Menu chứa gia vị như món độc lập | 0/133 | — |
 | Menu có nguyên liệu gốc bị coi là thô | 132/133 | C19 |
-| Menu hiển thị tên nguyên liệu thô | 0/133 | C19b |
+| Menu hiển thị tên nguyên liệu thô | 6/133 | C19b |
 | Menu có món chính không nêu cách chế biến | 0.0% (0/133) | C20 |
 | Lượt lọt dị ứng ngữ nghĩa (token “hải sản”) | 0/30 | C21 |
 | Lượt lọt dị ứng theo khớp chuỗi con (bộ dò auditor) | 2/30 | — |
@@ -42,7 +46,7 @@
 | Số bước swap đo được | 62 (max portion 250 g) | — |
 | Menu swap có trả `fitness` | 62/62 | C14 |
 | Biến thiên gap toàn chuỗi swap | 13.0 điểm % (baseline → cuối) | C24 |
-| Biến thiên gap 5 bước cuối | 0.4 điểm % (signed; abs 5.2) | C24b |
+| Biến thiên gap 5 bước cuối | 5.2 điểm % (signed; abs 6.8) | C24b |
 | 10 swap đồng thời | {'200': 10} · max 1977.7 ms | — |
 | Tái lập cùng seed | ids giống: True · portion giống: True | [C23] [C23b] |
 | Ma trận nhân khẩu | 14 OK / 0 lỗi, 0 rerun seed | C27 |
@@ -58,18 +62,18 @@ Phân bố tuổi / BMI / vận động / cấu trúc bữa trong ma trận: `{'
 
 - `[C03]` Không có request nào trả 5xx trên **250** request: server không sập, không rò traceback ra client.
 - `[C04]` Trong **44** phản hồi 4xx, **0** phản hồi chứa mẫu lỗi Pydantic tiếng Anh (`Input should…`, `String should…`, `Field required`) `[C06]`.
-- `[C05]` Không phản hồi 400 nào chứa thuật ngữ nội bộ (`min_pool_size`).
+- `[C05]` **14** phản hồi 400 có `detail` chứa thuật ngữ nội bộ (`pool`, `min_pool_size`, `has size …`) — người dùng cuối vẫn đọc thấy thông điệp kỹ thuật dù phần đầu câu đã tiếng Việt.
 
 ### 2.2. Swap: fitness, khẩu phần, độ lệch
 
 - Đo được **62** bước swap trên **5** chuỗi `[C29]` `[C30]`.
 - `[C14]` `SwapOut` **có** trả `fitness`: **62/62** menu swap có trường này (min 34.11 – max 97.19). Vì vậy báo cáo dùng cả `fitness` (điểm solver trả về) và `gap` (độ lệch dinh dưỡng so với target, đơn vị %, là đại lượng suy ra chứ không phải fitness).
-- Chuỗi 5 lần swap cùng slot: **3** chuỗi xấu đi, **2** chuỗi tốt lên, **0** chuỗi không đổi. Biến thiên trung bình đầu→cuối của đúng 5 bước: `[C24b]` **0.4** điểm % (abs 5.2). Toàn chuỗi (gồm các bước tuần tự trước đó): `[C24]` **13.0** điểm %.
-  - SwapA: 21.6 → 28.5 (xấu đi), min 21.6, max 28.5
-  - SwapB: 46.0 → 50.1 (xấu đi), min 38.7, max 50.8
-  - SwapC: 19.8 → 23.0 (xấu đi), min 19.8, max 23.0
-  - SwapD: 33.9 → 32.5 (tốt lên), min 15.7, max 33.9
-  - SwapE: 31.2 → 20.6 (tốt lên), min 15.1, max 31.2
+- Chuỗi 5 lần swap cùng slot: **4** chuỗi xấu đi, **1** chuỗi tốt lên, **0** chuỗi không đổi. Biến thiên trung bình đầu→cuối của đúng 5 bước: `[C24b]` **5.2** điểm % (abs 6.8). Toàn chuỗi (gồm các bước tuần tự trước đó): `[C24]` **13.0** điểm %.
+  - SwapA: 17.5 → 28.5 (xấu đi), min 21.6, max 28.5
+  - SwapB: 36.3 → 50.1 (xấu đi), min 38.7, max 50.8
+  - SwapC: 20.3 → 23.0 (xấu đi), min 19.8, max 23.0
+  - SwapD: 29.9 → 32.5 (xấu đi), min 15.7, max 33.9
+  - SwapE: 24.7 → 20.6 (tốt lên), min 15.1, max 31.2
 - `[SUY RA]` Dữ liệu cho thấy `gap` có thể **tăng** sau swap; audit này không ghi nhận cơ chế nào từ chối phương án có `gap`/`fitness` tệ hơn phương án trước.
 - Tổng số bước swap có ít nhất một món chạm trần ≥349.5 g: **0/62**; khẩu phần lớn nhất sau swap: **250 g** `[C31]` `[C32]`.
 
@@ -98,14 +102,14 @@ Phân bố tuổi / BMI / vận động / cấu trúc bữa trong ma trận: `{'
 - `[C15]` Menu có món chạm trần ≥349.5 g: **0/133** (0.0%). `[C16]` Khẩu phần bị coi là phản ẩm thực: **0** menu.
 - `[C18]` Slot đầu bữa trưa/tối đúng là tinh bột: **100.0%** trên 266 slot; `[C17]` **0/133** (0.0%) menu bị coi là sai cơ cấu bữa.
 - `[CẢNH BÁO ĐO LƯỜNG]` Auditor phân vai trò món bằng **từ vựng độc lập** với `DishRole` của hệ thống, nên 100% “sai” không đồng nghĩa 100% lỗi sản phẩm. Phải đối chiếu hai định nghĩa slot trước khi sửa theo con số này.
-- `[C19]` **132/133** menu có nguyên liệu gốc thuộc nhóm bị bộ dò coi là thô; `[C19b]` **0/133** menu còn hiển thị tên nguyên liệu thô; `[C20]` **0.0%** menu có món chính không nêu cách chế biến. C19 là giới hạn dữ liệu gốc (bảng dinh dưỡng theo 100 g nguyên liệu), không phải lỗi dinh dưỡng; C19b/C20 đo lớp ghép món hiển thị và phải đọc cùng C19.
+- `[C19]` **132/133** menu có nguyên liệu gốc thuộc nhóm bị bộ dò coi là thô; `[C19b]` **6/133** menu còn hiển thị tên nguyên liệu thô; `[C20]` **0.0%** menu có món chính không nêu cách chế biến. C19 là giới hạn dữ liệu gốc (bảng dinh dưỡng theo 100 g nguyên liệu), không phải lỗi dinh dưỡng; C19b/C20 đo lớp ghép món hiển thị và phải đọc cùng C19.
 - Không có menu nào chứa gia vị như món độc lập trong đợt chạy này.
 - `[C28]` Nhất quán calo vs 4P+4C+9F: lệch lớn nhất **0.3%**, **0** menu lệch >10%.
 
 ### 2.7. Dữ liệu món ăn
 
-- Mẫu **137** món `[C36]` lấy từ `/api/foods`; trong mẫu đó có **0** tên gia vị, **13** tên nguyên liệu thô, **97** tên không nêu cách chế biến.
-- Natri/100 g cao nhất: `[('Dưa chuột hộp', 1208.0), ('Tôm đồng', 418.0), ('Sữa bò tươi', 380.0), ('Nước ép cà chua', 269.0), ('Bầu dục bò', 200.0)]` — những món này một mình đã chiếm phần lớn ngưỡng 1500 mg/ngày.
+- Mẫu **137** món `[C36]` lấy từ `/api/foods`; trong mẫu đó có **0** tên gia vị, **10** tên nguyên liệu thô, **97** tên không nêu cách chế biến.
+- Natri/100 g cao nhất: `[['Dưa chuột hộp', 1208.0], ['Tôm đồng', 418.0], ['Sữa bò tươi', 380.0], ['Nước ép cà chua', 269.0], ['Bầu dục bò', 200.0]]` — những món này một mình đã chiếm phần lớn ngưỡng 1500 mg/ngày.
 
 ### 2.8. Chaos / fuzzing
 
@@ -199,7 +203,7 @@ Phân bố tuổi / BMI / vận động / cấu trúc bữa trong ma trận: `{'
 - Trả lời: “Không. Chúng em chỉ khẳng định thực đơn **đáp ứng hoặc không đáp ứng ngưỡng được cấu hình trong thử nghiệm**. Trong 43 thực đơn của hồ sơ tăng huyết áp, 0 thực đơn vượt 1500 mg và hệ thống báo vi phạm đúng; đây là hạn chế của bộ giải, không phải bảo đảm lâm sàng. Đây không phải thiết bị y tế.”
 
 **Câu 2. “Món ‘Gạo lứt 115 g’ là món gì? Ai ăn gạo sống?”**
-- Trả lời: “Dữ liệu gốc là bảng thành phần dinh dưỡng theo 100 g nguyên liệu, nên tên hiển thị hiện là tên nguyên liệu; 0.0% thực đơn trong đợt test dính vấn đề này. Đây là khoảng trống giữa dữ liệu dinh dưỡng và thực đơn ẩm thực, không phải kết quả tối ưu. Hướng khắc phục là lớp tên món ăn, chỉ chạm hiển thị, không đổi hàm dinh dưỡng.”
+- Trả lời: “Bảng dinh dưỡng lưu tên nguyên liệu theo 100 g; menu hiển thị tên món đã ghép ở lớp trình bày. Bộ đo tên nguyên liệu thô hiển thị (`[C19b]`) ghi nhận 6/133 thực đơn (4.5%). Chỉ số này khác với việc thiếu mô tả cách chế biến (`[C20]`). Tên món ghép không thay đổi dữ liệu dinh dưỡng gốc.”
 
 **Câu 3. “Nếu tôi dị ứng hải sản và gõ ‘hải sản’, hệ thống có loại tôm cua cá không?”**
 - Trả lời: “Trong 30 lượt thử, **không lượt nào còn món biển** sau khi loại trừ token ‘hải sản’ (`[C21]` = 0). Bộ dò chuỗi con của auditor vẫn ghi 2 lượt, nhưng đó là false-positive như ‘Gạo nếp **cái**’ chứa ‘cá’. Giới hạn còn lại: taxonomy hiện chỉ phủ một số nhóm thực phẩm, dị ứng ngoài các nhóm đó vẫn dựa vào so khớp chuỗi.”
@@ -208,11 +212,12 @@ Phân bố tuổi / BMI / vận động / cấu trúc bữa trong ma trận: `{'
 - Trả lời: “Fitness là hàm mục tiêu nội bộ, không phải chỉ số sức khỏe. `SwapOut` **có** trả `fitness` (62/62 menu swap), nên giao diện cập nhật được điểm sau mỗi lần đổi món. Vấn đề còn lại là ý nghĩa: một con số 0–100 không cho người bệnh biết đang thiếu hay thừa chất gì.”
 
 **Câu 5. “Vì sao bảng thực đơn có nhiều món là nguyên liệu thô như ‘Măng tre 220 g’?”**
-- Trả lời: “Tên hiển thị đã được ghép thành món: 0/133 menu còn hiển thị tên nguyên liệu thô (`[C19b]`), 0.0% menu có món chính không nêu cách chế biến (`[C20]`). Tuy nhiên 132/133 menu vẫn có nguyên liệu gốc thuộc nhóm thô (`[C19]`), vì dữ liệu dinh dưỡng là bảng theo 100 g nguyên liệu và chưa có bảng món nấu chín tương ứng. Đây là giới hạn dữ liệu, không phải khẩu phần thô được phục vụ. Trong đợt chạy này không có món nào chạm trần khẩu phần ≥349.5 g (`[C15]` = 0).”
+- Trả lời: “Tên hiển thị đã được ghép thành món: 6/133 menu còn hiển thị tên nguyên liệu thô (`[C19b]`), 0.0% menu có món chính không nêu cách chế biến (`[C20]`). Tuy nhiên 132/133 menu vẫn có nguyên liệu gốc thuộc nhóm thô (`[C19]`), vì dữ liệu dinh dưỡng là bảng theo 100 g nguyên liệu và chưa có bảng món nấu chín tương ứng. Đây là giới hạn dữ liệu, không phải khẩu phần thô được phục vụ. Trong đợt chạy này không có món nào chạm trần khẩu phần ≥349.5 g (`[C15]` = 0).”
 
 ## 5. VIỆC CẦN FIX — CHỈ HIỆN KHI CHỈ SỐ TƯƠNG ỨNG KHÁC 0
 
 1. **Dị ứng**: mở rộng taxonomy allergen và bỏ fallback so khớp chuỗi con; 14 lượt trả 400 cần thông điệp nêu rõ món nào đang chặn pool.
+2. **Thông điệp lỗi**: 14 phản hồi 400 còn lộ thuật ngữ nội bộ (`pool`, `min_pool_size`) — cần Việt hoá trọn câu.
 
 ## 6. GHI CHÚ THỦ CÔNG — KHÔNG SINH TỪ DỮ LIỆU
 
@@ -232,7 +237,7 @@ C01	n_requests	250
 C02	n_menus	133
 C03	n_5xx	0
 C04	derived.n_4xx	44
-C05	derived.n_400_internal_message	0
+C05	derived.n_400_internal_message	14
 C06	derived.n_4xx_english_pydantic	0
 C07	menus_with_violation	112
 C09	derived.n_menus_fitness_negative	0
@@ -246,14 +251,14 @@ C16	absurd_menus	0
 C17	structure_fail_menus	0
 C18	slot0_staple_pct	100.0
 C19	raw_menus	132
-C19b	raw_display_menus	0
+C19b	raw_display_menus	6
 C20	no_prep_pct	0.0
 C21	allergy.semantic_leak_runs	0
 C22	derived.n_allergy_menus_400	14
 C23	determinism.same_ids	True
 C23b	determinism.same_portions	True
 C24	swap.gap_first_last_delta	13.0
-C24b	swap.gap_chain5_delta_signed	0.4
+C24b	swap.gap_chain5_delta_signed	5.2
 C25	latency_all.p95	27245.1
 C26	derived.diabetes_warn	True
 C27	matrix.ok	14
@@ -270,3 +275,6 @@ C36	inventory.n_foods_sampled	137
 
 ---
 *Số liệu sinh tự động từ 250 request trong 806 giây; toàn bộ phần diễn giải đọc từ `summary.json` (xem §7), không có câu nào viết cứng. Đọc/ghi chỉ trong thư mục `experiments/` của đợt chạy; không đụng dữ liệu production.*
+
+
+<!-- /coderabbit-ai-generated:v1 -->

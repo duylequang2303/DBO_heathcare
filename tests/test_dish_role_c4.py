@@ -103,3 +103,15 @@ def test_whitelist_role_pools_satisfy_min_threshold_all_presets():
                 f"(ngưỡng tối thiểu {MIN_ROLE_POOL_SIZE})"
             )
 
+
+@pytest.mark.parametrize('name', ['Dầu rang', 'Dầu đậu nành rang', 'Bột mì rang', 'Mỡ chiên'])
+def test_cooking_word_does_not_make_industrial_product_a_dish(name):
+    assert classify_dish_role(name) == DishRole.RAW_INGREDIENT
+
+@pytest.mark.parametrize(('name', 'role'), [
+    ('Thịt gà rang dầu', DishRole.MAIN_PROTEIN),
+    ('Rau xào dầu', DishRole.VEGETABLE),
+    ('Cá chiên bột mì', DishRole.MAIN_PROTEIN),
+])
+def test_prepared_dish_can_mention_industrial_ingredient(name, role):
+    assert classify_dish_role(name) == role

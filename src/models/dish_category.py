@@ -112,7 +112,10 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
     name_clean = str(food_name or "").strip().lower()
     cat_clean = "" if category is None or str(category).lower() == "nan" else str(category).strip().lower()
 
-    is_cooked = bool(COOKED_STATE_PATTERNS.search(name_clean))
+    # A cooking word in an industrial product name does not make it a dish.
+    # Prepared dishes may still mention oil/flour later in their names.
+    is_product = bool(RAW_JUNK_REGEX.match(name_clean))
+    is_cooked = bool(COOKED_STATE_PATTERNS.search(name_clean)) and not is_product
     if not is_cooked and is_raw_or_industrial_junk(name_clean, cat_clean):
         return DishRole.RAW_INGREDIENT
 

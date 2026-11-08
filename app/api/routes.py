@@ -92,7 +92,7 @@ async def api_swap_menu(req: SwapIn) -> SwapOut:
 
     try:
         return await asyncio.to_thread(swap_menu_item, req)
-    except (ValueError, KeyError) as exc:
+    except ValueError as exc:
         raise HTTPException(
             status_code=400,
             detail=f"Không thể thay món với cấu hình hiện tại: {exc}",
