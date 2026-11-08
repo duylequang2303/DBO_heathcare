@@ -60,6 +60,12 @@ RAW_JUNK_PATTERNS = [
 
 RAW_JUNK_REGEX = re.compile("|".join(RAW_JUNK_PATTERNS), re.IGNORECASE)
 
+# Patterns identifying industrial products, fats/oils, or flours that are never standalone dishes
+RAW_PRODUCT_PREFIX = re.compile(
+    r"^(dầu|mỡ|bột|men|phụ gia|tinh bột|shortening|oil|lard|flour|baking powder)\b",
+    re.IGNORECASE,
+)
+
 # Patterns identifying prepared/cooked dishes to prevent them being treated as raw
 COOKED_STATE_PATTERNS = re.compile(
     r"\b(luộc|hấp|xào|nấu|cháo|chiên|rán|kho|nướng|hầm|áp chảo|sốt|rang|om|rim|quay|trộn|nộm|gỏi|canh|súp)\b",
@@ -112,7 +118,10 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
     name_clean = str(food_name or "").strip().lower()
     cat_clean = "" if category is None or str(category).lower() == "nan" else str(category).strip().lower()
 
-    # A cooking word in an industrial product name does not make it a dish.
+    # Industrial products remain raw even when their names contain cooking words.
+    if RAW_PRODUCT_PREFIX.search(name_clean):
+        return DishRole.RAW_INGREDIENT
+
     # Prepared dishes may still mention oil/flour later in their names.
     is_product = bool(RAW_JUNK_REGEX.match(name_clean))
     is_cooked = bool(COOKED_STATE_PATTERNS.search(name_clean)) and not is_product
@@ -150,7 +159,7 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
         return DishRole.FRUIT_SNACK
 
     # Món có trạng thái nấu chín nhưng chưa khớp nhóm nào ở trên
-    if is_cooked:
+    if is_cooked and not is_raw_or_industrial_junk(name_clean, cat_clean):
         if re.search(r"\b(xào|luộc|nộm|gỏi)\b", name_clean):
             return DishRole.VEGETABLE
         return DishRole.MAIN_PROTEIN
