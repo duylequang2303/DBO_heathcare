@@ -103,3 +103,20 @@ def test_whitelist_role_pools_satisfy_min_threshold_all_presets():
                 f"(ngưỡng tối thiểu {MIN_ROLE_POOL_SIZE})"
             )
 
+
+def test_industrial_products_with_cooked_words_stay_raw_ingredient():
+    """CodeRabbit review: Sản phẩm công nghiệp (dầu, mỡ, bột) dù có từ 'rang', 'rán', 'chiên' vẫn phải là RAW_INGREDIENT."""
+    industrial_names = [
+        "Dầu rang",
+        "Mỡ rán",
+        "Bột chiên xù",
+        "Dầu cám gạo",
+        "Bột nướng",
+    ]
+    for name in industrial_names:
+        role = classify_dish_role(name, source="vietnamese")
+        assert role == DishRole.RAW_INGREDIENT, (
+            f"Sản phẩm công nghiệp '{name}' không được gán role {role}, phải là RAW_INGREDIENT"
+        )
+
+
