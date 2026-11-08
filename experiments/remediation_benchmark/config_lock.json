@@ -1,0 +1,65 @@
+{
+  "benchmark_name": "KLCN142_Remediation_Benchmark_P1_P2_P3",
+  "generated_at": "2026-11-08T20:30:00+07:00",
+  "provenance": {
+    "git_branch": "fix/remediation-limitations",
+    "base_branch": "fix/c4-c6-takeover",
+    "dataset": "data/processed/cleaned_food_nutrition.csv",
+    "dataset_sha256": "4b6ec4efca18c21966ec0a38210332822a94562c5b3c3c7373f71c4f24efb2f1"
+  },
+  "profiles": [
+    {
+      "key": "p1",
+      "description": "Standard maintenance (Male, 22y, 2492 kcal, 0 medical conditions)"
+    },
+    {
+      "key": "p2",
+      "description": "Simulated diabetes / low carb (Female, 45y, 1838 kcal, carb control)"
+    },
+    {
+      "key": "p3",
+      "description": "Simulated hypertension (Male, 55y, sodium <= 1500mg AHA guideline)"
+    }
+  ],
+  "seeds": [8001, 8002, 8003, 8004, 8005],
+  "algorithms": {
+    "dbo": {
+      "outer_algo": "dbo",
+      "outer_n_agents": 10,
+      "outer_max_iter": 15,
+      "inner_algo": "dbo",
+      "inner_n_agents": 10,
+      "inner_max_iter": 15
+    },
+    "idbo": {
+      "outer_algo": "idbo",
+      "outer_n_agents": 10,
+      "outer_max_iter": 15,
+      "inner_algo": "idbo",
+      "inner_n_agents": 10,
+      "inner_max_iter": 15,
+      "outer_diversity_threshold": 0.50,
+      "inner_diversity_threshold": 0.05,
+      "stagnation_window": 3,
+      "outer_stagnation_window": 3,
+      "inner_stagnation_window": 3,
+      "restart_rate": 0.25,
+      "perturbation_rate": 0.20,
+      "perturbation_scale": 0.10
+    },
+    "random_search_baseline": {
+      "description": "Budget-matched uniform random sampling across discrete candidate pools and continuous role bounds",
+      "budget_policy": "exact_match_total_evaluations"
+    }
+  },
+  "metrics": {
+    "primary_metric": "rounded_fitness (after 5g rounding and production validation)",
+    "secondary_metric": "continuous_fitness (raw continuous solver fitness)",
+    "statistical_tests": [
+      "Wilcoxon signed-rank test (two-tailed)",
+      "Bootstrap 95% Confidence Interval (1000 resamples)",
+      "Wins / Ties / Losses ratio"
+    ]
+  }
+}
+
