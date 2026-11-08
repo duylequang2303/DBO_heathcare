@@ -60,6 +60,17 @@ RAW_JUNK_PATTERNS = [
 
 RAW_JUNK_REGEX = re.compile("|".join(RAW_JUNK_PATTERNS), re.IGNORECASE)
 
+# Patterns identifying prepared/cooked dishes to prevent them being treated as raw
+COOKED_STATE_PATTERNS = re.compile(
+    r"\b(luộc|hấp|xào|nấu|cháo|chiên|rán|kho|nướng|hầm|áp chảo|sốt|rang|om|rim|quay|trộn|nộm|gỏi|canh|súp)\b",
+    re.IGNORECASE,
+)
+
+DAIRY_PATTERNS = re.compile(
+    r"\b(sữa|yogurt|váng sữa|phô mai|cheese)\b",
+    re.IGNORECASE,
+)
+
 
 def is_raw_or_industrial_junk(food_name: str, category: str = "") -> bool:
     """Return True if food item is a raw industrial ingredient or unfit for direct meal eating."""
@@ -69,7 +80,7 @@ def is_raw_or_industrial_junk(food_name: str, category: str = "") -> bool:
 
 # Keyword mappings for Vietnamese dishes & USDA
 STAPLE_PATTERNS = re.compile(
-    r"\b(cơm|gạo|bún|phở|mì|miến|bánh mì|khoai|ngô|kê|đậu xanh|đậu tương|yến mạch|oatmeal|rice, cooked|noodles, cooked|pasta, cooked|bread)\b",
+    r"\b(cơm|gạo|bún|phở|mì|miến|bánh mì|khoai|ngô|kê|đậu xanh|đậu tương|đậu nành|đậu đen|đậu đỏ|yến mạch|oatmeal|rice, cooked|noodles, cooked|pasta, cooked|bread)\b",
     re.IGNORECASE,
 )
 
@@ -86,12 +97,12 @@ SOUP_PATTERNS = re.compile(
 )
 
 VEGETABLE_PATTERNS = re.compile(
-    r"\b(rau|cải|muống|ngót|dền|mồng tơi|xà lách|dưa leo|cà chua|bí|bầu|mướp|súp lơ|bông cải|nấm|đậu cô ve|cà|cần|củ|măng|giá đậu|su hào|vegetable|salad|spinach|broccoli|cucumber)\b",
+    r"\b(rau|cải|muống|ngót|dền|mồng tơi|xà lách|dưa leo|cà chua|bí|bầu|mướp|súp lơ|bông cải|nấm|đậu cô ve|đậu hà lan|cà|cần|củ|măng|giá đậu|su hào|vegetable|salad|spinach|broccoli|cucumber)\b",
     re.IGNORECASE,
 )
 
 SNACK_PATTERNS = re.compile(
-    r"\b(quả|trái|chuối|táo|cam|bưởi|xoài|dưa|nho|ổi|sữa chua|sữa tươi|sữa dê|sữa đậu|dứa|hồng|chanh|dâu|đu đủ|lê|lựu|mãng cầu|mít|mơ|na|nhãn|quít|sầu riêng|vải|bơ|khế|hạt|fruit|yogurt|apple|banana|orange|milk|almond|walnut)\b",
+    r"\b(quả|trái|chuối|táo|cam|bưởi|xoài|dưa|dưa hấu|nho|ổi|sữa chua|sữa tươi|sữa dê|sữa đậu|sữa bò|sữa|dứa|hồng|chanh|dâu|dâu tây|đu đủ|lê|lựu|mãng cầu|mít|mơ|na|nhãn|quít|quýt|sầu riêng|vải|bơ|khế|thanh long|chôm chôm|măng cụt|kiwi|mận|hồng xiêm|vú sữa|hạt dẻ|hạt điều|hạt sen|hạt bí|hạt dưa|hạt hướng dương|hạt macca|hạt óc chó|hạt hạnh nhân|fruit|yogurt|apple|banana|orange|milk|almond|walnut|peanut|nut|nuts)\b",
     re.IGNORECASE,
 )
 
@@ -101,11 +112,16 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
     name_clean = str(food_name or "").strip().lower()
     cat_clean = "" if category is None or str(category).lower() == "nan" else str(category).strip().lower()
 
-    if is_raw_or_industrial_junk(name_clean, cat_clean):
+    is_cooked = bool(COOKED_STATE_PATTERNS.search(name_clean))
+    if not is_cooked and is_raw_or_industrial_junk(name_clean, cat_clean):
         return DishRole.RAW_INGREDIENT
 
     # Snack overrides bread/cereal in cookie and waffle product names.
     if re.search(r"\b(cookie|cookies|waffle|waffles|biscuit|biscuits|bánh quy|bánh xốp)\b", name_clean):
+        return DishRole.FRUIT_SNACK
+
+    # Sữa và các chế phẩm từ sữa là snack/beverage (tránh nhầm "bò" trong sữa bò thành protein mặn)
+    if DAIRY_PATTERNS.search(name_clean):
         return DishRole.FRUIT_SNACK
 
     # 1. Soup / Canh
@@ -113,7 +129,9 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
         return DishRole.SOUP
 
     # 2. Main Protein / Món mặn
-    if PROTEIN_PATTERNS.search(name_clean) or any(k in cat_clean for k in ["beef", "poultry", "pork", "seafood", "fish"]):
+    if PROTEIN_PATTERNS.search(name_clean) or any(
+        k in cat_clean for k in ["beef", "poultry", "pork", "seafood", "fish", "thủy sản", "hải sản", "thịt", "gia cầm"]
+    ):
         return DishRole.MAIN_PROTEIN
 
     # 3. Vegetables / Rau xào, rau luộc, salad
@@ -127,6 +145,12 @@ def classify_dish_role(food_name: str, category: str = "", source: str = "vietna
     # 5. Snack / Fruit
     if SNACK_PATTERNS.search(name_clean) or any(k in cat_clean for k in ["fruit", "dairy", "yogurt", "nuts"]):
         return DishRole.FRUIT_SNACK
+
+    # Món có trạng thái nấu chín nhưng chưa khớp nhóm nào ở trên
+    if is_cooked:
+        if re.search(r"\b(xào|luộc|nộm|gỏi)\b", name_clean):
+            return DishRole.VEGETABLE
+        return DishRole.MAIN_PROTEIN
 
     # Unknown records are unsafe for a user-facing structured menu.
     # Keep them in the source database, but do not guess a culinary role.

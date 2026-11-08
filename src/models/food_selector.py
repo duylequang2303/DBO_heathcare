@@ -32,7 +32,7 @@ def _roles_for_slot(meal_name: str, slot_idx: int, count: int) -> set[DishRole]:
     if meal_name == "breakfast":
         if slot_idx == 0:
             return {DishRole.STAPLE}
-        return {DishRole.MAIN_PROTEIN, DishRole.FRUIT_SNACK}
+        return {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE}
     if slot_idx == 0:
         return {DishRole.STAPLE}
     return {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE, DishRole.SOUP}
