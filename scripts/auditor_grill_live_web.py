@@ -59,25 +59,25 @@ SOUP_RE = _words("canh", "súp", "cháo", "broth")
 STAPLE_RE = _words(
     "cơm", "gạo", "bún", "phở", "mì", "miến", "bánh mì", "khoai", "ngô", "kê", "yến mạch",
     "nếp", "bắp", "bánh cuốn", "bánh ướt", "bánh phở",
-    "đậu xanh", "đậu tương", "đậu nành", "đậu đen", "đậu hà lan",
+    "đậu xanh", "đậu tương", "đậu nành", "đậu đen",
 )
 PROTEIN_RE = _words(
     "thịt", "bò", "heo", "lợn", "gà", "vịt", "cá", "tôm", "cua", "mực", "tép", "nghêu",
-    "sò", "hến", "trứng", "đậu phụ", "chả", "giò", "sườn", "chim", "bồ câu", "thỏ", "ếch",
+    "sò", "hến", "trứng", "đậu phụ", "chả", "giò", "sườn", "chim", "bồ câu", "thỏ", "ếch", "trai", "ghẹ", "hàu", "ngao", "sò điệp",
     "lươn", "đuôi", "chân giò", "gan", "tim", "lòng", "ba chỉ", "nạc", "xúc xích", "dăm bông",
     "óc",
 )
 VEG_RE = _words(
     "rau", "cải", "muống", "ngót", "dền", "mồng tơi", "xà lách", "dưa leo", "dưa chuột",
     "cà chua", "cà pháo", "bí", "bầu", "mướp", "súp lơ", "bông cải", "nấm", "măng",
-    "su hào", "cà rốt", "giá", "su su", "đậu cô ve", "ngồng", "hành", "tỏi", "cà tím",
-    "củ", "mướp đắng", "khổ qua",
+    "su hào", "cà rốt", "giá", "su su", "đậu cô ve", "đậu hà lan", "ngồng", "hành", "tỏi", "cà tím",
+    "củ", "mướp đắng", "khổ qua", "cần tây", "cần", "giền",
 )
 FRUIT_RE = _words(
     "quả", "trái", "chuối", "táo", "cam", "chanh", "bưởi", "xoài", "nho", "ổi", "dứa",
     "hồng", "đu đủ", "lê", "lựu", "mít", "mơ", "na", "nhãn", "quít", "sầu riêng", "vải",
     "khế", "hạt", "sữa", "dưa hấu", "thanh long", "mận", "chôm chôm", "măng cụt",
-    "kiwi", "bơ", "dâu", "dâu tây",
+    "kiwi", "bơ", "dâu", "dâu tây", "mãng cầu",
 )
 SEAFOOD_RE = _words("tôm", "cua", "cá", "mực", "tép", "nghêu", "sò", "hến", "ghẹ", "hải sản")
 # Món có dạng món ăn rõ ràng → luôn là tinh bột, kể cả khi tên chứa từ khoá khác.
@@ -252,10 +252,10 @@ class Auditor:
             return "dairy"
         if SOUP_RE.search(n):
             return "soup"
-        if STICKY_STAPLE_RE.search(n):
-            return "staple"
         if VEG_HEAD_RE.search(n):
             return "veg"
+        if STICKY_STAPLE_RE.search(n):
+            return "staple"
         if STAPLE_RE.search(n):
             return "staple"
         if PROTEIN_RE.search(n):

@@ -102,7 +102,7 @@ def check(exp_dir: Path) -> int:
             codes = [c for c in codes if re.fullmatch(r"C\d+b?", c)]
             if not codes:
                 continue
-            shown = [_norm(x) for x in re.findall(r"\d[\d,]*\.?\d*", cells[1])]
+            shown = [_norm(x) for x in re.findall(r"-?\d[\d,]*\.?\d*", cells[1])]
             for cid in codes:
                 if cid not in claim_values:
                     errors.append(f"{cid}: xuất hiện ở §1 nhưng không có dòng §7")

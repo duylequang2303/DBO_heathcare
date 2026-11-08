@@ -1,0 +1,246 @@
+{"phase": "bootstrap", "label": "root", "method": "GET", "path": "/", "status": 200, "latency_ms": 30.8, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "health", "method": "GET", "path": "/api/health", "status": 200, "latency_ms": 1.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "profiles", "method": "GET", "path": "/api/profiles", "status": 200, "latency_ms": 1.3, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_all", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 11.4, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_cơm", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.5, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_rau", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.6, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_canh", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 9.1, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_thịt", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.8, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_cá", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.3, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_gà", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 7.7, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_bò", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.1, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_sữa", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 7.8, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_chuối", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 5.2, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_gạo", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 4.0, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_khoai", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 9.5, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_đậu", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 5.0, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_măng", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.7, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_tôm", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_trứng", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.9, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_bánh", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.0, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_mắm", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 7.0, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_dầu", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 3.7, "config": null, "note": ""}
+{"phase": "bootstrap", "label": "foods_muối", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 6.1, "config": null, "note": ""}
+{"phase": "clinical", "label": "hyp_seed100", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28464.6, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed101", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 29713.1, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed102", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28547.4, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed103", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28877.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed104", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28559.8, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed105", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 25870.6, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed106", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 24630.0, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed107", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 23969.1, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed108", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 24759.3, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed109", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28754.9, "config": "web", "note": ""}
+{"phase": "clinical", "label": "hyp_seed110", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 313.8, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed111", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 333.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed112", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 343.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed113", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 361.1, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed114", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 359.0, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed115", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 337.7, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed116", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 303.1, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed117", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 309.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed118", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 328.1, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed119", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 322.5, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed120", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 319.6, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed121", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 312.3, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed122", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 321.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed123", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 315.4, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed124", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 329.8, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed125", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 331.5, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed126", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 316.0, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed127", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 327.8, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed128", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 324.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "hyp_seed129", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 317.7, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "targets_hypertension", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_tăng huyết áp", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.7, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_cao huyết áp", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_huyết áp cao", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 5.1, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_HYPERTENSION", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.8, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_tiểu đường", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_diabetes", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_đái tháo đường", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.2, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_gout", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.1, "config": null, "note": ""}
+{"phase": "clinical", "label": "targets_suy thận", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.0, "config": null, "note": ""}
+{"phase": "clinical", "label": "diabetes_seed7", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 324.2, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "diabetes_seed8", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 324.5, "config": "smoke", "note": ""}
+{"phase": "clinical", "label": "diabetes_seed9", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 317.2, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:tôm", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 31266.5, "config": "web", "note": ""}
+{"phase": "allergy", "label": "single:tôm", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 30774.1, "config": "web", "note": ""}
+{"phase": "allergy", "label": "single:cua", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 341.5, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:cua", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 342.6, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 340.1, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 344.2, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:bò", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 328.7, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:bò", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 322.5, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:heo", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 326.1, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:heo", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 323.0, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:gà", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 335.1, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:gà", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 326.1, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:trứng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.9, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (19 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "single:trứng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (19 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "single:sữa", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.6, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (18 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "single:sữa", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.6, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (18 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "single:đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 343.0, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 368.9, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "single:hải sản", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 32008.6, "config": "web", "note": ""}
+{"phase": "allergy", "label": "single:hải sản", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 31594.6, "config": "web", "note": ""}
+{"phase": "allergy", "label": "triple:tôm+cua+cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 377.4, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "triple:tôm+cua+cá", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 362.9, "config": "smoke", "note": ""}
+{"phase": "allergy", "label": "triple:bò+heo+gà", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (19 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "triple:bò+heo+gà", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.5, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (19 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "triple:trứng+sữa+đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.5, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (15 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "triple:trứng+sữa+đậu phộng", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.5, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (15 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "ten-tokens", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (15 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "ten-tokens", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.7, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (15 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "ten-tokens-web", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 6.0, "config": "web", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (15 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "allergy", "label": "twenty-tokens", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 2.8, "config": "smoke", "note": "{\"detail\": \"Không tạo được thực đơn hợp lệ: Không đủ món phù hợp cho bữa 'breakfast' (6 món), ít hơn ngưỡng tối thiểu 20.\"}"}
+{"phase": "swap", "label": "gen_SwapA", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28062.9, "config": "web", "note": ""}
+{"phase": "swap", "label": "SwapA:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 147.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 139.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 148.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 149.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 144.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 139.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 136.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 145.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 145.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 140.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 139.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapA:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 138.3, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapB", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 315.0, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapB:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 150.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 150.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 148.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 146.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 148.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 144.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 143.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 136.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 139.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 140.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 139.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapB:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 151.2, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapC", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 418.5, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapC:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 194.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 192.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:breakfast_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 184.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 185.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 188.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:lunch_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 197.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 191.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 191.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:dinner_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 185.8, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 196.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:seq:snack_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 187.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 194.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 195.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 185.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 190.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapC:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 187.9, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapD", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 321.5, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapD:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 147.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:breakfast_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 146.6, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 144.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 145.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 145.4, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 141.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:seq:snack_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 143.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 139.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 140.7, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 141.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 143.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapD:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 147.1, "config": null, "note": ""}
+{"phase": "swap", "label": "gen_SwapE", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 269.9, "config": "smoke", "note": ""}
+{"phase": "swap", "label": "SwapE:seq:breakfast_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 119.9, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:lunch_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 119.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:lunch_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 119.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:dinner_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 111.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:seq:dinner_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 112.2, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 114.0, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 118.5, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 110.3, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 116.1, "config": null, "note": ""}
+{"phase": "swap", "label": "SwapE:chain5:4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 113.8, "config": null, "note": ""}
+{"phase": "swap", "label": "race_gen", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 311.1, "config": "smoke", "note": ""}
+{"phase": "swap_concurrent", "label": "concurrent_0", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1398.8, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":250.0,\"portion_g_rounded\":250,\"macros\":{\"calories\":1000.0,\"protein_g\":85.0,\"ca"}
+{"phase": "swap_concurrent", "label": "concurrent_1", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1393.6, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":235.0,\"portion_g_rounded\":235,\"macros\":{\"calories\":940.0,\"protein_g\":79.9,\"car"}
+{"phase": "swap_concurrent", "label": "concurrent_2", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1564.0, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":245.0,\"portion_g_rounded\":245,\"macros\":{\"calories\":980.0,\"protein_g\":83.3,\"car"}
+{"phase": "swap_concurrent", "label": "concurrent_3", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1563.9, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":240.0,\"portion_g_rounded\":240,\"macros\":{\"calories\":960.0,\"protein_g\":81.6,\"car"}
+{"phase": "swap_concurrent", "label": "concurrent_4", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1232.5, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":250.0,\"portion_g_rounded\":250,\"macros\":{\"calories\":1000.0,\"protein_g\":85.0,\"ca"}
+{"phase": "swap_concurrent", "label": "concurrent_5", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1392.6, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":250.0,\"portion_g_rounded\":250,\"macros\":{\"calories\":1000.0,\"protein_g\":85.0,\"ca"}
+{"phase": "swap_concurrent", "label": "concurrent_6", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1561.4, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":150.0,\"portion_g_rounded\":150,\"macros\":{\"calories\":600.0,\"protein_g\":51.0,\"car"}
+{"phase": "swap_concurrent", "label": "concurrent_7", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1364.8, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":250.0,\"portion_g_rounded\":250,\"macros\":{\"calories\":1000.0,\"protein_g\":85.0,\"ca"}
+{"phase": "swap_concurrent", "label": "concurrent_8", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1201.8, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":250.0,\"portion_g_rounded\":250,\"macros\":{\"calories\":1000.0,\"protein_g\":85.0,\"ca"}
+{"phase": "swap_concurrent", "label": "concurrent_9", "method": "POST", "path": "/api/menu/swap", "status": 200, "latency_ms": 1449.0, "config": "smoke", "note": "{\"items\":[{\"food_id\":\"VN_3007\",\"name\":\"Đậu tương (đậu nành) hấp\",\"slot\":\"breakfast_0\",\"meal_type\":\"breakfast\",\"portion_g\":235.0,\"portion_g_rounded\":235,\"macros\":{\"calories\":940.0,\"protein_g\":79.9,\"car"}
+{"phase": "chaos", "label": "chaos_gen", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 341.9, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "age=0", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 2.2, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải từ 18 trở lên\", \"type\": \"greater_than_equal\"}]}"}
+{"phase": "chaos", "label": "age=-10", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải từ 18 trở lên\", \"type\": \"greater_than_equal\"}]}"}
+{"phase": "chaos", "label": "age=200", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 0.9, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải nhỏ hơn hoặc bằng 120\", \"type\": \"less_than_equal\"}]}"}
+{"phase": "chaos", "label": "age='hai mươi tuổi'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải là số nguyên\", \"type\": \"int_parsing\"}]}"}
+{"phase": "chaos", "label": "height=30cm", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 313.9, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "height=300cm", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.3, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"height_cm\"], \"msg\": \"Chiều cao phải nhỏ hơn hoặc bằng 250\", \"type\": \"less_than_equal\"}]}"}
+{"phase": "chaos", "label": "weight=5kg", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 313.6, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "weight=400kg", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 313.8, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "meal_counts toàn 0", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 3.8, "config": "smoke", "note": "{\"detail\": \"Cần ít nhất 1 món ăn trong thực đơn để tối ưu.\"}"}
+{"phase": "chaos", "label": "chỉ snack x3", "method": "POST", "path": "/api/menu/generate", "status": 400, "latency_ms": 1.2, "config": "smoke", "note": "{\"detail\": \"Thực đơn cần ít nhất 1 món trưa (lunch) và 1 món tối (dinner) để đánh giá đa dạng món chính.\"}"}
+{"phase": "chaos", "label": "snack=10", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.1, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Số món mỗi bữa: Value error, Số món cho 'snack' phải từ 0 đến 3\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "breakfast=-1", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Số món mỗi bữa: Value error, Số món cho 'breakfast' phải từ 0 đến 5\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "meal key 'brunch'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Số món mỗi bữa: Value error, Bữa ăn 'brunch' không hợp lệ. Chỉ chấp nhận ['breakfast', 'lunch', 'dinner', 'snack']\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "allergy rỗng", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"allergies\"], \"msg\": \"Dị ứng: Value error, Mỗi mục dị ứng/bệnh lý/không thích phải có ít nhất 2 ký tự\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "allergy '<script>'", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 323.5, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy emoji", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 325.0, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy null byte", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 328.8, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy 10.000 ký tự", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 395.9, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "allergy 1000 token", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 6166.9, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "name SQL injection", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 330.2, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "name 10.000 ký tự", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 317.7, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "medical SQL", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 314.0, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "extra field", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 318.2, "config": "smoke", "note": ""}
+{"phase": "chaos", "label": "thiếu profile", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.4, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\"], \"msg\": \"Thiếu trường Hồ sơ\", \"type\": \"missing\"}]}"}
+{"phase": "chaos", "label": "gender 'other'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.2, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"gender\"], \"msg\": \"Giới tính không hợp lệ\", \"type\": \"literal_error\"}]}"}
+{"phase": "chaos", "label": "activity thường", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"activity_level\"], \"msg\": \"Mức độ hoạt động không hợp lệ\", \"type\": \"literal_error\"}]}"}
+{"phase": "chaos", "label": "seed=-1", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"seed\"], \"msg\": \"Seed phải từ 0 trở lên\", \"type\": \"greater_than_equal\"}]}"}
+{"phase": "chaos", "label": "config='turbo'", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 0.9, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"config\"], \"msg\": \"Cấu hình solver không hợp lệ\", \"type\": \"literal_error\"}]}"}
+{"phase": "chaos", "label": "foods q SQL", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 14.4, "config": null, "note": ""}
+{"phase": "chaos", "label": "foods q 10.000", "method": "GET", "path": "/api/foods", "status": 200, "latency_ms": 9.5, "config": null, "note": ""}
+{"phase": "chaos", "label": "foods limit=0", "method": "GET", "path": "/api/foods", "status": 422, "latency_ms": 1.8, "config": null, "note": "{\"detail\": [{\"loc\": [\"query\", \"limit\"], \"msg\": \"limit phải từ 1 trở lên\", \"type\": \"greater_than_equal\"}]}"}
+{"phase": "chaos", "label": "foods limit=1000", "method": "GET", "path": "/api/foods", "status": 422, "latency_ms": 1.0, "config": null, "note": "{\"detail\": [{\"loc\": [\"query\", \"limit\"], \"msg\": \"limit phải nhỏ hơn hoặc bằng 100\", \"type\": \"less_than_equal\"}]}"}
+{"phase": "chaos", "label": "swap slot lạ", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 1.2, "config": "smoke", "note": "{\"detail\": \"Vị trí 'lunch_9' không thuộc thực đơn (các vị trí hợp lệ: ['breakfast_0', 'breakfast_1', 'lunch_0', 'lunch_1', 'dinner_0', 'dinner_1', 'snack_0'])\"}"}
+{"phase": "chaos", "label": "swap thiếu food_ids", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 0.9, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải có cùng độ dài với food_ids\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "swap food_id lạ", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 1.2, "config": "smoke", "note": "{\"detail\": \"Mã món không hợp lệ: ['VN_9999', 'VN_9999', 'VN_9999']\"}"}
+{"phase": "chaos", "label": "swap new_food lạ", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 12.5, "config": "smoke", "note": "{\"detail\": \"Món 'VN_9999' không tồn tại trong cơ sở dữ liệu\"}"}
+{"phase": "chaos", "label": "swap old_portions lệch", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.2, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải có cùng độ dài với food_ids\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "swap old_portions=0", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải là số hữu hạn trong (0, 1000]\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "swap old_portions=1e9", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 0.9, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải là số hữu hạn trong (0, 1000]\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "swap food_ids rỗng", "method": "POST", "path": "/api/menu/swap", "status": 422, "latency_ms": 1.0, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải có cùng độ dài với food_ids\", \"type\": \"value_error\"}]}"}
+{"phase": "chaos", "label": "swap trùng món trong bữa", "method": "POST", "path": "/api/menu/swap", "status": 400, "latency_ms": 12.7, "config": "smoke", "note": "{\"detail\": \"Món mới 'VN_4075' bị trùng với món khác trong ngày\"}"}
+{"phase": "chaos", "label": "targets age=0", "method": "POST", "path": "/api/targets", "status": 422, "latency_ms": 1.4, "config": "smoke", "note": "{\"detail\": [{\"loc\": [\"body\", \"age\"], \"msg\": \"Tuổi phải từ 18 trở lên\", \"type\": \"greater_than_equal\"}]}"}
+{"phase": "chaos", "label": "JSON hỏng", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.2, "config": null, "note": "{\"detail\": [{\"loc\": [\"body\", 12], \"msg\": \"12: JSON decode error\", \"type\": \"json_invalid\"}]}"}
+{"phase": "chaos", "label": "content-type text/plain", "method": "POST", "path": "/api/menu/generate", "status": 422, "latency_ms": 1.1, "config": null, "note": "{\"detail\": [{\"loc\": [\"body\", 0], \"msg\": \"0: JSON decode error\", \"type\": \"json_invalid\"}]}"}
+{"phase": "determinism", "label": "run0", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 320.1, "config": "smoke", "note": ""}
+{"phase": "determinism", "label": "run1", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 316.7, "config": "smoke", "note": ""}
+{"phase": "determinism", "label": "run2", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 312.8, "config": "smoke", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-001", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.4, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-001", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 26755.9, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-002", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-002", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 26268.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-003", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 4.8, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-003", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 26603.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-004", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.6, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-004", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 26236.5, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-005", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-005", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 26224.5, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-006", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.7, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-006", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 29466.2, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-007", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-007", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28830.4, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-008", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-008", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28911.7, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-009", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 1.5, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-009", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28814.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-010", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 5.1, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-010", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 28969.8, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-011", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 2.0, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-011", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 38221.1, "config": "web", "note": ""}
+{"phase": "matrix_targets", "label": "Audit-012", "method": "POST", "path": "/api/targets", "status": 200, "latency_ms": 3.9, "config": null, "note": ""}
+{"phase": "matrix", "label": "Audit-012", "method": "POST", "path": "/api/menu/generate", "status": 200, "latency_ms": 38022.1, "config": "web", "note": ""}
