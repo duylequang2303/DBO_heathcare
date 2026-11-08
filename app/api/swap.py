@@ -56,8 +56,8 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         raise HTTPException(
             status_code=400,
             detail=(
-                f"Slot '{req.slot}' không thuộc thực đơn "
-                f"(chấp nhận: {meal_order})"
+                f"Vị trí '{req.slot}' không thuộc thực đơn "
+                f"(các vị trí hợp lệ: {meal_order})"
             ),
         )
 
@@ -66,8 +66,8 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         raise HTTPException(
             status_code=400,
             detail=(
-                f"Số lượng food_ids ({len(req.food_ids)}) "
-                f"không khớp số lượng slot ({len(meal_order)})"
+                f"Số lượng mã món ({len(req.food_ids)}) "
+                f"không khớp số lượng vị trí ({len(meal_order)})"
             ),
         )
 
@@ -80,20 +80,18 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
     if unknown:
         raise HTTPException(
             status_code=400,
-            detail=f"food_ids không hợp lệ: {unknown[:3]}",
+            detail=f"Mã món không hợp lệ: {unknown[:3]}",
         )
 
     slot_idx = meal_order.index(req.slot)
-    meal_name = req.slot.rsplit("_", 1)[0]
 
-    # 3. Các món đã dùng trong cùng bữa, trừ slot đang thay
-    used_in_meal = {
+    # 3. Các món đã dùng trong toàn ngày, trừ slot đang thay.
+    #    Không chỉ trong cùng bữa: C6 yêu cầu không tái sử dụng food_id
+    #    ở bất kỳ bữa nào trong ngày.
+    used_daily = {
         req.food_ids[i]
-        for i, slot in enumerate(meal_order)
-        if (
-            slot.rsplit("_", 1)[0] == meal_name
-            and i != slot_idx
-        )
+        for i in range(len(req.food_ids))
+        if i != slot_idx
     }
 
     # 4. Xây dựng pool ứng viên
@@ -110,7 +108,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
             status_code=409,
             detail=(
                 "Không tìm thấy danh sách món ứng viên "
-                f"cho slot '{req.slot}'"
+                f"cho vị trí '{req.slot}'"
             ),
         )
 
@@ -145,14 +143,13 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
                 ),
             )
 
-        # 5.3. Kiểm tra trùng món trong cùng bữa
-        if req.new_food_id in used_in_meal:
+        # 5.3. Kiểm tra trùng món trong toàn ngày
+        if req.new_food_id in used_daily:
             raise HTTPException(
                 status_code=400,
                 detail=(
                     f"Món mới '{req.new_food_id}' "
-                    f"bị trùng với món khác "
-                    f"trong cùng bữa {meal_name}"
+                    "bị trùng với món khác trong ngày"
                 ),
             )
 
@@ -163,7 +160,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
                 detail=(
                     f"Món '{req.new_food_id}' "
                     f"không phù hợp với vai trò "
-                    f"của slot '{req.slot}'"
+                    f"của vị trí '{req.slot}'"
                 ),
             )
 
@@ -176,7 +173,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
             for fid in pool
             if (
                 fid != req.food_ids[slot_idx]
-                and fid not in used_in_meal
+                and fid not in used_daily
             )
         ]
 
@@ -185,7 +182,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
                 status_code=409,
                 detail=(
                     "Không còn món thay thế phù hợp "
-                    f"trong pool cho slot '{req.slot}'"
+                    f"trong danh sách ứng viên cho vị trí '{req.slot}'"
                 ),
             )
 

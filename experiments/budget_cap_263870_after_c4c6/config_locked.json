@@ -1,0 +1,32 @@
+{
+  "config": {
+    "algorithms": [
+      "dbo",
+      "idbo"
+    ],
+    "evaluation_seeds": [
+      8001,
+      8002,
+      8003,
+      8004,
+      8005,
+      8006,
+      8007,
+      8008,
+      8009,
+      8010
+    ],
+    "experiment_version": 1,
+    "inner_diversity_threshold": null,
+    "inner_max_iter": 25,
+    "inner_n_agents": 10,
+    "max_evaluations": 263870,
+    "outer_diversity_threshold": 0.28,
+    "outer_max_iter": 25,
+    "outer_n_agents": 10,
+    "profile": "P1",
+    "stagnation_window": 25
+  },
+  "config_hash": "16bc790a115c25372fb171e61deccd5c051a9cdec237d6258fc25c06e594788c",
+  "git_commit": "55e7e0cdefb6bba449bcd713ffc88e4b5a193117"
+}

@@ -1,3 +1,4 @@
+from .allergen_rules import is_dislike_conflict, match_phrase_word_boundary
 from .constraints import validate_menu
 from .menu import Menu
 from .user_profile import UserProfile
@@ -71,20 +72,16 @@ def _preference_score(menu: Menu, profile: UserProfile) -> float:
         return 0.0
     disliked = 0
     for item in items:
-        name = item.food_name.lower()
-        for token in profile.dislikes:
-            if token and token.lower() in name:
-                disliked += 1
-                break
+        if is_dislike_conflict(item.food_name, profile.dislikes):
+            disliked += 1
     dislike_score = 100.0 * (1.0 - disliked / len(items))
     likes = profile.likes
     if not likes:
         return dislike_score
     liked = 0
     for item in items:
-        name = item.food_name.lower()
         for token in likes:
-            if token and token.lower() in name:
+            if token and match_phrase_word_boundary(item.food_name, token):
                 liked += 1
                 break
     like_score = 100.0 * liked / len(items)

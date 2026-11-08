@@ -89,7 +89,14 @@ async def api_swap_menu(req: SwapIn) -> SwapOut:
         from .swap import swap_menu_item
     except ImportError:
         raise HTTPException(status_code=501, detail="swap.py chưa được triển khai")
-    return await asyncio.to_thread(swap_menu_item, req)
+
+    try:
+        return await asyncio.to_thread(swap_menu_item, req)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Không thể thay món với cấu hình hiện tại: {exc}",
+        ) from exc
 
 
 # ---------------------------------------------------------------------------

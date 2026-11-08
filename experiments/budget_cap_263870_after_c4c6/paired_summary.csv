@@ -1,0 +1,7 @@
+﻿metric,dbo_mean,idbo_mean,paired_diff_mean_idbo_minus_dbo,idbo_higher,equal,idbo_lower,min_diff,max_diff
+best_fitness,98.803895,98.746094,-0.057801,2,5,3,-1.525823,1.055295
+final_fitness,99.395275,99.403751,0.008475,3,5,2,-0.415097,0.333908
+function_evaluations,68120.0,70103.6,1983.6,5,5,0,0.0,9396.0
+runtime_seconds,28.401349,30.662375,2.261026,8,0,2,-1.697292,4.358644
+outer_evals,260.0,267.6,7.6,5,5,0,0.0,36.0
+inner_evals_total,67860.0,69836.0,1976.0,5,5,0,0.0,9360.0

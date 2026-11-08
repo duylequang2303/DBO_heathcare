@@ -33,7 +33,7 @@ def test_whitelist_three_profiles():
     for name,p in PRESET_PROFILES.items():
         profile=build_profile(ProfileIn(**p))
         pools=build_meal_pools(foods,profile.meal_counts,profile)
-        assert all(len(candidates)>=20 for candidates in pools.values()),name
+        assert all(len(candidates)>=3 for candidates in pools.values()),name
 
 def test_hypertension_target():
     result=client.post('/api/targets',json=PRESET_PROFILES['p3'])

@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from src.models.dish_category import DishRole, classify_dish_role, get_role_portion_bounds
+from src.models.dish_presentation import present_dish
 from src.models.menu import MenuItem
 
 
@@ -107,6 +108,12 @@ class FoodItemSchema:
 
     def to_menu_item(self, portion_g: float) -> MenuItem:
         """Convert to domain MenuItem with a specific portion in grams."""
+        presentation = present_dish(
+            self.food_name,
+            self.category,
+            self.source,
+            role=self.dish_role,
+        )
         return MenuItem(
             food_id=self.food_id,
             food_name=self.food_name,
@@ -121,6 +128,10 @@ class FoodItemSchema:
             iron_mg=self.iron_mg,
             vitamin_c_mg=self.vitamin_c_mg,
             meal_type=self.meal_type,
+            display_name=presentation.display_name,
+            preparation=presentation.preparation,
+            ingredient_basis=presentation.ingredient_basis,
+            presentation_is_estimated=presentation.is_estimated,
         )
 
     def portion_bounds(self) -> tuple[float, float]:

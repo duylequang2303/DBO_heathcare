@@ -57,3 +57,20 @@ def test_invalid_meal_counts_rejected_before_generation(
         response = client.post("/api/menu/generate", json={"profile": profile})
     assert response.status_code == 422
     assert response.json()["detail"][0]["loc"] == ["body", "profile", "meal_counts"]
+
+
+def test_gout_and_kidney_warnings_emitted():
+    from app.api.services import build_profile, menu_notices
+
+    # Gout profile (tiếng Việt "bệnh gút")
+    p_gout = ProfileIn(**{**PRESET_PROFILES["p1"], "medical_conditions": ["bệnh gút"]})
+    user_p_gout = build_profile(p_gout)
+    warnings_gout, _ = menu_notices(user_p_gout)
+    assert any("gout" in w.lower() or "purin" in w.lower() for w in warnings_gout)
+
+    # Kidney disease profile (tiếng Việt "suy thận")
+    p_kidney = ProfileIn(**{**PRESET_PROFILES["p1"], "medical_conditions": ["suy thận"]})
+    user_p_kidney = build_profile(p_kidney)
+    warnings_kidney, _ = menu_notices(user_p_kidney)
+    assert any("thận" in w.lower() or "protein" in w.lower() for w in warnings_kidney)
+

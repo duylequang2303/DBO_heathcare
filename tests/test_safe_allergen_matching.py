@@ -250,3 +250,25 @@ def test_generate_with_seafood_allergy_has_no_seafood_items():
     assert res.status_code == 200, res.text
     for item in res.json()["items"]:
         assert not is_allergen_conflict(item["name"], ["hải sản"]), item["name"]
+
+
+# ---------------------------------------------------------------------------
+# 6. Dislikes word boundary & taxonomy matching (Khắc phục hạn chế KLCN142)
+# ---------------------------------------------------------------------------
+def test_dislike_matching_uses_word_boundary_not_substring():
+    from src.models.allergen_rules import is_dislike_conflict
+
+    # False-positives must NOT be flagged:
+    assert not is_dislike_conflict("Cà chua xào thịt", ["cá"])
+    assert not is_dislike_conflict("Rau cải thìa xào tỏi", ["cá"])
+    assert not is_dislike_conflict("Quả bơ sáp", ["bò"])
+    assert not is_dislike_conflict("Gan heo luộc", ["gà"])
+
+    # True positives MUST be flagged:
+    assert is_dislike_conflict("Canh cá lóc", ["cá"])
+    assert is_dislike_conflict("Cá hồi áp chảo", ["cá"])
+    assert is_dislike_conflict("Thịt bò xào rau cần", ["bò"])
+    assert is_dislike_conflict("Thịt gà hấp lá chanh", ["gà"])
+    # Dislike taxonomy keyword:
+    assert is_dislike_conflict("Tôm rim mặn ngọt", ["hải sản"])
+

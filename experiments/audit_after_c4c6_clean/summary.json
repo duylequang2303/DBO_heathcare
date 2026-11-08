@@ -1,0 +1,1371 @@
+{
+  "derived": {
+    "n_4xx": 44,
+    "n_4xx_english_pydantic": 0,
+    "n_400_internal_message": 14,
+    "n_swap_menus": 62,
+    "n_swap_menus_with_fitness": 62,
+    "swap_fitness_min": 34.11,
+    "swap_fitness_max": 97.19,
+    "n_menus_fitness_negative": 0,
+    "n_hyp_menus": 43,
+    "n_hyp_over_1500": 0,
+    "n_hyp_over_2300": 0,
+    "hyp_sodium_max": 1172.6,
+    "hyp_sodium_targets": [
+      1500.0
+    ],
+    "n_allergy_menus_400": 14,
+    "diabetes_warn": true,
+    "diabetes_mentions_sugar": true,
+    "diabetes_keys": [
+      "data_limitations",
+      "diversity_pct",
+      "fitness",
+      "items",
+      "runtime_s",
+      "targets",
+      "totals",
+      "violations",
+      "warnings"
+    ],
+    "at_cap_threshold_g": 349.5
+  },
+  "n_requests": 250,
+  "status_counts": {
+    "200": 206,
+    "400": 20,
+    "422": 24
+  },
+  "ok_rate_pct": 82.4,
+  "n_4xx": 44,
+  "n_5xx": 0,
+  "n_err": 0,
+  "latency_all": {
+    "n": 250,
+    "mean": 3293.1,
+    "median": 139.4,
+    "p95": 27245.1,
+    "max": 34872.1
+  },
+  "latency_generate_web": {
+    "n": 24,
+    "mean": 26515.9,
+    "median": 26499.5,
+    "p95": 31094.4,
+    "max": 34872.1
+  },
+  "latency_generate_smoke": {
+    "n": 85,
+    "mean": 256.9,
+    "median": 249.7,
+    "p95": 372.5,
+    "max": 5459.2
+  },
+  "latency_by_phase": {
+    "bootstrap": {
+      "n": 23,
+      "mean": 7.2,
+      "median": 7.4,
+      "p95": 9.8,
+      "max": 15.7
+    },
+    "clinical": {
+      "n": 43,
+      "mean": 6219.7,
+      "median": 278.0,
+      "p95": 27307.7,
+      "max": 29025.7
+    },
+    "allergy": {
+      "n": 30,
+      "mean": 3924.8,
+      "median": 278.0,
+      "p95": 28308.3,
+      "max": 28927.3
+    },
+    "swap": {
+      "n": 68,
+      "mean": 488.8,
+      "median": 141.5,
+      "p95": 295.5,
+      "max": 22447.6
+    },
+    "swap_concurrent": {
+      "n": 10,
+      "mean": 1952.4,
+      "median": 1949.7,
+      "p95": 1977.7,
+      "max": 1977.7
+    },
+    "chaos": {
+      "n": 45,
+      "mean": 192.0,
+      "median": 2.2,
+      "p95": 304.1,
+      "max": 5459.2
+    },
+    "determinism": {
+      "n": 3,
+      "mean": 324.3,
+      "median": 331.1,
+      "p95": 333.7,
+      "max": 333.7
+    },
+    "matrix_targets": {
+      "n": 14,
+      "mean": 2.3,
+      "median": 1.9,
+      "p95": 4.5,
+      "max": 4.5
+    },
+    "matrix": {
+      "n": 14,
+      "mean": 26822.6,
+      "median": 25988.2,
+      "p95": 31094.4,
+      "max": 34872.1
+    }
+  },
+  "n_menus": 133,
+  "menus_with_violation": 112,
+  "menus_with_violation_pct": 84.2,
+  "violation_types": {
+    "fiber_g": 87,
+    "protein_g": 38,
+    "energy": 12,
+    "carbs_g": 38,
+    "fat_g": 48,
+    "sodium_mg": 1
+  },
+  "menus_energy_violation": 12,
+  "menus_protein_violation": 38,
+  "fitness": {
+    "n": 133,
+    "mean": 71.5,
+    "min": 34.1,
+    "max": 99.1
+  },
+  "sodium": {
+    "mean": 543.1,
+    "max": 3205.9,
+    "n_over_1500": 5,
+    "n_over_2300": 1,
+    "over_1500_examples": [
+      [
+        "single:gà",
+        "allergy",
+        1557.3
+      ],
+      [
+        "Audit-010",
+        "matrix",
+        3205.9
+      ],
+      [
+        "Audit-012",
+        "matrix",
+        1566.8
+      ],
+      [
+        "Audit-013",
+        "matrix",
+        2184.8
+      ],
+      [
+        "Audit-014",
+        "matrix",
+        2252.1
+      ]
+    ]
+  },
+  "bad_nutrients": [],
+  "cal_macro_mismatch_pct": {
+    "n_checked": 133,
+    "max": 0.3,
+    "n_over_10pct": 0
+  },
+  "condiment_menus": 0,
+  "condiment_examples": [],
+  "raw_menus": 132,
+  "raw_examples": [
+    "Củ sắn",
+    "Gạo lứt",
+    "Gạo nếp cái",
+    "Gạo nếp máy (loại thường)",
+    "Gạo tẻ giã",
+    "Khoai tây",
+    "Măng tre",
+    "Đậu hà lan (hạt)",
+    "Đậu tương (đậu nành)",
+    "Đậu xanh (đậu tắt)"
+  ],
+  "raw_display_menus": 6,
+  "raw_display_examples": [
+    "Đậu hà lan (hạt) (ăn tươi)"
+  ],
+  "no_prep_menus": 0,
+  "no_prep_pct": 0.0,
+  "no_prep_examples": [],
+  "absurd_menus": 0,
+  "absurd_examples": [],
+  "at_cap_menus": 0,
+  "at_cap_pct": 0.0,
+  "at_cap_examples": [],
+  "structure_fail_menus": 0,
+  "structure_fail_pct": 0.0,
+  "structure_examples": [],
+  "duplicate_menus": 0,
+  "slot_misplaced_menus": 0,
+  "slot_misplaced_pct": 0.0,
+  "slot_violation_examples": [],
+  "slot0_staple_pct": 100.0,
+  "slot0_n": 266,
+  "implausible_200": [
+    {
+      "case": "height=30cm",
+      "status": 200
+    },
+    {
+      "case": "weight=5kg",
+      "status": 200
+    },
+    {
+      "case": "weight=400kg",
+      "status": 200
+    }
+  ],
+  "allergy_status_by_label": {
+    "single:tôm": {
+      "200": 2
+    },
+    "single:cua": {
+      "200": 2
+    },
+    "single:cá": {
+      "200": 2
+    },
+    "single:bò": {
+      "400": 2
+    },
+    "single:heo": {
+      "200": 2
+    },
+    "single:gà": {
+      "200": 2
+    },
+    "single:trứng": {
+      "400": 2
+    },
+    "single:sữa": {
+      "400": 2
+    },
+    "single:đậu phộng": {
+      "200": 2
+    },
+    "single:hải sản": {
+      "200": 2
+    },
+    "triple:tôm+cua+cá": {
+      "200": 2
+    },
+    "triple:bò+heo+gà": {
+      "400": 2
+    },
+    "triple:trứng+sữa+đậu phộng": {
+      "400": 2
+    },
+    "ten-tokens": {
+      "400": 2
+    },
+    "ten-tokens-web": {
+      "400": 1
+    },
+    "twenty-tokens": {
+      "400": 1
+    }
+  },
+  "gap": {
+    "mean": 20.1,
+    "max": 50.8
+  },
+  "swap": {
+    "n_chains": 5,
+    "n_swap_steps": 62,
+    "gap_series": {
+      "SwapA": [
+        16.0,
+        36.6,
+        29.3,
+        33.4,
+        28.4,
+        23.3,
+        16.6,
+        17.5,
+        21.6,
+        27.9,
+        24.7,
+        22.1,
+        28.5
+      ],
+      "SwapB": [
+        39.3,
+        29.0,
+        37.1,
+        42.9,
+        35.0,
+        32.3,
+        34.9,
+        36.3,
+        46.0,
+        42.8,
+        38.7,
+        50.8,
+        50.1
+      ],
+      "SwapC": [
+        6.2,
+        11.3,
+        7.4,
+        12.1,
+        9.7,
+        12.6,
+        18.6,
+        17.9,
+        21.6,
+        18.9,
+        21.9,
+        20.3,
+        19.8,
+        20.6,
+        20.9,
+        20.6,
+        23.0
+      ],
+      "SwapD": [
+        20.4,
+        20.7,
+        21.9,
+        22.8,
+        27.5,
+        26.9,
+        27.1,
+        29.9,
+        33.9,
+        33.0,
+        29.5,
+        15.7,
+        32.5
+      ],
+      "SwapE": [
+        7.9,
+        23.1,
+        24.0,
+        17.5,
+        14.6,
+        24.7,
+        31.2,
+        30.1,
+        15.1,
+        31.1,
+        20.6
+      ]
+    },
+    "chain5": {
+      "SwapA": {
+        "start": 17.5,
+        "end": 28.5,
+        "min": 21.6,
+        "max": 28.5
+      },
+      "SwapB": {
+        "start": 36.3,
+        "end": 50.1,
+        "min": 38.7,
+        "max": 50.8
+      },
+      "SwapC": {
+        "start": 20.3,
+        "end": 23.0,
+        "min": 19.8,
+        "max": 23.0
+      },
+      "SwapD": {
+        "start": 29.9,
+        "end": 32.5,
+        "min": 15.7,
+        "max": 33.9
+      },
+      "SwapE": {
+        "start": 24.7,
+        "end": 20.6,
+        "min": 15.1,
+        "max": 31.2
+      }
+    },
+    "gap_first_last_delta": 13.0,
+    "gap_full_chain_delta": 13.0,
+    "gap_chain5_delta_signed": 5.2,
+    "gap_chain5_delta_abs": 6.8,
+    "max_portion_overall": 250.0,
+    "steps_with_cap": 0,
+    "status_errors": []
+  },
+  "concurrency": {
+    "n": 10,
+    "status_counts": {
+      "200": 10
+    },
+    "latency_max_ms": 1977.7,
+    "latency_mean_ms": 1952.4,
+    "distinct_results": 9
+  },
+  "determinism": {
+    "n": 3,
+    "same_ids": true,
+    "same_portions": true
+  },
+  "clinical": {
+    "hypertension": {
+      "n": 30,
+      "sodium_max": 1172.6,
+      "sodium_mean": 362.7,
+      "over_1500": [],
+      "over_2300": [],
+      "energy_violation": 1,
+      "protein_violation": 5,
+      "targets_seen": [
+        1500.0
+      ]
+    },
+    "aliases": [
+      {
+        "condition": "hypertension",
+        "status": 200,
+        "sodium_target": 1500.0
+      },
+      {
+        "condition": "tăng huyết áp",
+        "status": 200,
+        "sodium_target": 1500.0
+      },
+      {
+        "condition": "cao huyết áp",
+        "status": 200,
+        "sodium_target": 1500.0
+      },
+      {
+        "condition": "huyết áp cao",
+        "status": 200,
+        "sodium_target": 1500.0
+      },
+      {
+        "condition": "HYPERTENSION",
+        "status": 200,
+        "sodium_target": 1500.0
+      },
+      {
+        "condition": "tiểu đường",
+        "status": 200,
+        "sodium_target": 2300.0
+      },
+      {
+        "condition": "diabetes",
+        "status": 200,
+        "sodium_target": 2300.0
+      },
+      {
+        "condition": "đái tháo đường",
+        "status": 200,
+        "sodium_target": 2300.0
+      },
+      {
+        "condition": "gout",
+        "status": 200,
+        "sodium_target": 2300.0
+      },
+      {
+        "condition": "suy thận",
+        "status": 200,
+        "sodium_target": 2300.0
+      }
+    ],
+    "diabetes": [
+      {
+        "seed": 7,
+        "status": 200,
+        "violations": [
+          "energy 1362 kcal outside [1062, 1298]",
+          "carbs_g: 155.5 outside [100.3, 135.6]",
+          "fiber_g: 9.8 outside [17.5, 32.5]"
+        ],
+        "keys": [
+          "data_limitations",
+          "diversity_pct",
+          "fitness",
+          "items",
+          "runtime_s",
+          "targets",
+          "totals",
+          "violations",
+          "warnings"
+        ],
+        "mentions_sugar": true,
+        "mentions_warning": true,
+        "carbs": 155.53
+      },
+      {
+        "seed": 8,
+        "status": 200,
+        "violations": [
+          "energy 1312 kcal outside [1062, 1298]",
+          "carbs_g: 175.6 outside [100.3, 135.6]",
+          "fat_g: 28.6 outside [31.5, 47.2]",
+          "fiber_g: 13.4 outside [17.5, 32.5]"
+        ],
+        "keys": [
+          "data_limitations",
+          "diversity_pct",
+          "fitness",
+          "items",
+          "runtime_s",
+          "targets",
+          "totals",
+          "violations",
+          "warnings"
+        ],
+        "mentions_sugar": true,
+        "mentions_warning": true,
+        "carbs": 175.57
+      },
+      {
+        "seed": 9,
+        "status": 200,
+        "violations": [
+          "carbs_g: 147.2 outside [100.3, 135.6]",
+          "fiber_g: 10.4 outside [17.5, 32.5]"
+        ],
+        "keys": [
+          "data_limitations",
+          "diversity_pct",
+          "fitness",
+          "items",
+          "runtime_s",
+          "targets",
+          "totals",
+          "violations",
+          "warnings"
+        ],
+        "mentions_sugar": true,
+        "mentions_warning": true,
+        "carbs": 147.17
+      }
+    ]
+  },
+  "allergy": {
+    "n_runs": 30,
+    "leak_runs": 2,
+    "leak_examples": [
+      {
+        "label": "single:cá",
+        "leaks": [
+          "Cơm gạo nếp cái"
+        ]
+      },
+      {
+        "label": "triple:tôm+cua+cá",
+        "leaks": [
+          "Cơm gạo nếp cái"
+        ]
+      }
+    ],
+    "semantic_leak_runs": 0,
+    "status_counts": {
+      "200": 16,
+      "400": 14
+    }
+  },
+  "inventory": {
+    "n_foods_sampled": 137,
+    "condiments": [],
+    "raw": [
+      "Củ sắn",
+      "Gạo lứt",
+      "Gạo nếp cái",
+      "Gạo nếp máy (loại thường)",
+      "Gạo tẻ giã",
+      "Khoai tây",
+      "Măng tre",
+      "Đậu hà lan (hạt)",
+      "Đậu tương (đậu nành)",
+      "Đậu xanh (đậu tắt)"
+    ],
+    "no_prep": [
+      "Bí ngô",
+      "Bí đao (bí xanh)",
+      "Bầu",
+      "Bầu dục bò",
+      "Chanh",
+      "Cà bát",
+      "Cà chua",
+      "Cà pháo",
+      "Cà rốt (củ đỏ, vàng)",
+      "Cá chép",
+      "Cá hồi",
+      "Cá mòi",
+      "Cá ngừ",
+      "Cá nục",
+      "Cá thu",
+      "Cá thu đao",
+      "Cá trê",
+      "Cá trích",
+      "Cá đối",
+      "Cải bắp",
+      "Cải bắp đỏ",
+      "Cải cúc",
+      "Cải soong",
+      "Cải thìa (cải trắng)",
+      "Cải xanh",
+      "Cần tây",
+      "Củ cái",
+      "Củ cải trắng",
+      "Củ sắn",
+      "Dâu tây",
+      "Dưa chuột",
+      "Dưa chuột hộp",
+      "Dạ dày bò",
+      "Giá đậu tương",
+      "Giá đậu xanh",
+      "Gạo lứt",
+      "Gạo nếp cái",
+      "Gạo nếp máy (loại thường)",
+      "Gạo tẻ giã",
+      "Hành củ tươi",
+      "Khoai lang",
+      "Khoai sọ",
+      "Khoai tây",
+      "Kê",
+      "Lưỡi bò",
+      "Măng chua",
+      "Măng tre",
+      "Măng tây",
+      "Mướp",
+      "Mướp đắng",
+      "Mề gà",
+      "Ngô bắp tươi",
+      "Nước ép cà chua",
+      "Nấm thường tươi",
+      "Phối bò",
+      "Rau bí",
+      "Rau câu tươi",
+      "Rau diếp",
+      "Rau giền đỏ",
+      "Rau húng",
+      "Rau khoai lang",
+      "Rau kinh giới",
+      "Rau muống",
+      "Rau mùi",
+      "Rau mùi tàu",
+      "Rau mồng tơi",
+      "Rau ngót",
+      "Rau ngố",
+      "Rau răm",
+      "Rau sà lách",
+      "Rau thơm",
+      "Rau đay",
+      "Su hào",
+      "Su su, quả",
+      "Thịt bê nạc",
+      "Thịt bò loại i",
+      "Thịt bò, lưng, nạc",
+      "Thịt bồ câu ra ràng",
+      "Thịt cừu, nạc",
+      "Thịt dê, nạc",
+      "Thịt gà ta",
+      "Thịt gà tây",
+      "Thịt hươu",
+      "Thịt lợn nạc",
+      "Thịt ngỗng",
+      "Thịt ngựa",
+      "Thịt thỏ nhà",
+      "Thịt thỏ rừng",
+      "Thịt trâu",
+      "Thịt vịt",
+      "Tôm biến",
+      "Tôm đồng",
+      "Óc bò",
+      "Đậu cô ve",
+      "Đậu tương (đậu nành)",
+      "Đậu xanh (đậu tắt)",
+      "Ếch (thịt đùi)"
+    ],
+    "max_sodium_per_100g": [
+      [
+        "Dưa chuột hộp",
+        1208.0
+      ],
+      [
+        "Tôm đồng",
+        418.0
+      ],
+      [
+        "Sữa bò tươi",
+        380.0
+      ],
+      [
+        "Nước ép cà chua",
+        269.0
+      ],
+      [
+        "Bầu dục bò",
+        200.0
+      ],
+      [
+        "Phối bò",
+        198.0
+      ],
+      [
+        "Trứng vịt",
+        191.0
+      ],
+      [
+        "Cá trích",
+        160.0
+      ],
+      [
+        "Trứng gà",
+        158.0
+      ],
+      [
+        "Tôm biến",
+        148.0
+      ]
+    ]
+  },
+  "chaos": [
+    {
+      "case": "age=0",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải từ 18 trở lên\", \"type\": \"greater_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.3
+    },
+    {
+      "case": "age=-10",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải từ 18 trở lên\", \"type\": \"greater_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.2
+    },
+    {
+      "case": "age=200",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải nhỏ hơn hoặc bằng 120\", \"type\": \"less_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.3
+    },
+    {
+      "case": "age='hai mươi tuổi'",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"age\"], \"msg\": \"Tuổi phải là số nguyên\", \"type\": \"int_parsing\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 2.8
+    },
+    {
+      "case": "height=30cm",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 237.3
+    },
+    {
+      "case": "height=300cm",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"height_cm\"], \"msg\": \"Chiều cao phải nhỏ hơn hoặc bằng 250\", \"type\": \"less_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.3
+    },
+    {
+      "case": "weight=5kg",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 228.5
+    },
+    {
+      "case": "weight=400kg",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 290.6
+    },
+    {
+      "case": "meal_counts toàn 0",
+      "expected": "4xx",
+      "status": 400,
+      "verdict": "PASS",
+      "note": "{\"detail\": \"Cần ít nhất 1 món ăn trong thực đơn để tối ưu.\"}",
+      "echoed_payload": false,
+      "latency_ms": 2.0
+    },
+    {
+      "case": "chỉ snack x3",
+      "expected": "4xx",
+      "status": 400,
+      "verdict": "PASS",
+      "note": "{\"detail\": \"Thực đơn cần ít nhất 1 món trưa (lunch) và 1 món tối (dinner) để đánh giá đa dạng món chính.\"}",
+      "echoed_payload": false,
+      "latency_ms": 2.0
+    },
+    {
+      "case": "snack=10",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Số món mỗi bữa: Value error, Số món cho 'snack' phải từ 0 đến 3\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 2.8
+    },
+    {
+      "case": "breakfast=-1",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Số món mỗi bữa: Value error, Số món cho 'breakfast' phải từ 0 đến 5\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 3.3
+    },
+    {
+      "case": "meal key 'brunch'",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"meal_counts\"], \"msg\": \"Số món mỗi bữa: Value error, Bữa ăn 'brunch' không hợp lệ. Chỉ chấp nhận ['breakfast', 'lunch', 'dinner', 'snack']\", \"type\": \"value_erro",
+      "echoed_payload": false,
+      "latency_ms": 2.4
+    },
+    {
+      "case": "allergy rỗng",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"allergies\"], \"msg\": \"Dị ứng: Value error, Mỗi mục dị ứng/bệnh lý/không thích phải có ít nhất 2 ký tự\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 2.2
+    },
+    {
+      "case": "allergy '<script>'",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 322.2
+    },
+    {
+      "case": "allergy emoji",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 263.7
+    },
+    {
+      "case": "allergy null byte",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 256.9
+    },
+    {
+      "case": "allergy 10.000 ký tự",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 304.1
+    },
+    {
+      "case": "allergy 1000 token",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 5459.2
+    },
+    {
+      "case": "name SQL injection",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 234.2
+    },
+    {
+      "case": "name 10.000 ký tự",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 231.2
+    },
+    {
+      "case": "medical SQL",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 237.4
+    },
+    {
+      "case": "extra field",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 239.7
+    },
+    {
+      "case": "thiếu profile",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\"], \"msg\": \"Thiếu trường Hồ sơ\", \"type\": \"missing\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 2.2
+    },
+    {
+      "case": "gender 'other'",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"gender\"], \"msg\": \"Giới tính không hợp lệ\", \"type\": \"literal_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 2.6
+    },
+    {
+      "case": "activity thường",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"profile\", \"activity_level\"], \"msg\": \"Mức độ hoạt động không hợp lệ\", \"type\": \"literal_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.9
+    },
+    {
+      "case": "seed=-1",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"seed\"], \"msg\": \"Seed phải từ 0 trở lên\", \"type\": \"greater_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.2
+    },
+    {
+      "case": "config='turbo'",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"config\"], \"msg\": \"Cấu hình solver không hợp lệ\", \"type\": \"literal_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.2
+    },
+    {
+      "case": "foods q SQL",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 7.9
+    },
+    {
+      "case": "foods q 10.000",
+      "expected": "any",
+      "status": 200,
+      "verdict": "INFO",
+      "note": "",
+      "echoed_payload": false,
+      "latency_ms": 6.8
+    },
+    {
+      "case": "foods limit=0",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"query\", \"limit\"], \"msg\": \"limit phải từ 1 trở lên\", \"type\": \"greater_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.3
+    },
+    {
+      "case": "foods limit=1000",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"query\", \"limit\"], \"msg\": \"limit phải nhỏ hơn hoặc bằng 100\", \"type\": \"less_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.1
+    },
+    {
+      "case": "swap slot lạ",
+      "expected": "4xx",
+      "status": 400,
+      "verdict": "PASS",
+      "note": "{\"detail\": \"Slot 'lunch_9' không thuộc thực đơn (chấp nhận: ['breakfast_0', 'breakfast_1', 'lunch_0', 'lunch_1', 'dinner_0', 'dinner_1', 'snack_0'])\"}",
+      "echoed_payload": false,
+      "latency_ms": 1.5
+    },
+    {
+      "case": "swap thiếu food_ids",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải có cùng độ dài với food_ids\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.1
+    },
+    {
+      "case": "swap food_id lạ",
+      "expected": "4xx",
+      "status": 400,
+      "verdict": "PASS",
+      "note": "{\"detail\": \"food_ids không hợp lệ: ['VN_9999', 'VN_9999', 'VN_9999']\"}",
+      "echoed_payload": false,
+      "latency_ms": 1.4
+    },
+    {
+      "case": "swap new_food lạ",
+      "expected": "4xx",
+      "status": 400,
+      "verdict": "PASS",
+      "note": "{\"detail\": \"Món 'VN_9999' không tồn tại trong cơ sở dữ liệu\"}",
+      "echoed_payload": false,
+      "latency_ms": 10.9
+    },
+    {
+      "case": "swap old_portions lệch",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải có cùng độ dài với food_ids\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.4
+    },
+    {
+      "case": "swap old_portions=0",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải là số hữu hạn trong (0, 1000]\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.6
+    },
+    {
+      "case": "swap old_portions=1e9",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải là số hữu hạn trong (0, 1000]\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.2
+    },
+    {
+      "case": "swap food_ids rỗng",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\"], \"msg\": \"Dữ liệu: Value error, old_portions_g phải có cùng độ dài với food_ids\", \"type\": \"value_error\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.1
+    },
+    {
+      "case": "swap trùng món trong bữa",
+      "expected": "4xx",
+      "status": 400,
+      "verdict": "PASS",
+      "note": "{\"detail\": \"Món mới 'VN_4083' bị trùng với món khác trong ngày\"}",
+      "echoed_payload": false,
+      "latency_ms": 11.4
+    },
+    {
+      "case": "targets age=0",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", \"age\"], \"msg\": \"Tuổi phải từ 18 trở lên\", \"type\": \"greater_than_equal\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.5
+    },
+    {
+      "case": "JSON hỏng",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", 12], \"msg\": \"12: JSON decode error\", \"type\": \"json_invalid\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.2
+    },
+    {
+      "case": "content-type text/plain",
+      "expected": "4xx",
+      "status": 422,
+      "verdict": "PASS",
+      "note": "{\"detail\": [{\"loc\": [\"body\", 0], \"msg\": \"0: JSON decode error\", \"type\": \"json_invalid\"}]}",
+      "echoed_payload": false,
+      "latency_ms": 1.1
+    }
+  ],
+  "matrix": {
+    "age": {
+      "18-25": 4,
+      "26-45": 4,
+      "46-65": 3,
+      ">65": 3
+    },
+    "bmi": {
+      "underweight": 4,
+      "normal": 4,
+      "overweight": 4,
+      "obese1": 2
+    },
+    "activity": {
+      "SEDENTARY": 14
+    },
+    "meal": {
+      "3meals": 5,
+      "4meals": 5,
+      "big": 4
+    },
+    "ok": 14,
+    "err": 0
+  },
+  "matrix_rerun_n": 0,
+  "matrix_rerun_fitness_spread": null,
+  "skipped": {
+    "matrix": 16
+  },
+  "elapsed_s": 805.9,
+  "worst_menus": [
+    {
+      "phase": "swap",
+      "label": "SwapA:seq:breakfast_0",
+      "config": "web",
+      "items": [
+        "Khoai tây luộc 250g",
+        "Sữa bò tươi xào 180g",
+        "Cơm gạo lứt 250g",
+        "Măng chua luộc 220g",
+        "Cơm gạo nếp cái 250g",
+        "Tôm đồng hấp 180g",
+        "Chanh (ăn tươi) 200g"
+      ],
+      "calories": 2322.4,
+      "sodium": 1499.7,
+      "gap_pct": 36.6,
+      "issues": {
+        "absurd": [],
+        "structure": [],
+        "raw": [
+          "Khoai tây",
+          "Gạo lứt",
+          "Gạo nếp cái"
+        ],
+        "condiment": [],
+        "at_cap": []
+      },
+      "violations": [
+        "protein_g: 90.3 outside [100.8, 136.4]",
+        "carbs_g: 441.2 outside [252.0, 340.9]",
+        "fat_g: 22.5 outside [63.2, 94.9]",
+        "fiber_g: 24.1 outside [26.6, 49.4]"
+      ]
+    },
+    {
+      "phase": "allergy",
+      "label": "single:heo",
+      "config": "smoke",
+      "items": [
+        "Khoai tây luộc 150g",
+        "Đậu hà lan (hạt) (ăn tươi) 200g",
+        "Cơm gạo lứt 125g",
+        "Rau mồng tơi luộc 220g",
+        "Ngô bắp tươi luộc 165g",
+        "Tôm đồng hấp 180g",
+        "Lựu (ăn tươi) 165g"
+      ],
+      "calories": 1838.5,
+      "sodium": 880.6,
+      "gap_pct": 30.3,
+      "issues": {
+        "absurd": [],
+        "structure": [],
+        "raw": [
+          "Khoai tây",
+          "Đậu hà lan (hạt)",
+          "Gạo lứt"
+        ],
+        "condiment": [],
+        "at_cap": []
+      },
+      "violations": [
+        "energy 1838 kcal outside [2134, 2609]",
+        "fat_g: 13.9 outside [63.2, 94.9]"
+      ]
+    },
+    {
+      "phase": "swap",
+      "label": "SwapD:seq:lunch_1",
+      "config": "smoke",
+      "items": [
+        "Đậu xanh (đậu tắt) hấp 100g",
+        "Đậu phụ sốt cà 70g",
+        "Cơm gạo tẻ giã 130g",
+        "Cá thu áp chảo 180g",
+        "Cơm gạo lứt 100g",
+        "Thịt lợn nạc xào 60g",
+        "Hồng ngâm (ăn tươi) 120g"
+      ],
+      "calories": 1614.5,
+      "sodium": 269.6,
+      "gap_pct": 27.5,
+      "issues": {
+        "absurd": [],
+        "structure": [],
+        "raw": [
+          "Đậu xanh (đậu tắt)",
+          "Gạo tẻ giã",
+          "Gạo lứt"
+        ],
+        "condiment": [],
+        "at_cap": []
+      },
+      "violations": [
+        "protein_g: 94.3 outside [69.6, 94.2]",
+        "fat_g: 33.3 outside [43.7, 65.5]",
+        "fiber_g: 12.3 outside [26.6, 49.4]"
+      ]
+    },
+    {
+      "phase": "clinical",
+      "label": "hyp_seed126",
+      "config": "smoke",
+      "items": [
+        "Đậu xanh (đậu tắt) hấp 100g",
+        "Trứng vịt luộc 150g",
+        "Cơm gạo nếp cái 100g",
+        "Tôm đồng hấp 160g",
+        "Cơm gạo nếp máy (loại thường) 160g",
+        "Lưỡi lợn hầm 165g",
+        "Nho ta (nho chua) (ăn tươi) 200g"
+      ],
+      "calories": 1967.3,
+      "sodium": 1172.6,
+      "gap_pct": 27.1,
+      "issues": {
+        "absurd": [],
+        "structure": [],
+        "raw": [
+          "Đậu xanh (đậu tắt)",
+          "Gạo nếp cái",
+          "Gạo nếp máy (loại thường)"
+        ],
+        "condiment": [],
+        "at_cap": []
+      },
+      "violations": [
+        "protein_g: 118.6 outside [78.0, 105.6]",
+        "fiber_g: 10.9 outside [26.6, 49.4]"
+      ]
+    },
+    {
+      "phase": "clinical",
+      "label": "hyp_seed110",
+      "config": "smoke",
+      "items": [
+        "Đậu tương (đậu nành) hấp 215g",
+        "Sữa dê tươi (ăn tươi) 120g",
+        "Cơm gạo lứt 175g",
+        "Rau kinh giới luộc 150g",
+        "Cơm gạo nếp cái 140g",
+        "Cà rốt (củ đỏ, vàng) luộc 220g",
+        "Chuối tây (ăn tươi) 135g"
+      ],
+      "calories": 2222.5,
+      "sodium": 217.6,
+      "gap_pct": 25.2,
+      "issues": {
+        "absurd": [],
+        "structure": [],
+        "raw": [
+          "Đậu tương (đậu nành)",
+          "Gạo lứt",
+          "Gạo nếp cái"
+        ],
+        "condiment": [],
+        "at_cap": []
+      },
+      "violations": [
+        "energy 2223 kcal outside [1652, 2020]",
+        "protein_g: 111.0 outside [78.0, 105.6]",
+        "carbs_g: 328.1 outside [195.1, 263.9]"
+      ]
+    },
+    {
+      "phase": "clinical",
+      "label": "hyp_seed125",
+      "config": "smoke",
+      "items": [
+        "Đậu xanh (đậu tắt) hấp 175g",
+        "Đậu phụ sốt cà 80g",
+        "Cơm gạo tẻ giã 110g",
+        "Măng tây luộc 125g",
+        "Cơm gạo nếp máy (loại thường) 100g",
+        "Đuôi lợn hầm 100g",
+        "Mít dai (ăn tươi) 145g"
+      ],
+      "calories": 1931.4,
+      "sodium": 94.5,
+      "gap_pct": 19.7,
+      "issues": {
+        "absurd": [],
+        "structure": [],
+        "raw": [
+          "Đậu xanh (đậu tắt)",
+          "Gạo tẻ giã",
+          "Gạo nếp máy (loại thường)"
+        ],
+        "condiment": [],
+        "at_cap": []
+      },
+      "violations": [
+        "carbs_g: 268.4 outside [195.1, 263.9]",
+        "fiber_g: 14.4 outside [26.6, 49.4]"
+      ]
+    }
+  ]
+}

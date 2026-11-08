@@ -1,0 +1,32 @@
+[    0.0s] Auditor start -> experiments/audit_after_c4_fix (budget 900s, min 0s)
+[    0.0s] PHASE 0 bootstrap: /, /api/health, /api/foods, /api/profiles
+[    0.2s]   inventory: 137 món, gia vị=0, nguyên liệu thô=14, tên không nêu cách chế biến=98
+[    0.2s] PHASE 1 lâm sàng: 30 seed tăng huyết áp (10 web / 20 smoke)
+[  144.4s]   hyp 5/30 — sodium max tới giờ: 1340 mg
+[  272.3s]   hyp 10/30 — sodium max tới giờ: 1340 mg
+[  274.1s]   hyp 15/30 — sodium max tới giờ: 1340 mg
+[  275.7s]   hyp 20/30 — sodium max tới giờ: 1340 mg
+[  277.3s]   hyp 25/30 — sodium max tới giờ: 1340 mg
+[  278.9s]   hyp 30/30 — sodium max tới giờ: 1340 mg
+[  278.9s]   sodium max=1340 mg, vượt 1500=0/30, vượt 2300=0
+[  279.9s]   tiểu đường: 3 truy vấn, có cảnh báo=True
+[  279.9s] PHASE 2 dị ứng / khẩu vị
+[  410.3s]   30 lượt, lọt dị ứng=2, lọt 'hải sản'=0
+[  410.3s] PHASE 3 swap chain + concurrency
+[  440.1s]   chain SwapA: gap 8.4% -> 29.8%, max portion 250g
+[  442.1s]   chain SwapB: gap 23.1% -> 25.1%, max portion 220g
+[  445.6s]   chain SwapC: gap 3.9% -> 12.3%, max portion 250g
+[  447.7s]   chain SwapD: gap 15.3% -> 18.3%, max portion 245g
+[  449.1s]   chain SwapE: gap 10.4% -> 25.2%, max portion 250g
+[  451.0s]   concurrency 10 swap: {'200': 10}, max 1564.0 ms, 10 kết quả khác nhau
+[  451.0s] PHASE 4 chaos / fuzzing nhập liệu
+[  461.2s]   44 case chaos, FAIL=0, 500=0
+[  461.2s] PHASE 5 tái lập (cùng seed)
+[  462.1s]   same ids=True, same portions=True
+[  462.1s] PHASE 6 ma trận nhân khẩu 30 hồ sơ (config web)
+[  594.2s]   ma trận 5/30 — fitness TB 98.0
+[  739.2s]   ma trận 10/30 — fitness TB 93.2
+[  815.5s]   hết ngân sách thời gian — dừng ma trận
+[  815.5s]   ma trận xong: 12 hồ sơ, 0 rerun seed
+[  815.5s] Hoàn tất thu thập: 246 request, 133 menu, elapsed 815s
+[  815.5s] Đã ghi report + summary vào experiments/audit_after_c4_fix

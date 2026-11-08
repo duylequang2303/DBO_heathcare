@@ -14,6 +14,7 @@ import json
 import math
 import re
 import statistics
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, asdict
@@ -58,22 +59,25 @@ SOUP_RE = _words("canh", "súp", "cháo", "broth")
 STAPLE_RE = _words(
     "cơm", "gạo", "bún", "phở", "mì", "miến", "bánh mì", "khoai", "ngô", "kê", "yến mạch",
     "nếp", "bắp", "bánh cuốn", "bánh ướt", "bánh phở",
+    "đậu xanh", "đậu tương", "đậu nành", "đậu đen",
 )
 PROTEIN_RE = _words(
     "thịt", "bò", "heo", "lợn", "gà", "vịt", "cá", "tôm", "cua", "mực", "tép", "nghêu",
-    "sò", "hến", "trứng", "đậu phụ", "chả", "giò", "sườn", "chim", "bồ câu", "thỏ", "ếch",
+    "sò", "hến", "trứng", "đậu phụ", "chả", "giò", "sườn", "chim", "bồ câu", "thỏ", "ếch", "trai", "ghẹ", "hàu", "ngao", "sò điệp",
     "lươn", "đuôi", "chân giò", "gan", "tim", "lòng", "ba chỉ", "nạc", "xúc xích", "dăm bông",
     "óc",
 )
 VEG_RE = _words(
-    "rau", "cải", "muống", "ngót", "dền", "mồng tơi", "xà lách", "dưa leo", "cà chua",
-    "cà pháo", "bí", "bầu", "mướp", "súp lơ", "bông cải", "nấm", "măng", "su hào", "cà rốt",
-    "giá", "su su", "đậu cô ve", "ngồng", "hành", "tỏi", "cà tím", "củ", "mướp đắng", "khổ qua",
+    "rau", "cải", "muống", "ngót", "dền", "mồng tơi", "xà lách", "dưa leo", "dưa chuột",
+    "cà chua", "cà pháo", "bí", "bầu", "mướp", "súp lơ", "bông cải", "nấm", "măng",
+    "su hào", "cà rốt", "giá", "su su", "đậu cô ve", "đậu hà lan", "ngồng", "hành", "tỏi", "cà tím",
+    "củ", "mướp đắng", "khổ qua", "cần tây", "cần", "giền",
 )
 FRUIT_RE = _words(
-    "quả", "trái", "chuối", "táo", "cam", "bưởi", "xoài", "nho", "ổi", "dứa", "hồng",
-    "đu đủ", "lê", "lựu", "mít", "mơ", "na", "nhãn", "quít", "sầu riêng", "vải", "khế",
-    "hạt", "sữa", "dưa hấu", "thanh long", "mận", "chôm chôm", "măng cụt", "kiwi", "bơ",
+    "quả", "trái", "chuối", "táo", "cam", "chanh", "bưởi", "xoài", "nho", "ổi", "dứa",
+    "hồng", "đu đủ", "lê", "lựu", "mít", "mơ", "na", "nhãn", "quít", "sầu riêng", "vải",
+    "khế", "hạt", "sữa", "dưa hấu", "thanh long", "mận", "chôm chôm", "măng cụt",
+    "kiwi", "bơ", "dâu", "dâu tây", "mãng cầu",
 )
 SEAFOOD_RE = _words("tôm", "cua", "cá", "mực", "tép", "nghêu", "sò", "hến", "ghẹ", "hải sản")
 # Món có dạng món ăn rõ ràng → luôn là tinh bột, kể cả khi tên chứa từ khoá khác.
@@ -221,6 +225,10 @@ class Auditor:
             {
                 "food_id": i.get("food_id"),
                 "name": i.get("name"),
+                "ingredient_name": i.get("ingredient_name") or i.get("name"),
+                "display_name": i.get("display_name") or i.get("name"),
+                "preparation": i.get("preparation") or "",
+                "ingredient_basis": i.get("ingredient_basis") or "",
                 "slot": i.get("slot"),
                 "meal_type": i.get("meal_type"),
                 "portion_g": i.get("portion_g"),
@@ -244,10 +252,10 @@ class Auditor:
             return "dairy"
         if SOUP_RE.search(n):
             return "soup"
-        if STICKY_STAPLE_RE.search(n):
-            return "staple"
         if VEG_HEAD_RE.search(n):
             return "veg"
+        if STICKY_STAPLE_RE.search(n):
+            return "staple"
         if STAPLE_RE.search(n):
             return "staple"
         if PROTEIN_RE.search(n):
@@ -259,7 +267,12 @@ class Auditor:
         return "unknown"
 
     def analyze_menu(self, m: MenuRec) -> dict:
-        names = [it["name"] or "" for it in m.items]
+        # `name` is the dish-like display name; `ingredient_name` is the
+        # original nutrient-table row. Keep both so the audit cannot hide a raw
+        # ingredient basis behind a nicer display name.
+        names = [it.get("display_name") or it.get("name") or "" for it in m.items]
+        ingredient_names = [it.get("ingredient_name") or it.get("name") or "" for it in m.items]
+        preparations = [it.get("preparation") or "" for it in m.items]
         portions = [float(it["portion_g"] or 0) for it in m.items]
         roles = [self.role_of(n) for n in names]
         by_meal: dict[str, list] = {}
@@ -327,10 +340,22 @@ class Auditor:
         dup = len(names) - len(set(names))
         return {
             "condiments": [n for n in names if CONDIMENT_RE.search(n)],
-            "raw": [n for n in names if RAW_RE.search(n) and not PREP_RE.search(n)
+            "raw": [n for n in ingredient_names if RAW_RE.search(n) and not PREP_RE.search(n)
                     and not DAIRY_RE.search(n) and not n.lower().startswith("giá")],
-            "no_prep": [n for n, r in zip(names, roles) if r in ("staple", "protein", "unknown")
-                        and not PREP_RE.search(n) and not READY_RE.search(n)],
+            "raw_display": [
+                n for n in names
+                if RAW_RE.search(n)
+                and not PREP_RE.search(n)
+                and not DAIRY_RE.search(n)
+                and not n.lower().startswith("giá")
+            ],
+            "no_prep": [
+                n for n, r, prep in zip(names, roles, preparations)
+                if r in ("staple", "protein", "unknown")
+                and prep.strip().lower() in ("", "chưa xác định")
+                and not PREP_RE.search(n)
+                and not READY_RE.search(n)
+            ],
             "at_cap": [f"{n} {p:.0f}g" for n, p in zip(names, portions) if p >= 349.5],
             "at_floor": [f"{n} {p:.0f}g" for n, p in zip(names, portions) if p <= 25.5],
             "absurd": absurd,
@@ -873,11 +898,21 @@ def main():
               f"elapsed {a.elapsed():.0f}s")
         from build_audit_report import build_report  # local module cùng thư mục
         summary = build_report(a)
+        try:
+            git_commit = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                cwd=ROOT,
+                stderr=subprocess.DEVNULL,
+                text=True,
+            ).strip()
+        except (OSError, subprocess.CalledProcessError):
+            git_commit = "UNKNOWN_NO_GIT"
         (out / "config.json").write_text(json.dumps({
             "base_url": args.base_url, "profiles": args.profiles,
             "hypertension_web": args.hypertension_web,
             "min_seconds": args.min_seconds, "max_seconds": args.max_seconds,
             "started": stamp, "elapsed_s": round(a.elapsed(), 1),
+            "git_commit": git_commit,
         }, ensure_ascii=False, indent=2), encoding="utf-8")
         with (out / "raw_requests.jsonl").open("w", encoding="utf-8") as fh:
             for r in a.reqs:

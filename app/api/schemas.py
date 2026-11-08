@@ -95,12 +95,17 @@ class MacroDict(BaseModel):
 
 class MenuItemOut(BaseModel):
     food_id: str
-    name: str
+    name: str               # tên món hiển thị (lớp ghép món demo)
     slot: str
     meal_type: str
     portion_g: float        # giá trị liên tục từ solver
     portion_g_rounded: int  # làm tròn bội số 5g (chỉ dùng để hiển thị)
     macros: MacroDict       # dinh dưỡng tính từ portion_g gốc
+    ingredient_name: str = ""
+    display_name: str = ""
+    preparation: str = ""
+    ingredient_basis: str = ""
+    presentation_is_estimated: bool = False
 
 
 class TargetsOut(BaseModel):

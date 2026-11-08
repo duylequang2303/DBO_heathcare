@@ -33,6 +33,7 @@ from src.models.dish_category import (
     classify_dish_role,
     portion_bounds_for_food_ids,
 )
+from src.models.dish_presentation import PRESENTATION_DISCLAIMER
 from src.models.diversity_penalty import calculate_unique_main_dish_pct
 from src.models.food_selector import get_meal_order_slots
 from src.models.user_profile import (
@@ -171,6 +172,10 @@ _MEDICAL_ALIASES: dict[str, str] = {
     "huyết áp cao": "hypertension", "huyết áp": "hypertension",
     "tăng huyết ap": "hypertension", "tiểu đường": "diabetes",
     "đái tháo đường": "diabetes", "tie duong": "diabetes",
+    "gout": "gout", "gút": "gout", "bệnh gút": "gout", "bệnh gout": "gout", "gut": "gout",
+    "suy thận": "kidney_disease", "bệnh thận": "kidney_disease",
+    "thận mạn": "kidney_disease", "kidney": "kidney_disease",
+    "kidney disease": "kidney_disease",
 }
 
 PROTOTYPE_DISCLAIMER = (
@@ -179,6 +184,14 @@ PROTOTYPE_DISCLAIMER = (
 DIABETES_SUGAR_WARNING = (
     "Dữ liệu chưa có chỉ số đường tổng (sugar), thực đơn này chỉ hỗ trợ "
     "kiểm soát calo và tinh bột, không bảo đảm an toàn lâm sàng cho bệnh nhân tiểu đường."
+)
+GOUT_PURIN_WARNING = (
+    "Bệnh nhân Gout cần tham vấn bác sĩ để kiểm soát purin từ thịt đỏ, nội tạng và hải sản; "
+    "hệ thống hiện chỉ tối ưu macro, chưa lọc purin chuyên sâu."
+)
+KIDNEY_PROTEIN_WARNING = (
+    "Bệnh nhân bệnh thận / suy thận cần kiểm soát chặt chẽ protein, kali và photpho theo chỉ định "
+    "chuyên khoa; thực đơn tự động chưa thay thế phác đồ dinh dưỡng lâm sàng cho bệnh thận."
 )
 
 
@@ -190,7 +203,11 @@ def menu_notices(profile: UserProfile) -> tuple[list[str], list[str]]:
     conditions = set(_normalize_medical_conditions(profile.medical_conditions))
     if "diabetes" in conditions:
         warnings.append(DIABETES_SUGAR_WARNING)
-    return warnings, [PROTOTYPE_DISCLAIMER]
+    if "gout" in conditions:
+        warnings.append(GOUT_PURIN_WARNING)
+    if "kidney_disease" in conditions:
+        warnings.append(KIDNEY_PROTEIN_WARNING)
+    return warnings, [PROTOTYPE_DISCLAIMER, PRESENTATION_DISCLAIMER]
 
 
 def _normalize_medical_conditions(conditions: list[str]) -> list[str]:
@@ -237,7 +254,12 @@ def _menu_item_out(item: Any, slot: str) -> MenuItemOut:
     """Convert MenuItem domain object → MenuItemOut."""
     return MenuItemOut(
         food_id=item.food_id,
-        name=item.food_name,
+        name=item.display_name or item.food_name,
+        ingredient_name=item.food_name,
+        display_name=item.display_name or item.food_name,
+        preparation=item.preparation,
+        ingredient_basis=item.ingredient_basis,
+        presentation_is_estimated=item.presentation_is_estimated,
         slot=slot,
         meal_type=item.meal_type or "",
         portion_g=round(item.portion_g, 1),

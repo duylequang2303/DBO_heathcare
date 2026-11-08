@@ -1,0 +1,10 @@
+{
+  "base_url": "http://127.0.0.1:8010",
+  "profiles": 30,
+  "hypertension_web": 10,
+  "min_seconds": 0,
+  "max_seconds": 900,
+  "started": "20261108_0814",
+  "elapsed_s": 805.9,
+  "git_commit": "bab4d409f9fe48e310654c1ca1a861311af35d96"
+}

@@ -32,25 +32,29 @@ def _roles_for_slot(meal_name: str, slot_idx: int, count: int) -> set[DishRole]:
     if meal_name == "breakfast":
         if slot_idx == 0:
             return {DishRole.STAPLE}
-        return {DishRole.MAIN_PROTEIN, DishRole.FRUIT_SNACK}
+        return {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE}
     if slot_idx == 0:
         return {DishRole.STAPLE}
     return {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE, DishRole.SOUP}
+
+
+MIN_MEAL_POOL_SIZE = 20
+MIN_ROLE_POOL_SIZE = 3
 
 
 def build_meal_pools(
     food_map: dict,
     meal_counts: dict[str, int],
     profile: UserProfile,
-    min_pool_size: int = 20,
+    min_pool_size: int = MIN_MEAL_POOL_SIZE,
 ) -> dict[str, list[str]]:
     """Build deterministic, user-facing and role-aware candidate pools.
 
     The original CSV is not modified. Allergy/dislike and meal-type filtering
     happens first, then raw ingredients are removed, and finally each slot is
-    assigned realistic culinary roles. If role classification is too sparse,
-    the function safely falls back to the cleaned meal pool, never to raw
-    ingredients.
+    assigned realistic culinary roles. If a role pool is too small, the
+    function raises ``ValueError`` instead of silently falling back to the
+    unfiltered meal pool. Callers must surface a clear configuration error.
     """
     pools: dict[str, list[str]] = {}
     for meal_name in MEAL_ORDER:
@@ -61,10 +65,11 @@ def build_meal_pools(
         cleaned = [fid for fid in meal_candidates if _is_user_facing_food(food_map[fid])]
         if len(cleaned) < min_pool_size:
             raise ValueError(
-                f"User-facing pool for '{meal_name}' has size {len(cleaned)}, "
-                f"less than min_pool_size={min_pool_size}."
+                f"Không đủ món phù hợp cho bữa '{meal_name}' ({len(cleaned)} món), "
+                f"ít hơn ngưỡng tối thiểu {min_pool_size}."
             )
         for slot_idx in range(count):
+            slot_name = f"{meal_name}_{slot_idx}"
             allowed_roles = _roles_for_slot(meal_name, slot_idx, count)
             role_candidates = []
             for fid in cleaned:
@@ -76,8 +81,13 @@ def build_meal_pools(
                 )
                 if role in allowed_roles:
                     role_candidates.append(fid)
-            selected = role_candidates if len(role_candidates) >= min_pool_size else cleaned
-            pools[f"{meal_name}_{slot_idx}"] = selected
+            selected = role_candidates
+            if len(selected) < MIN_ROLE_POOL_SIZE:
+                raise ValueError(
+                    f"Không đủ món theo vai trò cho vị trí '{slot_name}' ({len(selected)} món); cần ít nhất {MIN_ROLE_POOL_SIZE} món "
+                    f"thuộc vai trò {allowed_roles}."
+                )
+            pools[slot_name] = selected
     return pools
 
 
@@ -99,10 +109,10 @@ def decode_food_selection(
     """Decode a mixed-integer food selection vector using linear probing.
 
     For each slot i, the initial index is floor(clamp(z_i, 0, 1-eps) * N).
-    If the candidate was already selected in the same meal, scan cyclically
-    until an unused ID is found. Complexity per slot is O(N) worst case.
-    Different meals may reuse a food ID; the 7-day diversity constraint is
-    handled separately by diversity_penalty().
+    If the candidate was already selected in any earlier slot of the day, scan
+    cyclically until an unused ID is found. Complexity per slot is O(N) worst
+    case. The 7-day diversity constraint is handled separately by
+    diversity_penalty().
 
     Args:
         z: 1D array of shape (k,) with values in [0, 1).
@@ -113,7 +123,8 @@ def decode_food_selection(
         List of selected food_ids matching the order of meal_order.
 
     Raises:
-        ValueError: If len(z) != len(meal_order) or a slot has an empty pool.
+        ValueError: If len(z) != len(meal_order), a slot has an empty pool, or
+            a slot has no food_id unused earlier in the day.
     """
     z = np.asarray(z)
     if z.ndim != 1:
@@ -126,17 +137,13 @@ def decode_food_selection(
         )
 
     selected_food_ids: list[str] = []
-    # Track used foods per meal prefix (e.g. 'breakfast', 'lunch') to avoid intra-meal duplicates
-    used_per_meal: dict[str, set[str]] = {}
+    # Track used foods across the entire day to avoid duplicate items
+    used_daily: set[str] = set()
 
     for i, slot_name in enumerate(meal_order):
         pool = pools.get(slot_name, [])
         if not pool:
-            raise ValueError(f"Pool for slot '{slot_name}' is empty or missing.")
-
-        meal_prefix = slot_name.rsplit("_", 1)[0]
-        if meal_prefix not in used_per_meal:
-            used_per_meal[meal_prefix] = set()
+            raise ValueError(f"Không có ứng viên cho vị trí '{slot_name}'.")
 
         pool_len = len(pool)
         # Clamp finite optimizer coordinates to [0, 1). This also supports
@@ -144,23 +151,22 @@ def decode_food_selection(
         z_val = float(np.clip(z[i], 0.0, 1.0 - 1e-12))
         base_idx = int(z_val * pool_len) % pool_len
 
-        # Linear probing to avoid duplicates within the same meal
+        # Linear probing to avoid duplicates across the entire day
         chosen_fid = None
         for offset in range(pool_len):
             cand_idx = (base_idx + offset) % pool_len
             cand_fid = pool[cand_idx]
-            if cand_fid not in used_per_meal[meal_prefix]:
+            if cand_fid not in used_daily:
                 chosen_fid = cand_fid
                 break
 
-        # Never silently re-use a food within the same meal.
+        # Never silently re-use a food within the same day.
         if chosen_fid is None:
             raise ValueError(
-                f"Not enough unique food_ids for meal '{meal_prefix}' "
-                f"at slot '{slot_name}'."
+                f"Không còn mã món chưa dùng trong ngày cho vị trí '{slot_name}'."
             )
 
-        used_per_meal[meal_prefix].add(chosen_fid)
+        used_daily.add(chosen_fid)
         selected_food_ids.append(chosen_fid)
 
     return selected_food_ids

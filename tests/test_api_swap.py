@@ -120,7 +120,7 @@ def test_swap_invalid_slot_returns_400(sample_menu):
     }
     res = client.post("/api/menu/swap", json=swap_payload)
     assert res.status_code == 400
-    assert "Slot" in res.text or "slot" in res.text
+    assert "Vị trí" in res.text or "vị trí" in res.text
 
 
 def test_swap_duplicate_food_in_same_meal_returns_400(sample_menu):
@@ -138,6 +138,30 @@ def test_swap_duplicate_food_in_same_meal_returns_400(sample_menu):
     }
     res = client.post("/api/menu/swap", json=swap_payload)
     assert res.status_code == 400
+    assert "trùng" in res.text.lower() or "duplicate" in res.text.lower()
+
+
+def test_swap_rejects_food_used_in_another_meal(sample_menu):
+    """C6: a food already used in another meal must not be reintroduced."""
+    food_ids = [item["food_id"] for item in sample_menu["items"]]
+    slots = [item["slot"] for item in sample_menu["items"]]
+
+    # Select a food already used in another meal (not lunch) to test cross-meal deduplication (C6)
+    target_slot = "lunch_0"
+    other_item = next(it for it in sample_menu["items"] if not it["slot"].startswith("lunch"))
+    duplicate_food = other_item["food_id"]
+    assert duplicate_food in food_ids
+    assert slots[food_ids.index(duplicate_food)] != target_slot
+
+    swap_payload = {
+        "profile": BASE_PROFILE,
+        "food_ids": food_ids,
+        "slot": target_slot,
+        "new_food_id": duplicate_food,
+        "old_portions_g": [item["portion_g"] for item in sample_menu["items"]],
+    }
+    res = client.post("/api/menu/swap", json=swap_payload)
+    assert res.status_code == 400, res.text
     assert "trùng" in res.text.lower() or "duplicate" in res.text.lower()
 
 
@@ -162,6 +186,23 @@ def test_swap_allergen_food_returns_400(sample_menu):
     assert "dị ứng" in res.text.lower() or "allergy" in res.text.lower() or "không phù hợp" in res.text.lower()
 
 
+def test_swap_pool_configuration_error_returns_400_not_500(sample_menu):
+    """A too-small role/meal pool must be a client error, not a server crash."""
+    restrictive_profile = dict(
+        BASE_PROFILE,
+        allergies=["hải sản", "thịt", "cá", "trứng", "sữa", "đậu", "rau", "gạo"],
+    )
+    swap_payload = {
+        "profile": restrictive_profile,
+        "food_ids": [item["food_id"] for item in sample_menu["items"]],
+        "slot": "lunch_0",
+        "new_food_id": None,
+    }
+    res = client.post("/api/menu/swap", json=swap_payload)
+    assert res.status_code == 400, res.text
+    assert "Không thể thay món" in res.text
+
+
 def test_swap_mismatched_food_ids_length_returns_400():
     """Mismatched food_ids length must return HTTP 400."""
     swap_payload = {
@@ -173,3 +214,19 @@ def test_swap_mismatched_food_ids_length_returns_400():
     res = client.post("/api/menu/swap", json=swap_payload)
     assert res.status_code == 400
 
+
+@pytest.mark.parametrize('error', [ValueError('pool failure'), KeyError('missing record')])
+def test_swap_exception_boundary(monkeypatch, error):
+    def fail(_req):
+        raise error
+
+    monkeypatch.setattr('app.api.swap.swap_menu_item', fail)
+    with TestClient(app, raise_server_exceptions=False) as boundary_client:
+        res = boundary_client.post('/api/menu/swap', json={
+            'profile': BASE_PROFILE, 'food_ids': ['test'], 'slot': 'lunch_0',
+        })
+    if isinstance(error, ValueError):
+        assert res.status_code == 400
+        assert res.json()['detail'] == 'Không thể thay món với cấu hình hiện tại: pool failure'
+    else:
+        assert res.status_code == 500

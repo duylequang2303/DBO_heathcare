@@ -1,4 +1,4 @@
-from .allergen_rules import is_allergen_conflict
+from .allergen_rules import is_allergen_conflict, is_dislike_conflict
 from .menu import MealType, Menu
 from .user_profile import UserProfile
 from .dish_category import classify_dish_role, get_role_portion_bounds
@@ -130,7 +130,13 @@ def _check_portion(menu: Menu, food_map: dict | None = None) -> list[str]:
 
 
 def _check_dislikes(menu: Menu, dislikes: list[str]) -> list[str]:
-    return _match_tokens(menu, dislikes, "disliked")
+    """So khớp món không thích theo ranh giới từ + nhóm (tránh substring false positives)."""
+    issues = []
+    for item in menu.all_items():
+        for token in dislikes:
+            if token and is_dislike_conflict(item.food_name, [token]):
+                issues.append(f"{item.food_name}: contains disliked '{token}'")
+    return issues
 
 
 def _check_allergies(menu: Menu, allergies: list[str]) -> list[str]:
