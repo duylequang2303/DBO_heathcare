@@ -65,7 +65,7 @@ def run_random_search_baseline(
         food_map=food_map,
         meal_counts=profile.meal_counts,
         profile=profile,
-        min_pool_size=1,
+        min_pool_size=TwoTierConfig().min_pool_size,
     )
     meal_order = get_meal_order_slots(profile.meal_counts)
     dim_k = len(meal_order)
@@ -74,6 +74,8 @@ def run_random_search_baseline(
     best_fitness = -1e9
     best_food_ids = None
     best_portions = None
+    best_lb = None
+    best_ub = None
 
     # Number of outer random candidates vs inner random samples
     # Allocate approx 20 outer candidates, each evaluated with inner random points
@@ -108,9 +110,11 @@ def run_random_search_baseline(
                 best_fitness = fit
                 best_food_ids = food_ids
                 best_portions = x
+                best_lb = lb.copy()
+                best_ub = ub.copy()
 
     runtime = time.perf_counter() - t0
-    rounded_portions = np.clip(round_portions(best_portions, step=5), lb, ub)
+    rounded_portions = np.clip(round_portions(best_portions, step=5), best_lb, best_ub)
     final_obj = make_menu_objective(profile, best_food_ids, food_map, targets)
     rounded_fit = -float(final_obj(rounded_portions))
 
@@ -127,7 +131,9 @@ def run_random_search_baseline(
 
 def compute_bootstrap_ci(data: np.ndarray, n_boot: int = 1000, ci: float = 0.95) -> tuple[float, float]:
     """Bootstrap confidence interval for the mean."""
-    if len(data) == 0 or np.all(data == data[0]):
+    if len(data) == 0:
+        return float("nan"), float("nan")
+    if np.all(data == data[0]):
         return float(data[0]), float(data[0])
     rng = np.random.default_rng(42)
     means = [np.mean(rng.choice(data, size=len(data), replace=True)) for _ in range(n_boot)]
@@ -278,9 +284,9 @@ def analyze_and_save(df: pd.DataFrame) -> None:
             w_res = stats.wilcoxon(diff_idbo_dbo, zero_method="pratt")
             wilcoxon_stat_idbo_dbo = float(w_res.statistic)
             wilcoxon_p_idbo_dbo = float(w_res.pvalue)
-        except Exception:
+        except ValueError:
             wilcoxon_stat_idbo_dbo = float("nan")
-            wilcoxon_p_idbo_dbo = 1.0
+            wilcoxon_p_idbo_dbo = float("nan")
 
     ci_low, ci_high = compute_bootstrap_ci(diff_idbo_dbo)
 
@@ -288,7 +294,7 @@ def analyze_and_save(df: pd.DataFrame) -> None:
     try:
         w_rs = stats.wilcoxon(diff_dbo_rs, zero_method="pratt")
         wilcoxon_p_dbo_rs = float(w_rs.pvalue)
-    except Exception:
+    except ValueError:
         wilcoxon_p_dbo_rs = float("nan")
 
     # Generate README report
@@ -325,7 +331,7 @@ def analyze_and_save(df: pd.DataFrame) -> None:
    - Tỷ lệ Thắng / Hòa / Thua: **{wins_idbo} Thắng / {ties_idbo} Hòa / {losses_idbo} Thua**.
    - Kiểm định Wilcoxon signed-rank: W-stat = **{wilcoxon_stat_idbo_dbo}**, p-value = **{wilcoxon_p_idbo_dbo:.4f}**.
    - **Kích hoạt Telemetry**: IDBO ghi nhận trung bình **{df_summary.loc[df_summary['algorithm']=='IDBO', 'mean_outer_restarts'].values[0]:.1f} restarts tầng ngoài** và **{df_summary.loc[df_summary['algorithm']=='IDBO', 'mean_inner_restarts'].values[0]:.1f} restarts tầng trong**.
-   - **Kết luận Trung thực**: Trong cấu hình thử nghiệm hiện tại, các cơ chế cải tiến của IDBO (random restart và perturbation) đã kích hoạt đúng thiết kế khi phát hiện quần thể suy giảm đa dạng; tuy nhiên chất lượng thực đơn cuối cùng tương đương DBO (chưa ghi nhận sự vượt trội có ý nghĩa thống kê của IDBO so với DBO).
+   - **Kết luận Trung thực**: Trong cấu hình thử nghiệm hiện tại, kiểm định chưa ghi nhận khác biệt có ý nghĩa thống kê giữa IDBO và DBO về chất lượng thực đơn cuối cùng.
 """
     readme_path.write_text(content, encoding="utf-8")
     print(f"Saved benchmark README to: {readme_path}")

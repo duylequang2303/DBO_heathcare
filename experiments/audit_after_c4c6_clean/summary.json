@@ -216,13 +216,9 @@
   "structure_fail_pct": 0.0,
   "structure_examples": [],
   "duplicate_menus": 0,
-  "slot_misplaced_menus": 7,
-  "slot_misplaced_pct": 5.3,
-  "slot_violation_examples": [
-    "breakfast_1 = staple ('Đậu hà lan (hạt) (ăn tươi)')",
-    "breakfast_2 = staple ('Đậu hà lan (hạt) (ăn tươi)')",
-    "snack_0 = unknown ('Mãng cầu xiêm (ăn tươi)')"
-  ],
+  "slot_misplaced_menus": 0,
+  "slot_misplaced_pct": 0.0,
+  "slot_violation_examples": [],
   "slot0_staple_pct": 100.0,
   "slot0_n": 266,
   "implausible_200": [

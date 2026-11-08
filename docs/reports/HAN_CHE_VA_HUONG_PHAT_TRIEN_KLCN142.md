@@ -27,7 +27,13 @@ Mặc dù hệ thống đã đáp ứng đầy đủ các yêu cầu kỹ thuậ
 
 ### 2.2. Đánh đổi giữa số lượng đánh giá tầng ngoài và độ trễ phản hồi Web API
 - **Thực trạng**: Ở chế độ trực tuyến trên giao diện Web (`balanced` / `fast`), thuật toán tầng ngoài chỉ được cấp ngân sách khoảng 200–300 lượt đánh giá để đảm bảo thời gian phản hồi dưới 28 giây cho người dùng. Điều này khiến tỷ lệ vi phạm ràng buộc dinh dưỡng ở cấu hình nhanh cao hơn so với khi chạy cấu hình đầy đủ (full-scale iterations).
-- **Ý nghĩa kỹ thuật**: Đây là sự đánh đổi có chủ đích (trade-off) giữa **trải nghiệm người dùng tương tác thời gian thực** và **độ hội tụ tối đa của thuật toán metaheuristic**. Khi tăng số cá thể và số vòng lặp lên mức nghiên cứu (offline), chất lượng thực đơn đạt độ chính xác gần như tuyệt đối (sai lệch calo dưới 1%).
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:116b7c33ac7eccc9a4a72ca6e37f1ebb4fdd7cadf210e44a07dbb69fb24109fe -->
+
+- **Ý nghĩa kỹ thuật**: Đây là sự đánh đổi có chủ đích (trade-off) giữa **trải nghiệm người dùng tương tác thời gian thực** và **độ hội tụ tối đa của thuật toán metaheuristic**. Khi tăng số cá thể và số vòng lặp lên mức nghiên cứu (offline), các kết quả thử nghiệm được báo cáo có sai lệch calo dưới 1%; chỉ số này không chứng minh tất cả ràng buộc dinh dưỡng đều được đáp ứng.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ### 2.3. Cơ chế Thay món (Swap) ưu tiên quyền quyết định của người dùng
 - **Thực trạng**: Báo cáo kiểm toán tự động (Audit Report) ghi nhận trong 5 kịch bản người dùng liên tục đổi món, có 2 trường hợp điểm fitness tổng thể bị giảm so với thực đơn ban đầu.
@@ -41,7 +47,13 @@ Mặc dù hệ thống đã đáp ứng đầy đủ các yêu cầu kỹ thuậ
 ### 2.5. Dữ liệu thực phẩm và chỉ số dinh dưỡng
 - **Hồ sơ mô phỏng**: Các hồ sơ bệnh nhân P1 (Khỏe mạnh), P2 (Tiểu đường), P3 (Tăng huyết áp) là các hồ sơ mô phỏng kỹ thuật phục vụ benchmark, chưa bao quát toàn bộ phổ bệnh lý phức tạp trong đời sống thực.
 - **Kho món ăn hiển thị (Whitelist 163 món)**: Được chọn lọc và làm sạch từ cơ sở dữ liệu lớn để đảm bảo tên món chuẩn Việt Nam và vai trò ẩm thực hợp lý, tuy nhiên danh mục này còn khiêm tốn so với ẩm thực phong phú của các vùng miền Việt Nam.
-- **Chỉ số đường (Sugar Proxy)**: Cơ sở dữ liệu hiện tại chưa có trường đo đạc đường tổng (total sugar). Hệ thống sử dụng giá trị ước tính có nhãn minh bạch (`sugar_proxy_g`, `sugar_is_estimated = True`) và **tuyệt đối không dùng proxy này để tuyên bố thực đơn "an toàn tuyệt đối cho bệnh nhân tiểu đường"**.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:4ec9a845694e557797deaf65ff3e67d8e35da53b83b5c02585cd6509420e86e9 -->
+
+- **Chỉ số đường (Sugar Proxy)**: Cơ sở dữ liệu hiện tại chưa có trường đo đạc đường tổng (total sugar). Hệ thống sử dụng giá trị ước tính có nhãn minh bạch (`sugar_proxy_g`, `sugar_is_estimated = True`); proxy này không cung cấp bằng chứng về mức độ phù hợp của thực đơn cho bệnh nhân tiểu đường.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ### 2.6. Giới hạn về thử nghiệm lâm sàng và đối chứng y tế
 - **Định vị sản phẩm**: Đề tài được xây dựng dưới dạng **nguyên mẫu hỗ trợ quyết định (decision-support prototype)** dành cho mục đích nghiên cứu và tham khảo, **không phải là thiết bị y tế (medical device)** được cấp phép.
@@ -56,10 +68,22 @@ Mặc dù hệ thống đã đáp ứng đầy đủ các yêu cầu kỹ thuậ
 ## 3. So sánh đối chuẩn DBO vs IDBO và Baseline
 
 Theo nguyên tắc minh bạch thực nghiệm của đề tài (AGENTS.md):
-1. **So với Random Search Baseline (cùng ngân sách đánh giá)**: Cả DBO và IDBO đều đạt điểm fitness vượt trội có ý nghĩa thống kê rất cao ($p < 0.001$, kiểm định Wilcoxon signed-rank), chứng minh cơ chế mô phỏng bọ phân thực sự học và hội tụ tối ưu tốt hơn tìm kiếm ngẫu nhiên.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:e0d7bb23d25c4fcb560dc203dc4111048e494c8d3749b585ff663ac4382b0242 -->
+
+1. **So với Random Search Baseline (cùng ngân sách đánh giá)**: DBO đạt điểm fitness cao hơn với $p = 0.0026$, nhất quán với README của `experiments/remediation_benchmark/`; IDBO có $p < 0.001$ (kiểm định Wilcoxon signed-rank). Kết quả chỉ áp dụng trong phạm vi cấu hình thử nghiệm.
+
+<!-- /coderabbit-ai-generated:v1 -->
 2. **So sánh IDBO vs DBO**:
    - Khi cấu hình `stagnation_window` nhỏ (3–5 vòng lặp) và `diversity_threshold` được hiệu chỉnh tách biệt theo từng tầng, các cơ chế cải tiến của IDBO (**Random Restart** và **Adaptive Cauchy Perturbation**) đã **kích hoạt thành công** theo đúng thiết kế ghi nhận qua telemetry.
-   - Tuy nhiên, trên không gian bài toán thực đơn 12 chiều với các ràng buộc dinh dưỡng chặt chẽ, chất lượng nghiệm tối ưu cuối cùng của IDBO tương đương DBO ($p \ge 0.05$). Nhóm nghiên cứu kết luận trung thực: *"Trong phạm vi cấu hình và instance dữ liệu thử nghiệm, chưa ghi nhận bằng chứng thống kê cho thấy IDBO vượt trội hơn DBO về chất lượng thực đơn cuối cùng"*.
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:55f5aa67e72d42c369164f93193d0c01056677a3b2c0a3ea06c91b94939e719d -->
+
+   - Tuy nhiên, trên không gian bài toán thực đơn 12 chiều với các ràng buộc dinh dưỡng chặt chẽ, kiểm định chưa ghi nhận khác biệt có ý nghĩa thống kê giữa IDBO và DBO ($p = 0.3303$). Nhóm nghiên cứu kết luận trung thực: *"Trong phạm vi cấu hình và instance dữ liệu thử nghiệm, chưa ghi nhận bằng chứng thống kê cho thấy IDBO vượt trội hơn DBO về chất lượng thực đơn cuối cùng"*.
+
+<!-- /coderabbit-ai-generated:v1 -->
 
 ---
 

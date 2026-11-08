@@ -202,7 +202,14 @@ def is_dislike_conflict(food_name: str, dislikes: Iterable[str]) -> bool:
         group = _TOKEN_TO_GROUP.get(token)
         if group is not None:
             candidate = _strip_exclusions(name, group.exclusions)
-            if group.pattern.search(candidate):
+            # Leading group labels precede the first concrete food token.
+            first_food = next(
+                (i for i, item in enumerate(group.tokens) if item != group.key and group.pattern.search(item)),
+                len(group.tokens),
+            )
+            is_generic = token == group.key or token in group.tokens[:first_food]
+            if (group.pattern.search(candidate) if is_generic
+                    else match_phrase_word_boundary(candidate, token)):
                 return True
         elif match_phrase_word_boundary(name, token):
             return True

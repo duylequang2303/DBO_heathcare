@@ -1,6 +1,6 @@
 <!-- coderabbit-ai-generated:v1 -->
 
-<!-- coderabbit-ai-generated-section:v1:9725425451745b1cd4573eb02f48ee6746b96d44ef54b07d898ea9ba1de3a7ae -->
+<!-- coderabbit-ai-generated-section:v1:2d2db2bdd1f459dab895465284ecdc7e14270334f1b31b7ba8e2c4016b6c2b3a -->
 
 # BÁO CÁO PHẢN BIỆN & THẨM ĐỊNH HỆ THỐNG GỢI Ý THỰC ĐƠN DBO/IDBO
 
@@ -33,7 +33,7 @@
 | Menu có món kịch trần ≥349.5 g | 0/133 (0.0%) | C15 |
 | Menu có khẩu phần phản ẩm thực | 0/133 | C16 |
 | Menu sai cơ cấu bữa trưa/tối | 0/133 (0.0%) | C17 |
-| Menu sai vai trò slot ẩm thực | 7/133 (5.3%) | — |
+| Menu sai vai trò slot ẩm thực | 0/133 (0.0%) | — |
 | Slot đầu bữa trưa/tối đúng là tinh bột | 100.0% (266 slot) | C18 |
 | Menu chứa gia vị như món độc lập | 0/133 | — |
 | Menu có nguyên liệu gốc bị coi là thô | 132/133 | C19 |

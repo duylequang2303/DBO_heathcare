@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.models.dish_category import DishRole, classify_dish_role
+from src.models.dish_category import COOKED_STATE_PATTERNS, DishRole, classify_dish_role
 
 
 PRESENTATION_DISCLAIMER = (
@@ -63,6 +63,9 @@ def present_dish(
         # decoded directly (for example in a unit test), keep the original name
         # instead of inventing a dish or crashing the solver.
         return DishPresentation(name, "chưa xác định", "chưa phân loại")
+
+    if actual_role in {DishRole.STAPLE, DishRole.MAIN_PROTEIN} and COOKED_STATE_PATTERNS.search(lower):
+        return DishPresentation(name, "món chín", "món chín")
 
     if actual_role == DishRole.STAPLE:
         if lower.startswith("gạo"):

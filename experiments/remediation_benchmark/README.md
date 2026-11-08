@@ -1,6 +1,14 @@
 # Báo cáo Thực nghiệm Đối chuẩn Khắc phục Hạn chế KLCN142
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:67110751990cdabb475693b2d83d9ddd32f224379e22228037b9c5eea25b03c6 -->
+
 - **Ngày thực hiện**: 2026-11-08 20:58:42
+
+> Kết quả lịch sử: các số liệu dưới đây được giữ nguyên từ lần chạy trước khi sửa cấu hình pool và giới hạn làm tròn của Random Search. Cần chạy benchmark mới trong thư mục riêng để đánh giá mã đã sửa.
+
+<!-- /coderabbit-ai-generated:v1 -->
 - **Mục tiêu**: Đối chuẩn công bằng Paired runs giữa **DBO**, **IDBO**, và **Random Search Baseline** trên cùng ngân sách đánh giá.
 - **Hồ sơ đánh giá**: P1 (Duy trì - Nam trẻ), P2 (Tiểu đường mô phỏng), P3 (Tăng huyết áp mô phỏng).
 - **Số lượt chạy**: 15 paired runs (3 hồ sơ x 5 seed).
@@ -30,4 +38,10 @@
    - Tỷ lệ Thắng / Hòa / Thua: **4 Thắng / 0 Hòa / 11 Thua**.
    - Kiểm định Wilcoxon signed-rank: W-stat = **42.0**, p-value = **0.3303**.
    - **Kích hoạt Telemetry**: IDBO ghi nhận trung bình **2.5 restarts tầng ngoài** và **0.8 restarts tầng trong**.
-   - **Kết luận Trung thực**: Trong cấu hình thử nghiệm hiện tại, các cơ chế cải tiến của IDBO (random restart và perturbation) đã kích hoạt đúng thiết kế khi phát hiện quần thể suy giảm đa dạng; tuy nhiên chất lượng thực đơn cuối cùng tương đương DBO (chưa ghi nhận sự vượt trội có ý nghĩa thống kê của IDBO so với DBO).
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:19e2285dd446184ea0ce669af439243426282878cb803dd3c0fc18b72996a085 -->
+
+   - **Kết luận Trung thực**: Trong cấu hình thử nghiệm hiện tại, kiểm định chưa ghi nhận khác biệt có ý nghĩa thống kê giữa IDBO và DBO về chất lượng thực đơn cuối cùng.
+
+<!-- /coderabbit-ai-generated:v1 -->
