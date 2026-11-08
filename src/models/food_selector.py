@@ -65,7 +65,7 @@ def build_meal_pools(
         cleaned = [fid for fid in meal_candidates if _is_user_facing_food(food_map[fid])]
         if len(cleaned) < min_pool_size:
             raise ValueError(
-                f"Pool món ăn cho bữa '{meal_name}' chỉ có {len(cleaned)} món, "
+                f"Không đủ món phù hợp cho bữa '{meal_name}' ({len(cleaned)} món), "
                 f"ít hơn ngưỡng tối thiểu {min_pool_size}."
             )
         for slot_idx in range(count):
@@ -84,8 +84,7 @@ def build_meal_pools(
             selected = role_candidates
             if len(selected) < MIN_ROLE_POOL_SIZE:
                 raise ValueError(
-                    f"Nhóm món theo vai trò cho slot '{slot_name}' quá nhỏ "
-                    f"({len(selected)} món); cần ít nhất {MIN_ROLE_POOL_SIZE} món "
+                    f"Không đủ món theo vai trò cho vị trí '{slot_name}' ({len(selected)} món); cần ít nhất {MIN_ROLE_POOL_SIZE} món "
                     f"thuộc vai trò {allowed_roles}."
                 )
             pools[slot_name] = selected
@@ -144,7 +143,7 @@ def decode_food_selection(
     for i, slot_name in enumerate(meal_order):
         pool = pools.get(slot_name, [])
         if not pool:
-            raise ValueError(f"Pool for slot '{slot_name}' is empty or missing.")
+            raise ValueError(f"Không có ứng viên cho vị trí '{slot_name}'.")
 
         pool_len = len(pool)
         # Clamp finite optimizer coordinates to [0, 1). This also supports
@@ -164,7 +163,7 @@ def decode_food_selection(
         # Never silently re-use a food within the same day.
         if chosen_fid is None:
             raise ValueError(
-                f"Not enough unique food_ids for slot '{slot_name}' across the daily menu."
+                f"Không còn mã món chưa dùng trong ngày cho vị trí '{slot_name}'."
             )
 
         used_daily.add(chosen_fid)

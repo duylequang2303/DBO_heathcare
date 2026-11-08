@@ -56,8 +56,8 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         raise HTTPException(
             status_code=400,
             detail=(
-                f"Slot '{req.slot}' không thuộc thực đơn "
-                f"(chấp nhận: {meal_order})"
+                f"Vị trí '{req.slot}' không thuộc thực đơn "
+                f"(các vị trí hợp lệ: {meal_order})"
             ),
         )
 
@@ -66,8 +66,8 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         raise HTTPException(
             status_code=400,
             detail=(
-                f"Số lượng food_ids ({len(req.food_ids)}) "
-                f"không khớp số lượng slot ({len(meal_order)})"
+                f"Số lượng mã món ({len(req.food_ids)}) "
+                f"không khớp số lượng vị trí ({len(meal_order)})"
             ),
         )
 
@@ -80,7 +80,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
     if unknown:
         raise HTTPException(
             status_code=400,
-            detail=f"food_ids không hợp lệ: {unknown[:3]}",
+            detail=f"Mã món không hợp lệ: {unknown[:3]}",
         )
 
     slot_idx = meal_order.index(req.slot)
@@ -108,7 +108,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
             status_code=409,
             detail=(
                 "Không tìm thấy danh sách món ứng viên "
-                f"cho slot '{req.slot}'"
+                f"cho vị trí '{req.slot}'"
             ),
         )
 
@@ -160,7 +160,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
                 detail=(
                     f"Món '{req.new_food_id}' "
                     f"không phù hợp với vai trò "
-                    f"của slot '{req.slot}'"
+                    f"của vị trí '{req.slot}'"
                 ),
             )
 
@@ -182,7 +182,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
                 status_code=409,
                 detail=(
                     "Không còn món thay thế phù hợp "
-                    f"trong pool cho slot '{req.slot}'"
+                    f"trong danh sách ứng viên cho vị trí '{req.slot}'"
                 ),
             )
 

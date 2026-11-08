@@ -130,12 +130,12 @@ def test_min_pool_size_satisfied_for_p1(food_map_fixture, sample_profile):
 # Cương — Week 8: edge-case coverage for linear probing.
 def test_all_candidates_exhausted_raises():
     pools = {"lunch_0": ["F1"], "lunch_1": ["F1"]}
-    with pytest.raises(ValueError, match="Not enough unique"):
+    with pytest.raises(ValueError, match="Không còn mã món chưa dùng"):
         decode_food_selection(np.array([0.0, 0.0]), pools, list(pools))
 
 def test_duplicate_ids_in_pool_cannot_bypass_probing():
     pools = {"dinner_0": ["F1", "F1"], "dinner_1": ["F1", "F1"]}
-    with pytest.raises(ValueError, match="Not enough unique"):
+    with pytest.raises(ValueError, match="Không còn mã món chưa dùng"):
         decode_food_selection(np.array([0.0, 0.0]), pools, list(pools))
 
 @pytest.mark.parametrize("bad", [np.nan, np.inf, -np.inf])
@@ -149,7 +149,7 @@ def test_boundary_coordinates_are_clamped():
     assert decode_food_selection(np.array([1.0]), pools, ["lunch_0"]) == ["F3"]
 
 def test_missing_slot_and_shape_rejected():
-    with pytest.raises(ValueError, match="empty or missing"):
+    with pytest.raises(ValueError, match="Không có ứng viên"):
         decode_food_selection(np.array([0.2]), {}, ["lunch_0"])
     with pytest.raises(ValueError, match="one-dimensional"):
         decode_food_selection(np.array([[0.2]]), {"lunch_0": ["F1"]}, ["lunch_0"])
@@ -259,7 +259,7 @@ def test_role_pool_too_small_raises_value_error():
         activity_level=ActivityLevel.SEDENTARY,
         meal_counts={"lunch": 1},
     )
-    with pytest.raises(ValueError, match="Nhóm món theo vai trò cho slot 'lunch_0' quá nhỏ"):
+    with pytest.raises(ValueError, match="Không đủ món theo vai trò cho vị trí 'lunch_0'"):
         build_meal_pools(fake_map, {"lunch": 1}, profile, min_pool_size=1)
 
 

@@ -120,7 +120,7 @@ def test_swap_invalid_slot_returns_400(sample_menu):
     }
     res = client.post("/api/menu/swap", json=swap_payload)
     assert res.status_code == 400
-    assert "Slot" in res.text or "slot" in res.text
+    assert "Vị trí" in res.text or "vị trí" in res.text
 
 
 def test_swap_duplicate_food_in_same_meal_returns_400(sample_menu):
