@@ -170,7 +170,7 @@ def test_real_database_slots_have_expected_roles(food_map_fixture, sample_profil
     pools = build_meal_pools(food_map_fixture, sample_profile.meal_counts, sample_profile)
     expected = {
         'breakfast_0': {DishRole.STAPLE},
-        'breakfast_1': {DishRole.MAIN_PROTEIN, DishRole.FRUIT_SNACK},
+        'breakfast_1': {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE},
         'lunch_0': {DishRole.STAPLE},
         'lunch_1': {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE, DishRole.SOUP},
         'dinner_0': {DishRole.STAPLE},

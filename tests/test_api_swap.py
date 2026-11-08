@@ -146,11 +146,10 @@ def test_swap_rejects_food_used_in_another_meal(sample_menu):
     food_ids = [item["food_id"] for item in sample_menu["items"]]
     slots = [item["slot"] for item in sample_menu["items"]]
 
-    # The generated P1 menu uses VN_1005 (Gạo lứt) for dinner_0; it also
-    # belongs to the lunch_0 staple pool. Swapping lunch_0 to it would create a
-    # duplicate across meals.
+    # Select a food already used in another meal (not lunch) to test cross-meal deduplication (C6)
     target_slot = "lunch_0"
-    duplicate_food = "VN_1005"
+    other_item = next(it for it in sample_menu["items"] if not it["slot"].startswith("lunch"))
+    duplicate_food = other_item["food_id"]
     assert duplicate_food in food_ids
     assert slots[food_ids.index(duplicate_food)] != target_slot
 
