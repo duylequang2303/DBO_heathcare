@@ -172,6 +172,10 @@ _MEDICAL_ALIASES: dict[str, str] = {
     "huyết áp cao": "hypertension", "huyết áp": "hypertension",
     "tăng huyết ap": "hypertension", "tiểu đường": "diabetes",
     "đái tháo đường": "diabetes", "tie duong": "diabetes",
+    "gout": "gout", "gút": "gout", "bệnh gút": "gout", "bệnh gout": "gout", "gut": "gout",
+    "suy thận": "kidney_disease", "bệnh thận": "kidney_disease",
+    "thận mạn": "kidney_disease", "kidney": "kidney_disease",
+    "kidney disease": "kidney_disease",
 }
 
 PROTOTYPE_DISCLAIMER = (
@@ -180,6 +184,14 @@ PROTOTYPE_DISCLAIMER = (
 DIABETES_SUGAR_WARNING = (
     "Dữ liệu chưa có chỉ số đường tổng (sugar), thực đơn này chỉ hỗ trợ "
     "kiểm soát calo và tinh bột, không bảo đảm an toàn lâm sàng cho bệnh nhân tiểu đường."
+)
+GOUT_PURIN_WARNING = (
+    "Bệnh nhân Gout cần tham vấn bác sĩ để kiểm soát purin từ thịt đỏ, nội tạng và hải sản; "
+    "hệ thống hiện chỉ tối ưu macro, chưa lọc purin chuyên sâu."
+)
+KIDNEY_PROTEIN_WARNING = (
+    "Bệnh nhân bệnh thận / suy thận cần kiểm soát chặt chẽ protein, kali và photpho theo chỉ định "
+    "chuyên khoa; thực đơn tự động chưa thay thế phác đồ dinh dưỡng lâm sàng cho bệnh thận."
 )
 
 
@@ -191,6 +203,10 @@ def menu_notices(profile: UserProfile) -> tuple[list[str], list[str]]:
     conditions = set(_normalize_medical_conditions(profile.medical_conditions))
     if "diabetes" in conditions:
         warnings.append(DIABETES_SUGAR_WARNING)
+    if "gout" in conditions:
+        warnings.append(GOUT_PURIN_WARNING)
+    if "kidney_disease" in conditions:
+        warnings.append(KIDNEY_PROTEIN_WARNING)
     return warnings, [PROTOTYPE_DISCLAIMER, PRESENTATION_DISCLAIMER]
 
 

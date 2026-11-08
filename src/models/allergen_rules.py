@@ -170,3 +170,50 @@ def conflicting_allergens(food_name: str, user_allergies: Iterable[str]) -> list
         if is_allergen_conflict(food_name, [raw]):
             hits.append(str(raw))
     return hits
+
+
+def match_phrase_word_boundary(text: str, phrase: str) -> bool:
+    """Khớp từ hoặc cụm từ theo ranh giới từ (word boundary).
+
+    Tránh việc từ ngắn bị khớp nhầm vào từ dài hơn (substring matching).
+    Ví dụ: 'cá' không khớp 'cà chua', 'cải bắp'; 'bò' không khớp 'bơ'.
+    """
+    cleaned_text = normalize_allergen_text(text)
+    cleaned_phrase = normalize_allergen_text(phrase)
+    if not cleaned_text or not cleaned_phrase:
+        return False
+    pattern = rf"(?<!\w){re.escape(cleaned_phrase)}(?!\w)"
+    return bool(re.search(pattern, cleaned_text, re.IGNORECASE))
+
+
+def is_dislike_conflict(food_name: str, dislikes: Iterable[str]) -> bool:
+    """True nếu món ăn xung đột với danh sách không thích (dislikes) của người dùng.
+
+    Khớp theo ranh giới từ (word boundary) hoặc nhóm dị ứng tương ứng để không
+    bắt nhầm chuỗi con (false-positive).
+    """
+    name = normalize_allergen_text(food_name)
+    if not name:
+        return False
+    for raw in dislikes or []:
+        token = normalize_allergen_text(raw)
+        if not token:
+            continue
+        group = _TOKEN_TO_GROUP.get(token)
+        if group is not None:
+            candidate = _strip_exclusions(name, group.exclusions)
+            if group.pattern.search(candidate):
+                return True
+        elif match_phrase_word_boundary(name, token):
+            return True
+    return False
+
+
+def conflicting_dislikes(food_name: str, dislikes: Iterable[str]) -> list[str]:
+    """Danh sách token món không thích bị vi phạm (để báo lỗi rõ ràng)."""
+    hits: list[str] = []
+    for raw in dislikes or []:
+        if is_dislike_conflict(food_name, [raw]):
+            hits.append(str(raw))
+    return hits
+

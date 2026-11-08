@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.models.allergen_rules import is_allergen_conflict
+from src.models.allergen_rules import is_allergen_conflict, is_dislike_conflict
 from src.models.user_profile import UserProfile
 
 
@@ -32,11 +32,7 @@ def _is_blocked_food(food_name: str, profile: UserProfile) -> bool:
     if is_allergen_conflict(name, profile.allergies):
         return True
 
-    return any(
-        _normalize_text(token) in name
-        for token in profile.dislikes
-        if _normalize_text(token)
-    )
+    return is_dislike_conflict(food_name, profile.dislikes)
 
 
 def candidates_for_meal(
