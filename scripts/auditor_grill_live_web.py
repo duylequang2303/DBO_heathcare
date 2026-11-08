@@ -272,6 +272,7 @@ class Auditor:
         # ingredient basis behind a nicer display name.
         names = [it.get("display_name") or it.get("name") or "" for it in m.items]
         ingredient_names = [it.get("ingredient_name") or it.get("name") or "" for it in m.items]
+        preparations = [it.get("preparation") or "" for it in m.items]
         portions = [float(it["portion_g"] or 0) for it in m.items]
         roles = [self.role_of(n) for n in names]
         by_meal: dict[str, list] = {}
@@ -341,10 +342,21 @@ class Auditor:
             "condiments": [n for n in names if CONDIMENT_RE.search(n)],
             "raw": [n for n in ingredient_names if RAW_RE.search(n) and not PREP_RE.search(n)
                     and not DAIRY_RE.search(n) and not n.lower().startswith("giá")],
-            "raw_display": [n for n in names if RAW_RE.search(n) and not PREP_RE.search(n)
-                            and not DAIRY_RE.search(n) and not n.lower().startswith("giá")],
-            "no_prep": [n for n, r in zip(names, roles) if r in ("staple", "protein", "unknown")
-                        and not PREP_RE.search(n) and not READY_RE.search(n)],
+            "raw_display": [
+                n for n, ing in zip(names, ingredient_names)
+                if n.strip().lower() == ing.strip().lower()
+                and RAW_RE.search(n)
+                and not PREP_RE.search(n)
+                and not DAIRY_RE.search(n)
+                and not n.lower().startswith("giá")
+            ],
+            "no_prep": [
+                n for n, r, prep in zip(names, roles, preparations)
+                if r in ("staple", "protein", "unknown")
+                and prep.strip().lower() in ("", "chưa xác định")
+                and not PREP_RE.search(n)
+                and not READY_RE.search(n)
+            ],
             "at_cap": [f"{n} {p:.0f}g" for n, p in zip(names, portions) if p >= 349.5],
             "at_floor": [f"{n} {p:.0f}g" for n, p in zip(names, portions) if p <= 25.5],
             "absurd": absurd,

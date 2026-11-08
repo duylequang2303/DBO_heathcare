@@ -80,6 +80,10 @@ def present_dish(
             return DishPresentation(name, "ăn kèm", "bánh mì")
         if _has_any(lower, ("khoai", "ngô", "bắp")):
             return DishPresentation(f"{name} luộc", "luộc", "củ/quả tươi")
+        if lower.startswith("kê") or "yến mạch" in lower:
+            return DishPresentation(f"Cơm {name.lower()}", "nấu chín", "nguyên liệu khô")
+        if _has_any(lower, ("đậu xanh", "đậu tương", "đậu nành", "đậu đen", "đậu hà lan")):
+            return DishPresentation(f"{name} hấp", "hấp", "nguyên liệu khô")
         return DishPresentation(f"{name} (món bột)", "chế biến", "nguyên liệu khô")
 
     if actual_role == DishRole.MAIN_PROTEIN:

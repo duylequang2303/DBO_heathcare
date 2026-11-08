@@ -454,6 +454,7 @@ def render_markdown(s, A):
         ("C01", "n_requests", s["n_requests"]),
         ("C03", "n_5xx", s["n_5xx"]),
         ("C04", "derived.n_4xx", d["n_4xx"]),
+        ("C05", "derived.n_400_internal_message", d["n_400_internal_message"]),
         ("C07", "menus_with_violation", s["menus_with_violation"]),
         ("C09", "derived.n_menus_fitness_negative", d["n_menus_fitness_negative"]),
         ("C10", "sodium.max", s["sodium"]["max"]),
