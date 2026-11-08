@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from src.models.food_selector import (
+    MIN_ROLE_POOL_SIZE,
     build_meal_pools,
     decode_food_selection,
     get_meal_order_slots,
@@ -107,7 +108,7 @@ def test_empty_pool_raises_value_error():
         allergies=["peanut"],
         meal_counts={"breakfast": 1},
     )
-    with pytest.raises(ValueError, match="less than min_pool_size"):
+    with pytest.raises(ValueError, match="ít hơn ngưỡng tối thiểu"):
         build_meal_pools(fake_map, {"breakfast": 1}, profile_allergic, min_pool_size=1)
 
 
@@ -217,6 +218,32 @@ def test_main_slots_contain_only_protein_veg_soup(food_map_fixture, sample_profi
             assert role in allowed, f"Slot {slot} chứa món {fid} ({food.get('food_name')}) role={role} not in {allowed}"
 
 
+def test_production_whitelist_role_pools_are_complete():
+    """Production whitelist (163 items), not the 15k legacy DB, must pass C4."""
+    from app.api.schemas import ProfileIn
+    from app.api.services import PRESET_PROFILES, build_profile, get_food_map
+    from src.models.dish_category import classify_dish_role
+    from src.models.food_selector import _roles_for_slot
+
+    food_map = get_food_map()
+    for profile_key in ["p1", "p2", "p3"]:
+        profile = build_profile(ProfileIn(**PRESET_PROFILES[profile_key]))
+        pools = build_meal_pools(food_map, profile.meal_counts, profile)
+        for slot_name, food_ids in pools.items():
+            meal_name, idx_raw = slot_name.rsplit("_", 1)
+            count = profile.meal_counts[meal_name]
+            allowed = _roles_for_slot(meal_name, int(idx_raw), count)
+            assert len(food_ids) >= MIN_ROLE_POOL_SIZE
+            for fid in food_ids:
+                row = food_map[fid]
+                role = classify_dish_role(
+                    str(row.get("food_name", "")),
+                    str(row.get("category", "")),
+                    str(row.get("source", "")),
+                )
+                assert role in allowed, (profile_key, slot_name, fid, role)
+
+
 def test_role_pool_too_small_raises_value_error():
     """Role pool < 3 món -> raise ValueError rõ ràng."""
     fake_map = {
@@ -232,7 +259,7 @@ def test_role_pool_too_small_raises_value_error():
         activity_level=ActivityLevel.SEDENTARY,
         meal_counts={"lunch": 1},
     )
-    with pytest.raises(ValueError, match="Role pool cho slot 'lunch_0' quá nhỏ"):
+    with pytest.raises(ValueError, match="Nhóm món theo vai trò cho slot 'lunch_0' quá nhỏ"):
         build_meal_pools(fake_map, {"lunch": 1}, profile, min_pool_size=1)
 
 

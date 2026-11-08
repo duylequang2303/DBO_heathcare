@@ -121,7 +121,14 @@ def main():
         for item in meal.items:
             portion_orig = res.best_portions_g[idx]
             portion_round = rounded_portions[idx]
-            print(f"   - [{m_name}] {item.food_name[:42]:<42} : {portion_orig:>6.1f} g (thực tế: {portion_round:>3d} g, ID: {item.food_id})")
+            display = getattr(item, "display_name", "") or item.food_name
+            basis = getattr(item, "ingredient_basis", "")
+            suffix = f" [từ {basis}]" if basis else ""
+            print(
+                f"   - [{m_name}] {display[:42]:<42}{suffix} : "
+                f"{portion_orig:>6.1f} g (thực tế: {portion_round:>3d} g, "
+                f"ID: {item.food_id})"
+            )
             idx += 1
 
     print(f"\n   * Mảng gram tối ưu (gốc): {np.round(res.best_portions_g, 1).tolist()}")

@@ -84,16 +84,14 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
         )
 
     slot_idx = meal_order.index(req.slot)
-    meal_name = req.slot.rsplit("_", 1)[0]
 
-    # 3. Các món đã dùng trong cùng bữa, trừ slot đang thay
-    used_in_meal = {
+    # 3. Các món đã dùng trong toàn ngày, trừ slot đang thay.
+    #    Không chỉ trong cùng bữa: C6 yêu cầu không tái sử dụng food_id
+    #    ở bất kỳ bữa nào trong ngày.
+    used_daily = {
         req.food_ids[i]
-        for i, slot in enumerate(meal_order)
-        if (
-            slot.rsplit("_", 1)[0] == meal_name
-            and i != slot_idx
-        )
+        for i in range(len(req.food_ids))
+        if i != slot_idx
     }
 
     # 4. Xây dựng pool ứng viên
@@ -145,14 +143,13 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
                 ),
             )
 
-        # 5.3. Kiểm tra trùng món trong cùng bữa
-        if req.new_food_id in used_in_meal:
+        # 5.3. Kiểm tra trùng món trong toàn ngày
+        if req.new_food_id in used_daily:
             raise HTTPException(
                 status_code=400,
                 detail=(
                     f"Món mới '{req.new_food_id}' "
-                    f"bị trùng với món khác "
-                    f"trong cùng bữa {meal_name}"
+                    "bị trùng với món khác trong ngày"
                 ),
             )
 
@@ -176,7 +173,7 @@ def swap_menu_item(req: SwapIn) -> SwapOut:
             for fid in pool
             if (
                 fid != req.food_ids[slot_idx]
-                and fid not in used_in_meal
+                and fid not in used_daily
             )
         ]
 

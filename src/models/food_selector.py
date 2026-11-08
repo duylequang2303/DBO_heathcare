@@ -38,19 +38,23 @@ def _roles_for_slot(meal_name: str, slot_idx: int, count: int) -> set[DishRole]:
     return {DishRole.MAIN_PROTEIN, DishRole.VEGETABLE, DishRole.SOUP}
 
 
+MIN_MEAL_POOL_SIZE = 20
+MIN_ROLE_POOL_SIZE = 3
+
+
 def build_meal_pools(
     food_map: dict,
     meal_counts: dict[str, int],
     profile: UserProfile,
-    min_pool_size: int = 20,
+    min_pool_size: int = MIN_MEAL_POOL_SIZE,
 ) -> dict[str, list[str]]:
     """Build deterministic, user-facing and role-aware candidate pools.
 
     The original CSV is not modified. Allergy/dislike and meal-type filtering
     happens first, then raw ingredients are removed, and finally each slot is
-    assigned realistic culinary roles. If role classification is too sparse,
-    the function safely falls back to the cleaned meal pool, never to raw
-    ingredients.
+    assigned realistic culinary roles. If a role pool is too small, the
+    function raises ``ValueError`` instead of silently falling back to the
+    unfiltered meal pool. Callers must surface a clear configuration error.
     """
     pools: dict[str, list[str]] = {}
     for meal_name in MEAL_ORDER:
@@ -61,8 +65,8 @@ def build_meal_pools(
         cleaned = [fid for fid in meal_candidates if _is_user_facing_food(food_map[fid])]
         if len(cleaned) < min_pool_size:
             raise ValueError(
-                f"User-facing pool for '{meal_name}' has size {len(cleaned)}, "
-                f"less than min_pool_size={min_pool_size}."
+                f"Pool món ăn cho bữa '{meal_name}' chỉ có {len(cleaned)} món, "
+                f"ít hơn ngưỡng tối thiểu {min_pool_size}."
             )
         for slot_idx in range(count):
             slot_name = f"{meal_name}_{slot_idx}"
@@ -78,10 +82,11 @@ def build_meal_pools(
                 if role in allowed_roles:
                     role_candidates.append(fid)
             selected = role_candidates
-            if len(selected) < 3:
+            if len(selected) < MIN_ROLE_POOL_SIZE:
                 raise ValueError(
-                    f"Role pool cho slot '{slot_name}' quá nhỏ ({len(selected)} món); "
-                    f"cần bổ sung món thuộc vai trò {allowed_roles}."
+                    f"Nhóm món theo vai trò cho slot '{slot_name}' quá nhỏ "
+                    f"({len(selected)} món); cần ít nhất {MIN_ROLE_POOL_SIZE} món "
+                    f"thuộc vai trò {allowed_roles}."
                 )
             pools[slot_name] = selected
     return pools

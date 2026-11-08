@@ -141,6 +141,31 @@ def test_swap_duplicate_food_in_same_meal_returns_400(sample_menu):
     assert "trùng" in res.text.lower() or "duplicate" in res.text.lower()
 
 
+def test_swap_rejects_food_used_in_another_meal(sample_menu):
+    """C6: a food already used in another meal must not be reintroduced."""
+    food_ids = [item["food_id"] for item in sample_menu["items"]]
+    slots = [item["slot"] for item in sample_menu["items"]]
+
+    # The generated P1 menu uses VN_1005 (Gạo lứt) for dinner_0; it also
+    # belongs to the lunch_0 staple pool. Swapping lunch_0 to it would create a
+    # duplicate across meals.
+    target_slot = "lunch_0"
+    duplicate_food = "VN_1005"
+    assert duplicate_food in food_ids
+    assert slots[food_ids.index(duplicate_food)] != target_slot
+
+    swap_payload = {
+        "profile": BASE_PROFILE,
+        "food_ids": food_ids,
+        "slot": target_slot,
+        "new_food_id": duplicate_food,
+        "old_portions_g": [item["portion_g"] for item in sample_menu["items"]],
+    }
+    res = client.post("/api/menu/swap", json=swap_payload)
+    assert res.status_code == 400, res.text
+    assert "trùng" in res.text.lower() or "duplicate" in res.text.lower()
+
+
 def test_swap_allergen_food_returns_400(sample_menu):
     """Swapping with an allergen food must return HTTP 400."""
     allergic_profile = dict(BASE_PROFILE, allergies=["tôm"])
@@ -160,6 +185,23 @@ def test_swap_allergen_food_returns_400(sample_menu):
     res = client.post("/api/menu/swap", json=swap_payload)
     assert res.status_code == 400
     assert "dị ứng" in res.text.lower() or "allergy" in res.text.lower() or "không phù hợp" in res.text.lower()
+
+
+def test_swap_pool_configuration_error_returns_400_not_500(sample_menu):
+    """A too-small role/meal pool must be a client error, not a server crash."""
+    restrictive_profile = dict(
+        BASE_PROFILE,
+        allergies=["hải sản", "thịt", "cá", "trứng", "sữa", "đậu", "rau", "gạo"],
+    )
+    swap_payload = {
+        "profile": restrictive_profile,
+        "food_ids": [item["food_id"] for item in sample_menu["items"]],
+        "slot": "lunch_0",
+        "new_food_id": None,
+    }
+    res = client.post("/api/menu/swap", json=swap_payload)
+    assert res.status_code == 400, res.text
+    assert "Không thể thay món" in res.text
 
 
 def test_swap_mismatched_food_ids_length_returns_400():

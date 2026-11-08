@@ -33,6 +33,7 @@ from src.models.dish_category import (
     classify_dish_role,
     portion_bounds_for_food_ids,
 )
+from src.models.dish_presentation import PRESENTATION_DISCLAIMER
 from src.models.diversity_penalty import calculate_unique_main_dish_pct
 from src.models.food_selector import get_meal_order_slots
 from src.models.user_profile import (
@@ -190,7 +191,7 @@ def menu_notices(profile: UserProfile) -> tuple[list[str], list[str]]:
     conditions = set(_normalize_medical_conditions(profile.medical_conditions))
     if "diabetes" in conditions:
         warnings.append(DIABETES_SUGAR_WARNING)
-    return warnings, [PROTOTYPE_DISCLAIMER]
+    return warnings, [PROTOTYPE_DISCLAIMER, PRESENTATION_DISCLAIMER]
 
 
 def _normalize_medical_conditions(conditions: list[str]) -> list[str]:
@@ -237,7 +238,12 @@ def _menu_item_out(item: Any, slot: str) -> MenuItemOut:
     """Convert MenuItem domain object → MenuItemOut."""
     return MenuItemOut(
         food_id=item.food_id,
-        name=item.food_name,
+        name=item.display_name or item.food_name,
+        ingredient_name=item.food_name,
+        display_name=item.display_name or item.food_name,
+        preparation=item.preparation,
+        ingredient_basis=item.ingredient_basis,
+        presentation_is_estimated=item.presentation_is_estimated,
         slot=slot,
         meal_type=item.meal_type or "",
         portion_g=round(item.portion_g, 1),

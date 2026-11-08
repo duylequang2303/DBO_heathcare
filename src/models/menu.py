@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
 
+from src.models.dish_presentation import present_dish
+
 
 class MealType(Enum):
     BREAKFAST = "breakfast"
@@ -24,6 +26,10 @@ class MenuItem:
     iron_mg: float = 0.0
     vitamin_c_mg: float = 0.0
     meal_type: str = ""
+    display_name: str = ""
+    preparation: str = ""
+    ingredient_basis: str = ""
+    presentation_is_estimated: bool = False
 
     def nutrient(self, key: str) -> float:
         per_100g = getattr(self, key)
@@ -184,9 +190,15 @@ def _item_from_row(
     portion_g: float,
     row: dict,
 ) -> MenuItem:
+    food_name = str(row["food_name"])
+    presentation = present_dish(
+        food_name,
+        str(row.get("category", "")),
+        str(row.get("source", "vietnamese")),
+    )
     return MenuItem(
         food_id=food_id,
-        food_name=row["food_name"],
+        food_name=food_name,
         portion_g=portion_g,
         calories=_num(
             row.get("calories")
@@ -218,6 +230,10 @@ def _item_from_row(
         meal_type=_meal_type_str(
             row.get("meal_type")
         ),
+        display_name=presentation.display_name,
+        preparation=presentation.preparation,
+        ingredient_basis=presentation.ingredient_basis,
+        presentation_is_estimated=presentation.is_estimated,
     )
 
 
