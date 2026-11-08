@@ -9,6 +9,7 @@ Architecture:
 
 from __future__ import annotations
 
+import hashlib
 import time
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -45,6 +46,8 @@ class TwoTierConfig:
     inner_diversity_threshold: Optional[float] = None  # None: legacy value, not a calibrated threshold
     max_evaluations: Optional[int] = None  # Shared budget for outer + all inner evaluations
     stagnation_window: int = 25
+    outer_stagnation_window: Optional[int] = None
+    inner_stagnation_window: Optional[int] = None
     perturbation_rate: float = 0.2
     perturbation_scale: float = 0.1
     restart_rate: float = 0.25
@@ -81,6 +84,8 @@ class TwoTierResult:
     inner_runtime_total_s: float = 0.0
     inner_fitness_history: list[float] = field(default_factory=list)
     inner_diversity_history: list[float] = field(default_factory=list)
+    rounded_portions_g: Optional[np.ndarray] = None
+    rounded_fitness: Optional[float] = None
 
 
 def two_tier_optimize(
@@ -171,8 +176,9 @@ def two_tier_optimize(
         # Build inner continuous objective
         inner_obj = make_menu_objective(profile, food_ids, food_map, targets)
 
-        # Configure inner optimizer
-        inner_seed = (config.seed + eval_call_idx[0] * 101 + 7) % 2147483647
+        # Configure inner optimizer (deterministic seed based on food_ids hash)
+        food_ids_hash = int(hashlib.sha256(",".join(food_ids).encode("utf-8")).hexdigest()[:8], 16)
+        inner_seed = (config.seed + food_ids_hash) % 2147483647
         eval_call_idx[0] += 1
 
         if inner_algo == "dbo":
@@ -186,7 +192,7 @@ def two_tier_optimize(
                 n_agents=config.inner_n_agents,
                 max_iter=config.inner_max_iter,
                 diversity_threshold=(config.inner_diversity_threshold if config.inner_diversity_threshold is not None else config.diversity_threshold),
-                stagnation_window=config.stagnation_window,
+                stagnation_window=(config.inner_stagnation_window if config.inner_stagnation_window is not None else config.stagnation_window),
                 perturbation_rate=config.perturbation_rate,
                 perturbation_scale=config.perturbation_scale,
                 restart_rate=config.restart_rate,
@@ -223,7 +229,7 @@ def two_tier_optimize(
             n_agents=config.outer_n_agents,
             max_iter=config.outer_max_iter,
             diversity_threshold=config.outer_diversity_threshold,
-            stagnation_window=config.stagnation_window,
+            stagnation_window=(config.outer_stagnation_window if config.outer_stagnation_window is not None else config.stagnation_window),
             perturbation_rate=config.perturbation_rate,
             perturbation_scale=config.perturbation_scale,
             restart_rate=config.restart_rate,
@@ -260,7 +266,7 @@ def two_tier_optimize(
             n_agents=config.inner_n_agents,
             max_iter=config.inner_max_iter,
             diversity_threshold=(config.inner_diversity_threshold if config.inner_diversity_threshold is not None else config.diversity_threshold),
-            stagnation_window=config.stagnation_window,
+            stagnation_window=(config.inner_stagnation_window if config.inner_stagnation_window is not None else config.stagnation_window),
             perturbation_rate=config.perturbation_rate,
             perturbation_scale=config.perturbation_scale,
             restart_rate=config.restart_rate,
@@ -269,12 +275,14 @@ def two_tier_optimize(
         )
 
     final_lb, final_ub = portion_bounds(best_food_ids)
+    final_food_hash = int(hashlib.sha256(",".join(best_food_ids).encode("utf-8")).hexdigest()[:8], 16)
+    final_seed = (config.seed + final_food_hash) % 2147483647
     final_res = final_inner_solver.optimize(
         final_inner_obj,
         dim=dim_k,
         lb=final_lb,
         ub=final_ub,
-        seed=config.seed,
+        seed=final_seed,
     )
     inner_evals_counter[0] += final_res.n_evaluations
     inner_runtime_counter[0] += final_res.runtime_s
@@ -288,6 +296,10 @@ def two_tier_optimize(
     # History in true fitness scale (higher is better)
     true_history = [-float(val) for val in outer_res.history]
     true_best_fitness = -float(final_res.best_fitness)
+
+    from src.utils.portion_utils import round_portions
+    rounded_portions = np.clip(round_portions(final_res.best_x, step=5), final_lb, final_ub)
+    rounded_fit = -float(final_inner_obj(rounded_portions))
 
     return TwoTierResult(
         best_food_ids=best_food_ids,
@@ -316,4 +328,6 @@ def two_tier_optimize(
         inner_runtime_total_s=inner_runtime_counter[0],
         inner_fitness_history=inner_fitness_history,
         inner_diversity_history=inner_diversity_history,
+        rounded_portions_g=rounded_portions,
+        rounded_fitness=rounded_fit,
     )
