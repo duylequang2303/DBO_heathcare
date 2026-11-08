@@ -71,6 +71,7 @@ def build_report(a):
     cal_mismatch = [an["cal_macro_mismatch_pct"] for _, an in analyses if an["cal_macro_mismatch_pct"] is not None]
     condiment_menus = [(m, an) for m, an in analyses if an["condiments"]]
     raw_menus = [(m, an) for m, an in analyses if an["raw"]]
+    raw_display_menus = [(m, an) for m, an in analyses if an["raw_display"]]
     noprep_menus = [(m, an) for m, an in analyses if an["no_prep"]]
     absurd_menus = [(m, an) for m, an in analyses if an["absurd"]]
     structure_menus = [(m, an) for m, an in analyses if an["structure_issues"]]
@@ -112,6 +113,9 @@ def build_report(a):
     all_steps = []
     for ch in A.swap_chains:
         for s in ch.get("steps", []):
+            # step 0 is the generated baseline, not a swap request.
+            if s.get("step") == 0 or s.get("step") == "gen":
+                continue
             if s.get("status", 200) == 200 and "gap" in s:
                 all_steps.append(s)
     gaps = [s["gap"] for s in all_steps]
@@ -129,6 +133,9 @@ def build_report(a):
         if vals:
             chain5[ch["label"]] = {"start": vals[0], "end": vals[-1],
                                    "min": min(vals), "max": max(vals)}
+    chain5_deltas = [v["end"] - v["start"] for v in chain5.values()]
+    chain5_delta_signed = round(statistics.mean(chain5_deltas), 1) if chain5_deltas else 0.0
+    chain5_delta_abs = round(statistics.mean([abs(x) for x in chain5_deltas]), 1) if chain5_deltas else 0.0
 
     # ---- matrix coverage
     meta = A.matrix_meta
@@ -153,7 +160,12 @@ def build_report(a):
         if "hypertension" in {str(c).strip().lower() for c in (m.profile.get("medical_conditions") or [])}
     ]
     hyp_sodium = [float(m.totals.get("sodium_mg", 0) or 0) for m in hyp_menus]
-    swap_menus = [m for m in menus if m.phase == "swap"]
+    # Baseline menus are named gen_*; they are not swap results. Counting them
+    # as swap steps inflates the denominator by five.
+    swap_menus = [
+        m for m in menus
+        if m.phase == "swap" and not m.label.startswith("gen_")
+    ]
     swap_fit = [float(m.fitness) for m in swap_menus if m.fitness is not None]
     dia_rows = [r for r in A.clinical.get("diabetes", []) if r.get("status") == 200]
     derived = {
@@ -224,6 +236,10 @@ def build_report(a):
         "condiment_examples": sorted({c for _, an in condiment_menus for c in an["condiments"]}),
         "raw_menus": len(raw_menus),
         "raw_examples": sorted({c for _, an in raw_menus for c in an["raw"]}),
+        "raw_display_menus": len(raw_display_menus),
+        "raw_display_examples": sorted(
+            {c for _, an in raw_display_menus for c in an["raw_display"]}
+        )[:15],
         "no_prep_menus": len(noprep_menus),
         "no_prep_pct": _pct(len(noprep_menus), len(menus)),
         "no_prep_examples": sorted({c for _, an in noprep_menus for c in an["no_prep"]})[:15],
@@ -254,6 +270,9 @@ def build_report(a):
             "gap_series": gap_series,
             "chain5": chain5,
             "gap_first_last_delta": gap_delta,
+            "gap_full_chain_delta": gap_delta,
+            "gap_chain5_delta_signed": chain5_delta_signed,
+            "gap_chain5_delta_abs": chain5_delta_abs,
             "max_portion_overall": max([s.get("max_portion", 0) for s in all_steps], default=0),
             "steps_with_cap": sum(1 for s in all_steps if s.get("n_at_cap", 0) > 0),
             "status_errors": [{"label": ch["label"], "error": ch.get("error")}
@@ -406,7 +425,8 @@ def render_markdown(s, A):
       f"({s['slot_misplaced_pct']}%) | — |")
     L(f"| Slot đầu bữa trưa/tối đúng là tinh bột | {s['slot0_staple_pct']}% ({s['slot0_n']} slot) | C18 |")
     L(f"| Menu chứa gia vị như món độc lập | {s['condiment_menus']}/{s['n_menus']} | — |")
-    L(f"| Menu chứa nguyên liệu thô (bộ dò auditor) | {s['raw_menus']}/{s['n_menus']} | C19 |")
+    L(f"| Menu có nguyên liệu gốc bị coi là thô | {s['raw_menus']}/{s['n_menus']} | C19 |")
+    L(f"| Menu hiển thị tên nguyên liệu thô | {s['raw_display_menus']}/{s['n_menus']} | C19b |")
     L(f"| Menu có món chính không nêu cách chế biến | {s['no_prep_pct']}% "
       f"({s['no_prep_menus']}/{s['n_menus']}) | C20 |")
     L(f"| Lượt lọt dị ứng ngữ nghĩa (token “hải sản”) | {allergy.get('semantic_leak_runs', 0)}/"
@@ -417,7 +437,9 @@ def render_markdown(s, A):
     L(f"| Menu trùng món trong ngày | {s['duplicate_menus']} | — |")
     L(f"| Số bước swap đo được | {sw['n_swap_steps']} (max portion {num(sw['max_portion_overall'], 0)} g) | — |")
     L(f"| Menu swap có trả `fitness` | {d['n_swap_menus_with_fitness']}/{d['n_swap_menus']} | C14 |")
-    L(f"| Biến thiên độ lệch dinh dưỡng qua swap | {sw['gap_first_last_delta']} điểm % (đầu → cuối) | C24 |")
+    L(f"| Biến thiên gap toàn chuỗi swap | {sw['gap_full_chain_delta']} điểm % (baseline → cuối) | C24 |")
+    L(f"| Biến thiên gap 5 bước cuối | {sw['gap_chain5_delta_signed']} điểm % "
+      f"(signed; abs {sw['gap_chain5_delta_abs']}) | C24b |")
     L(f"| 10 swap đồng thời | {conc.get('status_counts')} · max {conc.get('latency_max_ms')} ms | — |")
     L(f"| Tái lập cùng seed | ids giống: {det.get('same_ids')} · portion giống: {det.get('same_portions')} "
       "| [C23] [C23b] |")
@@ -444,12 +466,14 @@ def render_markdown(s, A):
         ("C17", "structure_fail_menus", s["structure_fail_menus"]),
         ("C18", "slot0_staple_pct", s["slot0_staple_pct"]),
         ("C19", "raw_menus", s["raw_menus"]),
+        ("C19b", "raw_display_menus", s["raw_display_menus"]),
         ("C20", "no_prep_pct", s["no_prep_pct"]),
         ("C21", "allergy.semantic_leak_runs", allergy.get("semantic_leak_runs", 0)),
         ("C22", "derived.n_allergy_menus_400", d["n_allergy_menus_400"]),
         ("C23", "determinism.same_ids", det.get("same_ids")),
         ("C23b", "determinism.same_portions", det.get("same_portions")),
         ("C24", "swap.gap_first_last_delta", sw["gap_first_last_delta"]),
+        ("C24b", "swap.gap_chain5_delta_signed", sw["gap_chain5_delta_signed"]),
         ("C25", "latency_all.p95", lat["p95"]),
         ("C27", "matrix.ok", mat.get("ok")),
         ("C28", "cal_macro_mismatch_pct.max", s["cal_macro_mismatch_pct"]["max"]),
@@ -507,8 +531,11 @@ def render_markdown(s, A):
     flat = [(k, v) for k, v in sw["chain5"].items() if v["end"] == v["start"]]
     if sw["chain5"]:
         L(f"- Chuỗi 5 lần swap cùng slot: **{len(worse)}** chuỗi xấu đi, **{len(better)}** chuỗi tốt lên, "
-          f"**{len(flat)}** chuỗi không đổi. Biến thiên trung bình đầu→cuối: "
-          f"`[C24]` **{num(sw['gap_first_last_delta'])}** điểm %.")
+          f"**{len(flat)}** chuỗi không đổi. Biến thiên trung bình đầu→cuối của đúng 5 bước: "
+          f"`[C24b]` **{num(sw['gap_chain5_delta_signed'])}** điểm % "
+          f"(abs {num(sw['gap_chain5_delta_abs'])}). "
+          f"Toàn chuỗi (gồm các bước tuần tự trước đó): `[C24]` "
+          f"**{num(sw['gap_full_chain_delta'])}** điểm %.")
         for label, v in sw["chain5"].items():
             trend = "xấu đi" if v["end"] > v["start"] else ("tốt lên" if v["end"] < v["start"] else "không đổi")
             L(f"  - {label}: {v['start']} → {v['end']} ({trend}), min {v['min']}, max {v['max']}")
@@ -605,9 +632,11 @@ def render_markdown(s, A):
     L("- `[CẢNH BÁO ĐO LƯỜNG]` Auditor phân vai trò món bằng **từ vựng độc lập** với `DishRole` của hệ thống, "
       "nên 100% “sai” không đồng nghĩa 100% lỗi sản phẩm. Phải đối chiếu hai định nghĩa slot trước khi "
       "sửa theo con số này.")
-    L(f"- `[C19]` **{s['raw_menus']}/{s['n_menus']}** menu chứa món bị bộ dò coi là nguyên liệu thô; "
+    L(f"- `[C19]` **{s['raw_menus']}/{s['n_menus']}** menu có nguyên liệu gốc thuộc nhóm bị bộ dò coi là thô; "
+      f"`[C19b]` **{s['raw_display_menus']}/{s['n_menus']}** menu còn hiển thị tên nguyên liệu thô; "
       f"`[C20]` **{s['no_prep_pct']}%** menu có món chính không nêu cách chế biến. "
-      "Đây là giới hạn của lớp tên hiển thị (tên nguyên liệu thay vì tên món), không phải lỗi dinh dưỡng.")
+      "C19 là giới hạn dữ liệu gốc (bảng dinh dưỡng theo 100 g nguyên liệu), không phải lỗi dinh dưỡng; "
+      "C19b/C20 đo lớp ghép món hiển thị và phải đọc cùng C19.")
     if s["condiment_menus"]:
         L(f"- Gia vị xuất hiện như món độc lập: **{s['condiment_menus']}** menu `{s['condiment_examples'][:6]}`.")
     else:
@@ -704,10 +733,13 @@ def render_markdown(s, A):
           "phần chưa khớp giữa ngưỡng của hệ thống và tiêu chí của bộ đo độc lập.”")
     else:
         L("**Câu 5. “Vì sao bảng thực đơn có nhiều món là nguyên liệu thô như ‘Măng tre 220 g’?”**")
-        L(f"- Trả lời: “Đó là lớp tên hiển thị, không phải khẩu phần: {s['no_prep_pct']}% menu có món chính "
-          f"không nêu cách chế biến (`[C20]`), và {s['raw_menus']}/{s['n_menus']} menu bị bộ dò độc lập coi là "
-          "có nguyên liệu thô (`[C19]`). Trong đợt chạy này không có món nào chạm trần khẩu phần "
-          f"≥{d['at_cap_threshold_g']:.1f} g (`[C15]` = {s['at_cap_menus']}).”")
+        L(f"- Trả lời: “Tên hiển thị đã được ghép thành món: {s['raw_display_menus']}/{s['n_menus']} menu "
+          f"còn hiển thị tên nguyên liệu thô (`[C19b]`), {s['no_prep_pct']}% menu có món chính không nêu "
+          f"cách chế biến (`[C20]`). Tuy nhiên {s['raw_menus']}/{s['n_menus']} menu vẫn có nguyên liệu gốc "
+          "thuộc nhóm thô (`[C19]`), vì dữ liệu dinh dưỡng là bảng theo 100 g nguyên liệu và chưa có bảng "
+          "món nấu chín tương ứng. Đây là giới hạn dữ liệu, không phải khẩu phần thô được phục vụ. "
+          f"Trong đợt chạy này không có món nào chạm trần khẩu phần ≥{d['at_cap_threshold_g']:.1f} g "
+          f"(`[C15]` = {s['at_cap_menus']}).”")
     L("")
 
     # ------------------------------------------------------------------ §5
