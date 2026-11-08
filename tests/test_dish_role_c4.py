@@ -102,3 +102,4 @@ def test_whitelist_role_pools_satisfy_min_threshold_all_presets():
                 f"Preset {key}, slot '{slot_name}' chỉ có {len(food_ids)} món "
                 f"(ngưỡng tối thiểu {MIN_ROLE_POOL_SIZE})"
             )
+
